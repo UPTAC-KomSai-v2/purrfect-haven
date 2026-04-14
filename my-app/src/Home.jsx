@@ -1,20 +1,11 @@
 import './App.css'
+import Header from "./components/Header"
+import Footer from "./components/Footer"
 
 function App() {
   return (
     <>
-      <section className="nav">
-        <h1>PURRFECT HAVEN</h1>
-        <div className="navOptions">
-          <a href="/">Home</a>
-          <a href="">Adopt</a>
-          <a href="">Rescue</a>
-          <a href="">Community</a>
-        </div>
-
-        <a href="">SIGN IN</a>
-      </section>
-
+      <Header />
       <section className="imageContent">
         <div className="imageDiv">
           <div className="blur">
@@ -83,30 +74,7 @@ function App() {
         <h1>Frequently Asked Questions</h1>
       </section>
 
-      <section className="footer">
-        <div className="row">
-          <div className="column">
-            <p><strong>Follow Us</strong></p>
-            <div className="row">
-              <img className="smallComputer" src="computer.png" />
-              <img className="smallComputer" src="computer.png" />
-              <img className="smallComputer" src="computer.png" />
-            </div>
-          </div>
-          <div className="column">
-            <p><strong>About</strong></p>
-            <p><em>Every pet deserves a loving home.</em></p>
-          </div>
-        </div>
-        <hr/>
-        <div className="row">
-          <div className="row">
-            <p>© 2026 Purrfect Haven</p>
-            <p>Privacy Policy</p>
-            <p>Website Developed by rubberduck</p>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </> 
   )
 }
