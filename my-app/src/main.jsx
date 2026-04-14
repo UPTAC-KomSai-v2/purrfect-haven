@@ -4,6 +4,7 @@ import './styles/index.css'
 import App from './App'
 import { BrowserRouter } from "react-router-dom";
 
+/* Modify for the Page layers example Home.jsx */
 createRoot(document.getElementById('root')).render(
     <StrictMode>
       <BrowserRouter>
