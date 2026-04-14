@@ -7,7 +7,7 @@ function App() {
       <h1>PURRFECT HAVEN</h1>
       <div className="navOptions">
         <Link to="/">Home</Link>
-        <Link to="">Adopt</Link>
+        <Link to="/adoptionlist">Adopt</Link>
         <Link to="">Rescue</Link>
         <Link to="">Community</Link>
       </div>
