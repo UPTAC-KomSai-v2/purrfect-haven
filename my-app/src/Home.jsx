@@ -1,17 +1,11 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <section class="nav">
+      <section className="nav">
         <h1>PURRFECT HAVEN</h1>
-        <div class="navOptions">
+        <div className="navOptions">
           <a href="/">Home</a>
           <a href="">Adopt</a>
           <a href="">Rescue</a>
@@ -21,13 +15,13 @@ function App() {
         <a href="">SIGN IN</a>
       </section>
 
-      <section class="imageContent">
-        <div class="imageDiv">
-          <div class="blur">
+      <section className="imageContent">
+        <div className="imageDiv">
+          <div className="blur">
             <h1 id="dark">Every Pet Deserves a</h1>
             <h1>Loving Home</h1>
             <p>Browse adoptable pets around Tacloban City, report animals in need, or post community adoptions. Together, we can make a difference for our Tacloban fur babies.</p>
-            <div class="row">
+            <div className="row">
               <button>Available Pets</button>
               <button>Report a Rescue</button>
             </div>
@@ -35,11 +29,11 @@ function App() {
         </div>
       </section>
       
-      <section class="featuredStory">
+      <section className="featuredStory">
         <h1>Featured Story</h1>
-        <div class="fsContent">
-          <div class="fscat"></div>
-          <div class="fsText">
+        <div className="fsContent">
+          <div className="fscat"></div>
+          <div className="fsText">
             <p>Adoption Success Story</p>
             <h2>“Henhen changed our lives and we changed hers”</h2>
             <p>
@@ -50,32 +44,32 @@ function App() {
         </div>
       </section>
 
-      <section class="petsForAdoption">
+      <section className="petsForAdoption">
         <h1>Available Pets for Adoption</h1>
         <p>Find your perfect furry friend from our loving pets waiting for their forever homes!</p>
-        <div class="adoptionList">
-          <div class="pet">
+        <div className="adoptionList">
+          <div className="pet">
             <img src="callie.jpg" />
             <p><strong>Callie</strong></p>
             <p>Puspin</p>
             <p>3 yrs</p>
             <p>Female</p>
           </div>
-          <div class="pet">
+          <div className="pet">
             <img src="elliot.png" />
             <p><strong>Elliot</strong></p>
             <p>German Shepherd</p>
             <p>3 yrs</p>
             <p>Male</p>
           </div>
-          <div class="pet">
+          <div className="pet">
             <img src="samsam.png" />
             <p><strong>Samsam</strong></p>
             <p>Aspin</p>
             <p>3 yrs</p>
             <p>Female</p>
           </div>
-          <div class="pet">
+          <div className="pet">
             <img src="tikay.png" />
             <p><strong>Tikay</strong></p>
             <p>Puspin</p>
@@ -85,28 +79,28 @@ function App() {
         </div>
       </section>
 
-      <section class="faq">
+      <section className="faq">
         <h1>Frequently Asked Questions</h1>
       </section>
 
-      <section class="footer">
-        <div class="row">
-          <div class="column">
+      <section className="footer">
+        <div className="row">
+          <div className="column">
             <p><strong>Follow Us</strong></p>
-            <div class="row">
-              <img class="smallComputer" src="computer.png" />
-              <img class="smallComputer" src="computer.png" />
-              <img class="smallComputer" src="computer.png" />
+            <div className="row">
+              <img className="smallComputer" src="computer.png" />
+              <img className="smallComputer" src="computer.png" />
+              <img className="smallComputer" src="computer.png" />
             </div>
           </div>
-          <div class="column">
+          <div className="column">
             <p><strong>About</strong></p>
             <p><em>Every pet deserves a loving home.</em></p>
           </div>
         </div>
         <hr/>
-        <div class="row">
-          <div class="row">
+        <div className="row">
+          <div className="row">
             <p>© 2026 Purrfect Haven</p>
             <p>Privacy Policy</p>
             <p>Website Developed by rubberduck</p>
