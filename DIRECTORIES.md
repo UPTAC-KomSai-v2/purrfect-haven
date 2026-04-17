@@ -17,6 +17,9 @@ src/
 purrfect-haven-server/
 ├── config/
 │   └── db.js          ← database connection pool
+├── database/
+│   ├── migrate.js    ← runs schema.sql programmatically
+│   └── schema.sql  
 ├── controllers/       ← business logic (one file per resource)
 ├── middleware/        ← auth guards, error handlers
 ├── routes/            ← API route definitions

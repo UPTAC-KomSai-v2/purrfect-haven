@@ -17,3 +17,29 @@ This is a repository of Group AENS for CMSC 121 Final Project for the SS 2025-20
 - Hero section
 - Brown buttons
 - FeaturedStory section
+
+## DB migrate cmd
+- See server/package.json
+- npm run migrate
+
+### Sample migration
+```
+npm run migrate
+> server@1.0.0 migrate
+> node database/migrate.js
+
+◇ injected env (6) from .env // tip: ⌘ enable debugging { debug: true }
+Connecting to MySQL...
+Connected. Running schema migration...
+
+Migration complete. Tables created:
+  - Species
+  - Users
+  - Pets
+  - pet_photos
+  - Adoptions
+  - Rescue_Reports
+
+Database is ready.
+aus.sn50@Angelas-MacBook-Air server % 
+```
