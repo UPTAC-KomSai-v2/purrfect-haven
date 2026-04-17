@@ -11,7 +11,6 @@ src/
 └── hooks/           ← custom hooks (optional)
 ```
 
-
 ### `server`
 ```
 purrfect-haven-server/
