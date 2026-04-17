@@ -3,6 +3,7 @@ import session from 'express-session';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/db.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -26,6 +27,10 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24,
   },
 }));
+
+// auth endpoint
+app.use('/api/auth', authRoutes);
+ 
 
 // health endpoint
 app.get('/api/health', async (req, res) => {
