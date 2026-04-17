@@ -9,8 +9,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// MySQL migration script for db
-async function runMigration() {
+async function runSeed() {
   let connection;
 
   try {
@@ -20,32 +19,29 @@ async function runMigration() {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       port: process.env.DB_PORT || 3306,
       multipleStatements: true,
     });
 
-    console.log('Connected. Running schema migration...\n');
+    console.log('Connected. Running seed...\n');
 
-    const schemaPath = path.join(__dirname, 'schema.sql');
-    const sql = fs.readFileSync(schemaPath, 'utf8');
+    const seedPath = path.join(__dirname, 'seed.sql');
+    const sql = fs.readFileSync(seedPath, 'utf8');
 
     await connection.query(sql);
 
-    console.log('Migration complete. Tables created:');
-    console.log('  - Species');
-    console.log('  - Users');
-    console.log('  - Pets');
-    console.log('  - pet_photos');
-    console.log('  - Adoptions');
-    console.log('  - Rescue_Reports');
-    console.log('\nDatabase is ready.');
+    console.log('Seed complete. Inserted:');
+    console.log('  - 5 Species  (Dog, Cat, Rabbit, Bird, Guinea Pig)');
+    console.log('  - 7 Pets     (5 available, 2 adopted)');
+    console.log('\nYou can now test all pet listing endpoints.');
 
   } catch (err) {
-    console.error('Migration failed:', err.message);
+    console.error('Seed failed:', err.message);
     process.exit(1);
   } finally {
     if (connection) await connection.end();
   }
 }
 
-runMigration();
+runSeed();
