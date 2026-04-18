@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/db.js';
 import authRoutes from './routes/auth.js';
+import usersRoutes from './routes/users.js';
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ app.use(session({
 
 // auth endpoint
 app.use('/api/auth', authRoutes);
- 
+app.use('/api/users', usersRoutes);
 
 // health endpoint
 app.get('/api/health', async (req, res) => {
