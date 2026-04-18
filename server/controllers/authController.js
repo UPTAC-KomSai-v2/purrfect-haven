@@ -120,3 +120,21 @@ export async function login(req, res) {
     return res.status(500).json({ error: 'Server error. Please try again.' });
   }
 }
+
+// POST /api/auth/logout
+export async function logout(req, res) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'No active session to log out from.' });
+  }
+ 
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Logout error:', err.message);
+      return res.status(500).json({ error: 'Logout failed. Please try again.' });
+    }
+ 
+    res.clearCookie('connect.sid');
+    return res.status(200).json({ message: 'Logged out successfully.' });
+  });
+}
+ 
