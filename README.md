@@ -95,4 +95,9 @@ Profile update (needs login)
 }
 ```
 
+## styles
+```
+Define global theme in instead of hardcoded styles: src/styles/theme.css
+```
+
 ## Deliverables checklist

@@ -1,0 +1,33 @@
+/**
+ * Theme CSS Variables
+ * Extracted from src/constants/theme.js
+ */
+
+:root {
+  /* Primary Branding */
+  --color-primary: #5E3023;
+  --color-secondary: #895737;
+
+  /* Backgrounds */
+  --color-background: #FDF8F1;
+  --color-surface: #FFFFFF;
+  --color-header-gradient-start: #8B5E3C;
+  --color-header-gradient-end: #5E3023;
+
+  /* Text Colors */
+  --color-text-primary: #2D1B14;
+  --color-text-secondary: #5F4B42;
+  --color-text-light: #FFFFFF;
+
+  /* UI States & Borders */
+  --color-border: #E6D5C3;
+  --color-success: #4A7C44;
+  --color-error: #A33B3B;
+  --color-pending: #D4A373;
+
+  /* Specialized Elements */
+  --color-overlay: rgba(94, 48, 35, 0.1);
+  
+  /* Additional utility colors */
+  --color-border-light: #f0f0f0;
+}

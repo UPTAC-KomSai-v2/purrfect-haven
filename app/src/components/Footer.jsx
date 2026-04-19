@@ -1,6 +1,6 @@
 import '../styles/app.css'
 
-function App() {
+function Footer() {
   return (
     <section className="footer">
         <div className="row">
@@ -29,4 +29,4 @@ function App() {
   )
 }
 
-export default App
+export default Footer
