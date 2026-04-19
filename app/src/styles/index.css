@@ -1,3 +1,5 @@
+@import './theme.css';
+
 /* Reset files */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -12,6 +14,7 @@ body {
 }
 
 /* added by @nikkanap */
+/*
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -44,6 +47,7 @@ body {
     font-size: 16px;
   }
 }
+*/
 
 h1,
 h2 {

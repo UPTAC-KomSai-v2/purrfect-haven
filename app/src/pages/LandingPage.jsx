@@ -1,11 +1,8 @@
-import './styles/app.css'
-import Header from "./components/Header"
-import Footer from "./components/Footer"
+import '../styles/app.css'
 
-function Home() {
+function LandingPage() {
   return (
     <>
-      <Header />
       <section className="imageContent">
         <div className="imageDiv">
           <div className="blur">
@@ -73,10 +70,8 @@ function Home() {
       <section className="faq">
         <h1>Frequently Asked Questions</h1>
       </section>
-
-      <Footer />
     </> 
   )
 }
 
-export default Home
+export default LandingPage;

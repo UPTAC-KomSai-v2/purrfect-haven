@@ -1,9 +1,9 @@
-import './styles/app.css'
+import '../styles/app.css'
 import { Link } from 'react-router-dom'
-import Header from "./components/Header"
-import Footer from "./components/Footer"
+import Navbar from '../components/Navbar'
+import Footer from "../components/Footer"
 
-function Login() {
+function App() {
   return (
     <>
       <Header />
@@ -25,4 +25,4 @@ function Login() {
   )
 }
 
-export default Login
+export default App

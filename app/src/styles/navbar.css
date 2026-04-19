@@ -1,0 +1,105 @@
+@import './theme.css';
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content:  space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: var(--color-surface);
+  border-bottom: 0.5px solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Added navbar-brand to be a flex container */
+.navbar-brand {
+  font-size: 18px;
+  font-weight:  500;
+  color: var(--color-primary);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+}
+
+/* Add cap + fit: contain to img */
+.navbar-brand img {
+  max-height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar-brand:hover {
+  color: var(--color-secondary);
+}
+
+.navbar-links {
+  display: flex;
+  align-items:  center;
+  gap: 1.5rem;
+}
+
+.navbar-links a {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.navbar-links a:hover {
+  color: var(--color-text-primary);
+}
+
+.navbar-profile {
+  font-weight: 500;
+  color: var(--color-text-primary) !important;
+}
+
+.navbar-signup {
+  font-size: 13px !important;
+  font-weight: 500;
+  color: var(--color-text-light) !important;
+  background: var(--color-primary);
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: background 0.15s !important;
+}
+
+.navbar-signup:hover {
+  background: var(--color-secondary);
+  color: var(--color-text-light) !important;
+}
+
+.navbar-logout {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  background: none;
+  border: 0.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition:   border-color 0.15s, color 0.15s;
+}
+
+.navbar-logout:hover {
+  border-color: var(--color-text-secondary);
+  color: var(--color-text-primary);
+}
+
+/* Add more media query, e.g. dropdown navbar thingy */
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 1rem;
+  }
+
+  .navbar-links {
+    gap: 1rem;
+  }
+
+  .navbar-links a {
+    font-size: 13px;
+  }
+}
