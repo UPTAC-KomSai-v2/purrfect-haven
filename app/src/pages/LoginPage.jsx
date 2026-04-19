@@ -1,12 +1,9 @@
 import '../styles/app.css'
 import { Link } from 'react-router-dom'
-import Navbar from '../components/Navbar'
-import Footer from "../components/Footer"
 
-function App() {
+function Login() {
   return (
     <>
-      <Header />
       <section class="login">
         <h1>Welcome Back</h1>
         <p>Sign in to your account to continue</p>
@@ -20,9 +17,8 @@ function App() {
         <Link to="/signup">Don't have an account? <strong>Sign up</strong></Link>
       </section>
 
-      <Footer />
     </> 
   )
 }
 
-export default App
+export default Login;

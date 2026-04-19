@@ -1,12 +1,9 @@
-import './styles/app.css'
+import '../styles/app.css'
 import { Link } from 'react-router-dom'
-import Header from "./components/Header"
-import Footer from "./components/Footer"
 
 function Signup() {
   return (
     <>
-      <Header />
       <section class="login">
         <h1>Create Your Account</h1>
         <p>Join our community and help pets find loving homes</p>
@@ -23,10 +20,8 @@ function Signup() {
         </form>
         <Link to="/login">Already have an account? <strong>Sign in</strong></Link>
       </section>
-
-      <Footer />
     </> 
   )
 }
 
-export default Signup
+export default Signup;

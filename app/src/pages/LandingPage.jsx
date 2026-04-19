@@ -1,6 +1,6 @@
 import '../styles/app.css'
 
-function LandingPage() {
+function Landing() {
   return (
     <>
       <section className="imageContent">
@@ -74,4 +74,4 @@ function LandingPage() {
   )
 }
 
-export default LandingPage;
+export default Landing;

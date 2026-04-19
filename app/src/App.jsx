@@ -1,7 +1,9 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import ProtectedRoute   from './components/ProtectedRoute.jsx';
-import Navbar           from './components/Navbar.jsx';
-import LandingPage      from './pages/LandingPage.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Navbar from './components/Navbar.jsx';
+import Landing from './pages/LandingPage.jsx';
+import Login from './pages/LoginPage.jsx';
+import Signup from './pages/SignupPage.jsx';
 
 function App() {
   return (
@@ -11,10 +13,10 @@ function App() {
         <Routes>
 
           {/* Public routes */}
-          <Route path="/"         element={<LandingPage />} />
+          <Route path="/"         element={<Landing />} />
+          <Route path="/login"    element={<Login />} />
+          <Route path="/signup"   element={<Signup />} />
           {/*
-          <Route path="/login"    element={<LoginPage />} />
-          <Route path="/signup"   element={<SignupPage />} />
           <Route path="/pets"     element={<PetsPage />} />
           <Route path="/pets/:id" element={<PetDetailPage />} />
           <Route path="/adopted"  element={<AdoptedPetsPage />} />
