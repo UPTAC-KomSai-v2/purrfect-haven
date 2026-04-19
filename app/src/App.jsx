@@ -14,9 +14,9 @@ function App() {
         <Routes>
 
           {/* Public routes */}
-          <Route path="/"         element={<Landing />} />
-          <Route path="/login"    element={<Login />} />
-          <Route path="/signup"   element={<Signup />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/*
           <Route path="/pets"     element={<PetsPage />} />
           <Route path="/pets/:id" element={<PetDetailPage />} />
