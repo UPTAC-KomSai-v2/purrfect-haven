@@ -1,6 +1,7 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 import Landing from './pages/LandingPage.jsx';
 import Login from './pages/LoginPage.jsx';
 import Signup from './pages/SignupPage.jsx';
@@ -13,9 +14,9 @@ function App() {
         <Routes>
 
           {/* Public routes */}
-          <Route path="/"         element={<Landing />} />
-          <Route path="/login"    element={<Login />} />
-          <Route path="/signup"   element={<Signup />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/*
           <Route path="/pets"     element={<PetsPage />} />
           <Route path="/pets/:id" element={<PetDetailPage />} />
@@ -36,6 +37,7 @@ function App() {
 
         </Routes>
       </main>
+      <Footer />
     </BrowserRouter>
   );
 }

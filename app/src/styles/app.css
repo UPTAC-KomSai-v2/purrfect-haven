@@ -100,12 +100,7 @@
   }
 }
 
-.footer {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--accent);
-  color: var(--l-text);
-}
+
 
 .smallComputer {
   width: 30px;
