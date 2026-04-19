@@ -1,5 +1,6 @@
 @import './theme.css';
 
+/*Currently contains only navbar specific css*/
 .navbar {
   display: flex;
   align-items: center;
