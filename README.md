@@ -58,5 +58,41 @@ POST/auth/login
 }
 ```
 
+::: Sample param
+```
+api/pets
+
+All available pets (no filter):
+GET http://localhost:3000/api/pets
+
+Filter by species:
+GET http://localhost:3000/api/pets?species=dog
+
+Filter by breed:
+GET http://localhost:3000/api/pets?breed=aspin
+Filter by age:
+GET http://localhost:3000/api/pets?age=2
+
+Filter by location:
+GET http://localhost:3000/api/pets?location=tacloban
+
+Combined filters:
+GET http://localhost:3000/api/
+```
+
+## api/auth
+```
+Login
+{
+  "email":    "angela@email.com",
+  "password": "securepass123"
+}
+
+Profile update (needs login)
+{
+  "first_name": "Angela",
+  "city": "Ormoc City"
+}
+```
 
 ## Deliverables checklist

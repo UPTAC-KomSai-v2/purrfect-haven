@@ -20,3 +20,88 @@ export async function getProfile(req, res) {
     return res.status(500).json({ error: 'Server error. Please try again.' });
   }
 }
+
+// Modify my user details
+// PUT /api/users/profile
+export async function updateProfile(req, res) {
+  const { first_name, last_name, city, email, cell_num } = req.body;
+ 
+  // Input validation
+  if (!first_name && !last_name && !city && !email && !cell_num) {
+    return res.status(400).json({
+      error: 'At least one field must be provided to update.',
+    });
+  }
+
+  // How about create a helper for this regex
+  if (email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format.' });
+    }
+  }
+ 
+  try {
+    // Check email/cell_num not already taken by another user
+    if (email || cell_num) {
+      const conditions = [];
+      const checkParams = [];
+ 
+      if (email) {
+        conditions.push('email = ?');
+        checkParams.push(email);
+      }
+      if (cell_num) {
+        conditions.push('cell_num = ?');
+        checkParams.push(cell_num);
+      }
+ 
+      const [existing] = await pool.query(
+        `SELECT user_id FROM Users
+         WHERE (${conditions.join(' OR ')})
+         AND user_id != ?`,
+        [...checkParams, req.session.userId]
+      );
+ 
+      if (existing.length > 0) {
+        return res.status(409).json({
+          error: 'That email or phone number is already in use by another account.',
+        });
+      }
+    }
+ 
+    // Build UPDATE query dynamically (only update provided fields)
+    const fields = [];
+    const params = [];
+ 
+    if (first_name) { fields.push('first_name = ?'); params.push(first_name); }
+    if (last_name)  { fields.push('last_name = ?');  params.push(last_name);  }
+    if (city)       { fields.push('city = ?');       params.push(city);       }
+    if (email)      { fields.push('email = ?');      params.push(email);      }
+    if (cell_num)   { fields.push('cell_num = ?');   params.push(cell_num);   }
+ 
+    params.push(req.session.userId);
+ 
+    await pool.query(
+      `UPDATE Users SET ${fields.join(', ')} WHERE user_id = ?`,
+      params
+    );
+ 
+    // Return updated profile
+    const [rows] = await pool.query(
+      `SELECT user_id, first_name, last_name, city, email, cell_num, created_at
+       FROM Users WHERE user_id = ?`,
+      [req.session.userId]
+    );
+ 
+    return res.status(200).json({
+      message: 'Profile updated successfully.',
+      user:    rows[0],
+    });
+ 
+  } catch (err) {
+    console.error('Update profile error:', err.message);
+    return res.status(500).json({ error: 'Server error. Please try again.' });
+  }
+}
+ 
