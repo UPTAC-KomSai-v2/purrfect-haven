@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getPets } from '../services/petsService.js';
+import PetCard from '../components/PetCard.jsx';
 import '../styles/landing.css';
 import faqItems from '../data/faqs.json';
 import ResponsiveImage from '../components/ResponsiveImage';
@@ -7,6 +9,26 @@ import ResponsiveImage from '../components/ResponsiveImage';
 function Landing() {
   const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState(0);
+
+  // State for the pets shown in the "Available Pets" section on the homepage.
+  // We fetch these from the backend instead of hardcoding them.
+  const [featuredPets, setFeaturedPets] = useState([]);
+
+  // Fetch a few available pets when the page first loads.
+  // We only show 4 pets on the homepage as a preview — the full list is on /pets.
+  useEffect(() => {
+    async function fetchFeaturedPets() {
+      try {
+        const pets = await getPets();
+        // slice(0, 4) keeps only the first 4 pets from the list
+        setFeaturedPets(pets.slice(0, 4));
+      } catch (err) {
+        console.error('Failed to load featured pets:', err);
+        // If this fails, the section just shows nothing — no big deal
+      }
+    }
+    fetchFeaturedPets();
+  }, []);
 
   const toggleFaq = (index) => setActiveFaq(activeFaq === index ? -1 : index);
 
@@ -47,36 +69,15 @@ function Landing() {
           <h1>Available Pets for Adoption</h1>
           <p>Find your perfect furry friend from our loving pets waiting for their forever homes!</p>
         </div>
+
+        {/* Pets are now fetched from the backend.
+            If the list is empty (still loading or API failed), nothing shows. */}
         <div className="pets-grid">
-          <div className="pet-card">
-            <ResponsiveImage name="callie" type="pets" alt="Callie adoption pet" lazy={true} className="pet-image" />
-            <p className="pet-name">Callie</p>
-            <p className="pet-breed">Puspin</p>
-            <p className="pet-age">3 yrs</p>
-            <p className="pet-gender">Female</p>
-          </div>
-          <div className="pet-card">
-            <ResponsiveImage name="elliot" type="pets" alt="Elliot adoption pet" lazy={true} className="pet-image" />
-            <p className="pet-name">Elliot</p>
-            <p className="pet-breed">German Shepherd</p>
-            <p className="pet-age">3 yrs</p>
-            <p className="pet-gender">Male</p>
-          </div>
-          <div className="pet-card">
-            <ResponsiveImage name="samsam" type="pets" alt="Samsam adoption pet" lazy={true} className="pet-image" />
-            <p className="pet-name">Samsam</p>
-            <p className="pet-breed">Aspin</p>
-            <p className="pet-age">3 yrs</p>
-            <p className="pet-gender">Female</p>
-          </div>
-          <div className="pet-card">
-            <ResponsiveImage name="tikay" type="pets" alt="Tikay adoption pet" lazy={true} className="pet-image" />
-            <p className="pet-name">Tikay</p>
-            <p className="pet-breed">Puspin</p>
-            <p className="pet-age">3 yrs</p>
-            <p className="pet-gender">Male</p>
-          </div>
+          {featuredPets.map((pet) => (
+            <PetCard key={pet.pet_id} pet={pet} />
+          ))}
         </div>
+
         <button className="view-all-button" onClick={() => navigate('/pets')}>View All</button>
       </section>
 

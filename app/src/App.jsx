@@ -5,6 +5,8 @@ import Footer from './components/Footer.jsx';
 import Landing from './pages/LandingPage.jsx';
 import Login from './pages/LoginPage.jsx';
 import Signup from './pages/SignupPage.jsx';
+import AdoptionList from './pages/AdoptionListPage.jsx';
+import PetDetail from './pages/PetDetailPage.jsx';
 
 function App() {
   return (
@@ -12,29 +14,24 @@ function App() {
       <Navbar />
       <main>
         <Routes>
+          {/* Public routes — anyone can view */}
+          <Route path="/"          element={<Landing />} />
+          <Route path="/login"     element={<Login />} />
+          <Route path="/signup"    element={<Signup />} />
+          <Route path="/pets"      element={<AdoptionList />} />
+          <Route path="/pets/:id"  element={<PetDetail />} />
 
-          {/* Public routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          {/*
-          <Route path="/pets"     element={<PetsPage />} />
-          <Route path="/pets/:id" element={<PetDetailPage />} />
-          <Route path="/adopted"  element={<AdoptedPetsPage />} />
-          */}
-
-          {/* Protected routes */}
+          {/* Protected routes — only for logged-in users */}
           <Route path="/profile" element={
             <ProtectedRoute>
-              {/*<ProfilePage />*/}
+              {/* <ProfilePage /> */}
             </ProtectedRoute>
           } />
           <Route path="/report" element={
             <ProtectedRoute>
-              {/*<ProfilePage />*/}
+              {/* <RescueReportPage /> */}
             </ProtectedRoute>
           } />
-
         </Routes>
       </main>
       <Footer />
