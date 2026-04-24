@@ -24,7 +24,7 @@ export default function Navbar() {
   const handleProtectedLink = (e, path) => {
     if (!isAuthenticated) {
       e.preventDefault();
-      navigate('/login');
+      navigate(`/login?page=${path.replace('/', '')}`);
     } else {
       navigate(path);
     }

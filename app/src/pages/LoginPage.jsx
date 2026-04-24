@@ -5,6 +5,7 @@ import api from '../services/api.js';
 import '../styles/auth.css';
 import passHideIcon from '../assets/icons/pass-hide.svg';
 import passSeeIcon from '../assets/icons/pass-see.svg';
+import { useSearchParams } from "react-router-dom";
 
 function LoginPage() {
   // react use state
@@ -15,10 +16,15 @@ function LoginPage() {
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
   
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const queryString = searchParams.get('page');
+  const loginH1 = !queryString ? "Welcome Back!" : `You Must Be Logged In`;
+  const extraText = !queryString ? "" : (queryString === "report" ? 'To Report a Pet Rescue' : 'To Post a Pet For Adoption');
+  
   // handle submit POST req. connect to endpoint built
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +63,8 @@ function LoginPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Welcome Back</h1>
+        <h1>{loginH1}</h1>
+        <p><strong>{extraText}</strong></p>
         <p>Sign in to your account to continue</p>
         
         {generalError && <div className="error-banner">{generalError}</div>}
