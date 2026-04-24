@@ -4,6 +4,7 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  gap: 10px;
   padding: 40px 20px;
   background-color: var(--color-background);
 }
@@ -29,17 +30,17 @@ h1 {
 }
 
 h3 {
-    font-weight: 700;
-    color: var(--color-text-secondary);
-    font-size: 15px;
-    margin: 10px 0;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  margin: 10px 0;
 }
 
 .adoptpet-container > p {
   font-size: 14px;
   color: var(--color-text-secondary);
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   line-height: 1.5;
 }
 
@@ -48,8 +49,8 @@ label{
 }
 
 .adoptpet-card h4 {
-    color: var(--color-text-secondary);
-    font-size: 15px;
+  color: var(--color-text-secondary);
+  font-size: 15px;
 }
 
 .adoptpet-form {
@@ -211,6 +212,80 @@ label{
     flex-direction: row;
     gap: 20px;
 }
+
+.detail-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  padding: 25px 0;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.detail-main-photo {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.info-card {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  border-radius: 12px;
+  padding: 30px;
+  gap: 20px;
+}
+
+.info-card-name {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--color-text-light);
+}
+
+.info-card-location {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.info-card-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+}
+
+.info-label {
+  font-weight: 700;
+}
+
+.info-value {
+  font-weight: 400;
+}
+
 
 /* Responsive */
 @media (max-width: 600px) {

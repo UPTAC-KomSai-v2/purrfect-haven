@@ -1,11 +1,19 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+
+import { getPetById } from '../services/petsService.js';
 import '../styles/adoptform.css';
 import { Paperclip } from "lucide-react";
 
+function getPhotoUrl(filePath) {
+  if (!filePath) return 'https://placehold.co/400x400?text=No+Photo';
+  return `http://localhost:3000/${filePath}`;
+}
+
 function AdoptFormPage() {
   // react use state
+  const { id } = useParams(); // grabs the :id from the URL
   const [fullname, setFullname] = useState('');
   const [contactNo, setContactNo] = useState('');
   const [email, setEmail] = useState('');
@@ -17,11 +25,38 @@ function AdoptFormPage() {
   const [hasChildren, setHasChildren] = useState(false);
   const [homeOwnership, setHomeOwnerhsip] = useState('');
   const [financialCapTxt, setFinancialCapTxt] = useState('');
+  const [pet, setPet] = useState(null);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState('');
   const [generalError, setGeneralError] = useState('');
   const [loading, setLoading] = useState(false);
   
+  useEffect(() => {
+      async function fetchPet() {
+        setLoading(true);
+        setError('');
+  
+        try {
+          const fetched = await getPetById(id);
+          setPet(fetched);
+          setSelectedPhotoIndex(0); // reset photo selection when loading a new pet
+        } catch (err) {
+          console.error('Failed to load pet:', err);
+          if (err.response?.status === 404) {
+            setError('Pet not found.');
+          } else {
+            setError('Could not load pet details. Please try again later.');
+          }
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchPet();
+    }, [id]);
+
   // handle submit POST req. connect to endpoint built
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,11 +75,82 @@ function AdoptFormPage() {
     }
   };
 
+  if (loading) {
+    return <p className="status-message">Loading pet details...</p>;
+  }
+
+  if (error) {
+    return <p className="status-message error-message">{error}</p>;
+  }
+
+  if (!pet) {
+    return null; // shouldn't happen, but just in case
+  }
+
+  const photos = pet.photos || [];
+  const mainPhoto = photos[selectedPhotoIndex];
+  const mainPhotoUrl = mainPhoto
+    ? getPhotoUrl()
+    : getPhotoUrl(null);
+
   return (
     <div className="adoptpet-container">
       <h1>Adoption Form</h1>
       <p>Thank you for your interest in adopting Callie! Please fill out the form below to start the adoption process.</p>
       
+      <div className="adoptpet-card">
+        <div className="info-card">
+          <img
+            src={mainPhotoUrl}
+            alt={pet.name}
+            className="detail-main-photo"
+          />
+
+          <div>
+            <h2 className="info-card-name">{pet.name}</h2>
+            {pet.location_held && (
+              <p className="info-card-location">{pet.location_held}</p>
+            )}
+
+            {/* Info rows — only render the ones that have data */}
+            <div className="info-card-rows">
+              {pet.species_name && (
+                <div className="info-row">
+                  <span className="info-label">Type</span>
+                  <span className="info-value">{pet.species_name}</span>
+                </div>
+              )}
+              {pet.breed && (
+                <div className="info-row">
+                  <span className="info-label">Breed</span>
+                  <span className="info-value">{pet.breed}</span>
+                </div>
+              )}
+              {pet.sex && (
+                <div className="info-row">
+                  <span className="info-label">Gender</span>
+                  <span className="info-value">{pet.sex}</span>
+                </div>
+              )}
+              {pet.age !== null && pet.age !== undefined && (
+                <div className="info-row">
+                  <span className="info-label">Age</span>
+                  <span className="info-value">
+                    {pet.age} {pet.age === 1 ? 'year' : 'years'}
+                  </span>
+                </div>
+              )}
+              {pet.color && (
+                <div className="info-row">
+                  <span className="info-label">Color/Pattern</span>
+                  <span className="info-value">{pet.color}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="adoptpet-card">
         {generalError && <div className="error-banner">{generalError}</div>}
         
