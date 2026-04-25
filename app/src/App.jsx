@@ -10,6 +10,7 @@ import PetDetail from './pages/PetDetailPage.jsx';
 import ReportRescue from './pages/ReportRescue.jsx'; //delete when done testing
 import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/AdoptionFormPage.jsx';
+import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
           <Route path="/report" element={<ReportRescue />} /> {/*delete when done testing*/}
           <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
-
+          <Route path="/settings" element={<AccountSettingsPage />} />
           {/* Protected routes — only for logged-in users */}
           {/* Add back protected routes after testing */}
         </Routes>
