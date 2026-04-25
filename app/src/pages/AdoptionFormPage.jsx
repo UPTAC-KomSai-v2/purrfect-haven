@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useParams } from 'react-router-dom';
 
 import { getPetById } from '../services/petsService.js';
 import '../styles/adoptform.css';
@@ -15,7 +14,7 @@ function AdoptFormPage() {
   // react use state
   const { id } = useParams(); // grabs the :id from the URL
   const [fullname, setFullname] = useState('');
-  const [contactNo, setContactNo] = useState('');
+  const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
   const [location, setLocation] = useState('');
   const [aboutSelf, setAboutSelf] = useState('');
@@ -66,8 +65,13 @@ function AdoptFormPage() {
 
     // Validation
     const newErrors = {};
+    if (!fullname) newErrors.fullname = 'Full Name is required';
     if (!email) newErrors.email = 'Email is required';
-
+    if (!phoneNo) newErrors.phoneNo = 'Phone Number is required';
+    if (!location) newErrors.location = 'Location is required';
+    if (!aboutSelf) newErrors.aboutSelf = 'About Self is required';
+    if (!homeOwnership) newErrors.homeOwnership = 'Home Owenrship is required';
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setLoading(false);
@@ -175,18 +179,18 @@ function AdoptFormPage() {
                   {errors.fullname && <span className="error-text">{errors.fullname}</span>}
                 </div>
 
-                <div className={`form-group ${errors.contactNo ? 'form-group-error' : ''}`}>
-                  <label htmlFor="contactNo">Contact No.</label>
+                <div className={`form-group ${errors.phoneNo ? 'form-group-error' : ''}`}>
+                  <label htmlFor="phoneNo">Phone No.</label>
                   <input
-                    id="contactNo"
+                    id="phoneNo"
                     type="text"
                     placeholder="09xxx-xxx-xxxx"
-                    value={contactNo}
-                    onChange={(e) => setContactNo(e.target.value)}
-                    className={errors.contactNo ? 'input-error' : ''}
+                    value={phoneNo}
+                    onChange={(e) => setPhoneNo(e.target.value)}
+                    className={errors.phoneNo ? 'input-error' : ''}
                     required
                   />
-                  {errors.contactNo && <span className="error-text">{errors.contactNo}</span>}
+                  {errors.phoneNo && <span className="error-text">{errors.phoneNo}</span>}
                 </div>
               </div>
               <div className="flex-col contact-info-container">
