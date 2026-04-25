@@ -314,11 +314,16 @@ function AdoptFormPage() {
                   />
                   {errors.financialCapTxt && <span className="error-text">{errors.financialCapTxt}</span>}
                 </div>
-                <button className="file-upload" type="button">
-                  <Paperclip size={30} />
-                  <p>Upload File of Financial Capability Proof</p>
-                  <p>PDF, DOC up to 10MB each - Max 5 files</p>
-                </button>
+                
+                <div className="adoptpet-upload-container">
+                  <div className="adoptpet-upload-dropzone">
+                    <Paperclip size={30} />
+                    <p>Upload Proof of Financial Capability (File)</p>
+                    <small>PDF, Doc up to 10MB each • Max 5 files</small>
+                    <input type="file" multiple accept="image/*,video/*" className="adoptpet-hidden-file" />
+                  </div>
+                </div>
+
               </div>
               
             </div>
