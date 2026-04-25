@@ -11,6 +11,7 @@ import ReportRescue from './pages/ReportRescue.jsx'; //delete when done testing
 import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/AdoptionFormPage.jsx';
 import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
+import AdminPage from './pages/AdminPage.jsx'
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
           <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
           <Route path="/settings" element={<AccountSettingsPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+         
           {/* Protected routes — only for logged-in users */}
           {/* Add back protected routes after testing */}
         </Routes>
