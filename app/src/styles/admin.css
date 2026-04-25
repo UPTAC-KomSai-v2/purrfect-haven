@@ -2,138 +2,130 @@
 .admin-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  flex-direction: column;
   min-height: calc(100vh - 100px);
   background-color: var(--color-background);
   padding: 40px 20px;
+  align-items: center;
 }
 
+.admin-nav {
+  padding: 20px;
+  background-color: #FFFFFF;
+  display: flex;
+  gap: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.admin-nav button {
+  background: none;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--color-text-primary);
+  padding: 15px 40px;
+  cursor: pointer;
+}
+
+.admin-nav button:hover {
+  background-color: antiquewhite;
+  color: var(--color-text-primary);
+}
+
+.current {
+  background-color: #5A3923 !important;
+  text-decoration: none;
+  color: #FFFFFF !important;
+}
+
+/*adoption request template*/
 .admin-card {
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-surface);
   border: 2px solid var(--color-border);
   border-radius: 12px;
   max-width: 900px;
   width: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
   overflow: hidden;
 }
 
-.admin-card-top {
+.buttons-container {
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.btn {
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 50px;
+  margin: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 250px;
+}
+
+.approved-btn {
+  background-color: green;
+}
+
+.approved-btn:hover {
+  background-color: rgb(24, 175, 24);
+}
+
+.rejected-btn {
+  background-color: maroon;
+}
+
+.rejected-btn:hover {
+  background-color: rgb(168, 23, 23);
+}
+
+h3 {
+  margin-top: -10px;
+}
+
+.posted {
+  font-size: small;
+  margin-top: -15px ;
+  color: var(--color-text-primary);
+}
+
+.post-content-container {
+  width: 100%;
+  margin-bottom: -25px;
+}
+
+.detail-photo {
+  width: 120px;
+  margin: 2px;
+}
+
+.posted-by {
+  width: 40%;
+}
+
+.card-top {
   background: linear-gradient(to right, #5A3923, #C0794A);
   width: 100%;
   height: max-content;
   padding: 20px;
 }
 
-.admin-card-top h1 {
-  font-size: 28px;
-  font-weight: 700;
+.card-top h2, .card-top p {
   color: #FFFFFF;
-  text-align: left;
 }
 
-.admin-card-top > p {
-  font-size: 14px;
-  color: #FFFFFF;
-  margin-bottom: 10px;
-  line-height: 1.5;
-  text-align: left;
+h4 {
+  font-style: italic;
 }
 
-.admin-card-nav {
-  padding: 20px;
-  background-color: #FFF1DA;
-  display: flex;
-  gap: 20px;
-}
-
-.admin-card-nav button {
-  background: none;
-  border: none;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.admin-card-nav button:hover {
-  cursor: pointer;
-}
-
-.current {
-  text-decoration: underline;
-}
-
-.admin-form {
-  display: flex;
-  padding: 20px 20px;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.profile-info-title > p {
-  font-size: 15px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="number"],
-.form-group input[type="tel"] {
-  padding: 12px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--color-secondary);
-  box-shadow: 0 0 0 3px rgba(137, 87, 55, 0.1);
-}
-
-.password-field {
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  top: 38px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  font-size: 18px;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.password-toggle img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-.password-toggle:hover {
-  color: var(--color-text-primary);
-  opacity: 0.8;
-}
 
 /* Submit Button */
 .admin-button {
@@ -166,10 +158,36 @@
   width: 100%;
 }
 
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.topMargin20px {
+  margin-top: 20px;
+}
+
+.small-italics {
+  font-size: small;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+}
+
+.padding20px {
+  padding: 30px;
+}
+
+
 /* Responsive */
 @media (max-width: 1200px) {
   .admin-card {
-    width: 80%;
+    width: 100%;
   }
 
   .admin-card h1 {
