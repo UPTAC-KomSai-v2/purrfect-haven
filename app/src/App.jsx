@@ -7,6 +7,11 @@ import Login from './pages/LoginPage.jsx';
 import Signup from './pages/SignupPage.jsx';
 import AdoptionList from './pages/AdoptionListPage.jsx';
 import PetDetail from './pages/PetDetailPage.jsx';
+import ReportRescue from './pages/ReportRescue.jsx'; //delete when done testing
+import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
+import AdoptionFormPage from './pages/AdoptionFormPage.jsx';
+import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
+import AdminPage from './pages/AdminPage.jsx'
 
 function App() {
   return (
@@ -20,18 +25,14 @@ function App() {
           <Route path="/signup"    element={<Signup />} />
           <Route path="/pets"      element={<AdoptionList />} />
           <Route path="/pets/:id"  element={<PetDetail />} />
-
+          <Route path="/report" element={<ReportRescue />} /> {/*delete when done testing*/}
+          <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
+          <Route path="/adopt/:id" element={<AdoptionFormPage />} />
+          <Route path="/settings" element={<AccountSettingsPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+         
           {/* Protected routes — only for logged-in users */}
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              {/* <ProfilePage /> */}
-            </ProtectedRoute>
-          } />
-          <Route path="/report" element={
-            <ProtectedRoute>
-              {/* <RescueReportPage /> */}
-            </ProtectedRoute>
-          } />
+          {/* Add back protected routes after testing */}
         </Routes>
       </main>
       <Footer />

@@ -24,7 +24,7 @@ export default function Navbar() {
   const handleProtectedLink = (e, path) => {
     if (!isAuthenticated) {
       e.preventDefault();
-      navigate('/login');
+      navigate(`/login?page=${path.replace('/', '')}`);
     } else {
       navigate(path);
     }
@@ -40,10 +40,10 @@ export default function Navbar() {
 
       <div className="navbar-links">
         <Link to="/pets">Find a pet</Link>
-        <Link to="/report" onClick={(e) => handleProtectedLink(e, '/report')}>
+        <Link to="/report">
           Report a rescue
         </Link>
-        <Link to="/community" onClick={(e) => handleProtectedLink(e, '/community')}>
+        <Link to="/community">
           Community posts
         </Link>
       </div>

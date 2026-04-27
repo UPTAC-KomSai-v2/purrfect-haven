@@ -60,7 +60,7 @@ function AdoptionListPage() {
       <section className="adopt-header">
         <h1>Pets For Adoption</h1>
         <p>
-          Check out our list of pets up for adoption and find the perfect
+          Browse through list of pets up for adoption and find the perfect
           companion waiting to meet you!
         </p>
       </section>
