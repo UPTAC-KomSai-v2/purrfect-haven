@@ -101,3 +101,8 @@ Define global theme in instead of hardcoded styles: src/styles/theme.css
 ```
 
 ## Deliverables checklist
+
+## Pet name convention
+For uploading pics in report a rescue/ community pets/ 
+- firstname.jpg
+- Add images 
