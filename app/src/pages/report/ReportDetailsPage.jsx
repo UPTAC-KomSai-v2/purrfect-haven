@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../../services/api.js';
 import '../../styles/report.css';
+import Button from '../../components/Button.jsx';
 
 function ReportDetailsPage() {
   const { reportId } = useParams();
@@ -41,9 +42,9 @@ function ReportDetailsPage() {
       <section className="report-details-wrapper">
         <div className="report-details-container">
           <p className="error-message">{error}</p>
-          <button className="button-primary" onClick={() => navigate('/')}>
+          <Button onClick={() => navigate('/')}>
             Back to Home
-          </button>
+          </Button>
         </div>
       </section>
     );
@@ -159,12 +160,12 @@ function ReportDetailsPage() {
           </div>
 
           <div className="report-detail-actions">
-            <button className="button-primary" onClick={() => navigate('/')}>
+            <Button onClick={() => navigate('/')}>
               Back to Home
-            </button>
-            <button className="button-secondary" onClick={() => window.print()}>
+            </Button>
+            <Button onClick={() => window.print()}>
               Print Report
-            </button>
+            </Button>
           </div>
         </div>
       </div>

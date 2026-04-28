@@ -135,31 +135,6 @@
   opacity: 0.8;
 }
 
-/* Submit Button */
-.settings-button {
-  padding: 14px 20px;
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 10px;
-}
-
-.settings-button:hover {
-  background-color: var(--color-secondary);
-  transform: translateY(-2px);
-}
-
-.settings-button:active {
-  transform: translateY(0);
-}
-
 .flex-row {
   display: flex;
   flex-direction: row;

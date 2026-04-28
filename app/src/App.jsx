@@ -3,10 +3,10 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Landing from './pages/LandingPage.jsx';
-import Login from './pages/LoginPage.jsx';
-import Signup from './pages/SignupPage.jsx';
+import Login from './pages/auth/LoginPage.jsx';
+import Signup from './pages/auth/SignupPage.jsx';
 import AdoptionList from './pages/pets/AdoptionListPage.jsx';
-import PetDetail from './pages/PetDetailPage.jsx';
+import PetDetail from './pages/pets/PetDetailPage.jsx';
 import ReportRescue from './pages/report/ReportRescue.jsx'; //delete when done testing
 import ReportDetailsPage from './pages/report/ReportDetailsPage.jsx';
 import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing

@@ -4,6 +4,7 @@ import { submitAdoptionApplication } from '../../services/adoptionsService.js'; 
 
 import { getPetById } from '../../services/petsService.js';
 import '../../styles/adoptform.css';
+import Button from '../../components/Button.jsx';
 import { Paperclip } from "lucide-react";
 
 function getPhotoUrl(filePath) {
@@ -360,9 +361,9 @@ function AdoptFormPage() {
             </div>
 
 
-            <button type="submit" className="adoptpet-button" disabled={loading}>
+            <Button type="submit" disabled={loading}>
               Submit Adoption Application
-            </button>
+            </Button>
           </div>
         </form>
       </div>

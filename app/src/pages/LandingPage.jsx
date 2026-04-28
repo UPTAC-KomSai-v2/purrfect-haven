@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { getPets } from '../services/petsService.js';
 import { getFeaturedStory } from '../services/storiesService.js';
 import PetCard from '../components/PetCard.jsx';
+import Hero from '../components/Hero.jsx';
+import Button from '../components/Button.jsx';
 import '../styles/landing.css';
 import faqItems from '../data/faqs.json';
 import ResponsiveImage from '../components/ResponsiveImage';
@@ -51,18 +53,8 @@ function Landing() {
 
   return (
     <>
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1>Every Pet Deserves a</h1>
-          <h1>Loving Home</h1>
-          <p>Browse adoptable pets around Tacloban City, report animals in need, or post community adoptions. Together, we can make a difference for our Tacloban fur babies.</p>
-          <div className="hero-buttons">
-            <button className="hero-button" onClick={() => navigate('/pets')}>Find a pet</button>
-            <button className="hero-button" onClick={() => navigate('/report')}>Report a rescue</button>
-          </div>
-        </div>
-      </section>
-
+      <Hero />
+    
       <section className="featured-story">
         <h1>Featured Story</h1>
         <div className="story-content">
@@ -110,6 +102,7 @@ function Landing() {
               </div>
             </>
           )}
+
         </div>
       </section>
 
@@ -121,7 +114,12 @@ function Landing() {
         <div className="pets-grid">
           {featuredPets.map((pet) => <PetCard key={pet.pet_id} pet={pet} />)}
         </div>
-        <button className="view-all-button" onClick={() => navigate('/pets')}>View All</button>
+
+        {/* Uses Custom button reusable component */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Button onClick={() => navigate('/pets')}>View All</Button>
+        </div>
+
       </section>
 
       <section className="faq-section">

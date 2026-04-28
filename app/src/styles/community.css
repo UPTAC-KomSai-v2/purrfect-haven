@@ -148,23 +148,6 @@ body {
   margin-top: 10px;
 }
 
-.cap-submit-button {
-  background: var(--color-primary);
-  color: var(--color-text-light);
-  border: none;
-  padding: 12px 60px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-}
-
-.cap-submit-button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
 @media (max-width: 900px) {
   .cap-main-wrapper {
     flex-direction: column;

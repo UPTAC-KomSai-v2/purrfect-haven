@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import FormCard from '../components/FormCard.jsx';
-import api from '../services/api.js';
-import '../styles/forms.css';
-import passHideIcon from '../assets/icons/pass-hide.svg';
-import passSeeIcon from '../assets/icons/pass-see.svg';
+import { useAuth } from '../../context/AuthContext.jsx';
+import FormCard from '../../components/FormCard.jsx';
+import api from '../../services/api.js';
+import '../../styles/forms.css';
+import passHideIcon from '../../assets/icons/pass-hide.svg';
+import passSeeIcon from '../../assets/icons/pass-see.svg';
 import { useSearchParams } from "react-router-dom";
+import Button from '../../components/Button.jsx';
 
 function LoginPage() {
   // react use state
@@ -122,9 +123,9 @@ function LoginPage() {
           <Link to="/forgotPassword">Forgot password?</Link>
         </div>
 
-        <button type="submit" className="auth-button" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'LOGGING IN...' : 'LOG IN'}
-        </button>
+        </Button>
       </form>
 
       <div className="auth-footer-link">

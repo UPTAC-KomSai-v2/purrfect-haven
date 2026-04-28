@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormCard from '../components/FormCard.jsx';
+import Button from '../components/Button.jsx';
 import '../styles/forms.css';
 import '../styles/community.css';
 
@@ -108,10 +109,7 @@ function CommunityPage() {
                         </div>
 
                         <div className="cap-action-area">
-                            {/* Changed type to "button" to prevent refresh */}
-                            <button type="button" className="cap-submit-button">
-                                Submit
-                            </button>
+                            <Button>Submit</Button>
                         </div>
                     </form>
                 </section>

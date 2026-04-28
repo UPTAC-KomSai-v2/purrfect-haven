@@ -333,6 +333,16 @@ Recommended order (smallest first):
 
 - **Community posts backend** — mirrors the adoption pattern almost exactly
 - **Rescue reports backend** — same shape as community posts
+
+- **Welfare checks** — new feature, fairly self-contained
+- **Pet creation + photo upload** — multer involved, more complex
 - **Rescue report admin view** — once the backend exists, mirror the AdminPage adoption tab
 - **Email notifications** — would replace the "we'll notify you via email" placeholder text everywhere
 - **Persistent session storage** — swap in `express-mysql-session` so sessions survive server restarts
+
+Something to work on (low priority)
+- Frontend styles fix to /profile
+- Clean up on redundant CSS files
+- Component creation for redundant lines of code that could be converted to components
+- Featured story recco:
+  - Random featured story showing based on DB query instead of just "Henhen" entry
