@@ -1,13 +1,9 @@
--- purrfect haven database schema (v2)
--- expanded para ma-support yung lahat ng adoption phases, admin role,
--- community post moderation, welfare checks, post-adoption updates, at stories.
-
 CREATE DATABASE IF NOT EXISTS purrfect_haven;
 USE purrfect_haven;
 
 -- =====================================================
 -- table: species
--- (walang binago — pareho lang sa una)
+-- lookup table para sa pet types (Dog, Cat, etc.)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS Species (
   species_id   INT         NOT NULL AUTO_INCREMENT,
@@ -34,8 +30,7 @@ CREATE TABLE IF NOT EXISTS Users (
 
 -- =====================================================
 -- table: pets
--- walang binago — pero tandaan: pwedeng auto-created ito kapag
--- in-approve ng admin yung community post.
+-- pwedeng auto-created ito kapag in-approve ng admin yung community post.
 -- =====================================================
 CREATE TABLE IF NOT EXISTS Pets (
   pet_id           INT          NOT NULL AUTO_INCREMENT,
@@ -57,7 +52,7 @@ CREATE TABLE IF NOT EXISTS Pets (
 
 -- =====================================================
 -- table: pet_photos
--- (walang binago)
+-- multiple photos per pet
 -- =====================================================
 CREATE TABLE IF NOT EXISTS pet_photos (
   pet_pic_id INT          NOT NULL AUTO_INCREMENT,
@@ -69,11 +64,11 @@ CREATE TABLE IF NOT EXISTS pet_photos (
 
 -- =====================================================
 -- table: adoptions
--- malaking refactor ito.  dati 4 columns lang, ngayon may status
--- tracking para sa lahat ng phases (0 hanggang 4) at appointment.
+-- malaking refactor — may status tracking para sa lahat ng phases
+-- (0 hanggang 4) at appointment.
 --
--- yung application form fields (address, financial info, etc.)
--- nilagay ko na rin dito instead of separate table — para
+-- yung application form fields (address, financial info, checkboxes,
+-- motivation) nilagay na rin dito instead of separate table — para
 -- mas simple, walang masyadong join.
 -- =====================================================
 CREATE TABLE IF NOT EXISTS Adoptions (
@@ -100,7 +95,11 @@ CREATE TABLE IF NOT EXISTS Adoptions (
   -- mga details galing sa application form (phase 1)
   applicant_address    VARCHAR(255) NOT NULL,
   is_first_pet         TINYINT      NOT NULL DEFAULT 0,
+  has_experience       TINYINT      NOT NULL DEFAULT 0,  -- may experience sa pets?
+  has_other_pets       TINYINT      NOT NULL DEFAULT 0,  -- may iba pang pets sa bahay?
+  has_children         TINYINT      NOT NULL DEFAULT 0,  -- may bata sa bahay?
   financial_capability TEXT,
+  motivation           TEXT,                              -- bakit gusto mag-adopt?
   owns_home            TINYINT      NOT NULL DEFAULT 0,
 
   -- phase 0: appointment para makita yung pet
@@ -121,8 +120,7 @@ CREATE TABLE IF NOT EXISTS Adoptions (
 
 -- =====================================================
 -- table: rescue_reports
--- bagong columns: status at admin_note para may tracking ng
--- ano na nangyari sa report.
+-- may status at admin_note para may tracking ng ano na nangyari sa report.
 -- =====================================================
 CREATE TABLE IF NOT EXISTS Rescue_Reports (
   report_id     INT          NOT NULL AUTO_INCREMENT,
@@ -140,7 +138,7 @@ CREATE TABLE IF NOT EXISTS Rescue_Reports (
 
 -- =====================================================
 -- table: rescue_report_photos
--- bagong table — para sa multiple photos per report.
+-- multiple photos per report
 -- =====================================================
 CREATE TABLE IF NOT EXISTS rescue_report_photos (
   photo_id  INT          NOT NULL AUTO_INCREMENT,
@@ -152,7 +150,7 @@ CREATE TABLE IF NOT EXISTS rescue_report_photos (
 
 -- =====================================================
 -- table: community_posts
--- bago — kapag may user na gusto mag-post ng pet for adoption.
+-- kapag may user na gusto mag-post ng pet for adoption.
 -- hindi agad lalabas sa public — kailangan muna i-approve ng admin.
 -- pag in-approve, gagawa siya ng Pet record at ila-link via created_pet_id.
 -- =====================================================
