@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD:app/src/pages/AdoptionListPage.jsx
 import { useAuth } from '../context/AuthContext.jsx';
 import {
   getPets,
@@ -9,6 +10,11 @@ import {
 import PetCard from '../components/PetCard.jsx';
 import PetFormModal from '../components/PetFormModal.jsx';
 import '../styles/pets.css';
+=======
+import { getPets, getAdoptedPets } from '../../services/petsService.js';
+import PetCard from '../../components/PetCard.jsx';
+import '../../styles/pets.css';
+>>>>>>> main:app/src/pages/pets/AdoptionListPage.jsx
 
 const SPECIES_FILTERS = [
   { label: 'All Types', value: '' },

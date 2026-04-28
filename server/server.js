@@ -6,6 +6,7 @@ import pool from './config/db.js';
 import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import petsRoutes from './routes/pets.js';
+import rescueRoutes from './routes/rescue.js';
 import adoptionsRoutes from './routes/adoptions.js';
 import storiesRoutes from './routes/stories.js';
 import welfareChecksRoutes from './routes/welfareChecks.js';
@@ -42,6 +43,7 @@ app.use(session({
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/pets',  petsRoutes);
+app.use('/api/rescue',  rescueRoutes);
 app.use('/api/adoptions', adoptionsRoutes);
 app.use('/api/stories', storiesRoutes);
 app.use('/api/welfare-checks', welfareChecksRoutes);

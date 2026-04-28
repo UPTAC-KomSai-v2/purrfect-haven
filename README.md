@@ -336,5 +336,3 @@ Recommended order (smallest first):
 - **Rescue report admin view** — once the backend exists, mirror the AdminPage adoption tab
 - **Email notifications** — would replace the "we'll notify you via email" placeholder text everywhere
 - **Persistent session storage** — swap in `express-mysql-session` so sessions survive server restarts
-
----
