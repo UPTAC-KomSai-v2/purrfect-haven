@@ -12,6 +12,8 @@ import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testin
 import AdoptionFormPage from './pages/AdoptionFormPage.jsx';
 import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
 import AdminPage from './pages/AdminPage.jsx'
+import ProfilePage from './pages/ProfilePage.jsx';
+import AdminRoute from './components/AdminRoute.jsx';
 
 function App() {
   return (
@@ -29,7 +31,15 @@ function App() {
           <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
           <Route path="/settings" element={<AccountSettingsPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
+            } 
+          />
+          <Route path="/profile" element={<ProfilePage />} />
          
           {/* Protected routes — only for logged-in users */}
           {/* Add back protected routes after testing */}

@@ -6,6 +6,7 @@ import pool from './config/db.js';
 import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import petsRoutes from './routes/pets.js';
+import adoptionsRoutes from './routes/adoptions.js';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use(session({
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/pets',  petsRoutes);
+app.use('/api/adoptions', adoptionsRoutes);
 
 // health endpoint
 app.get('/api/health', async (req, res) => {

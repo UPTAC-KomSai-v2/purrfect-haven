@@ -58,6 +58,7 @@ export async function signup(req, res) {
         city,
         email,
         cell_num,
+        is_admin:   0,
       },
     });
 
@@ -79,8 +80,9 @@ export async function login(req, res) {
   try {
     // Email lookup
     const [rows] = await pool.query(
-      `SELECT user_id, first_name, last_name, city, email, cell_num, password_hash
-       FROM Users WHERE email = ?`,
+      `SELECT user_id, first_name, last_name, city, email, cell_num,
+              password_hash, is_admin
+      FROM Users WHERE email = ?`,
       [email]
     );
  
@@ -112,6 +114,7 @@ export async function login(req, res) {
         city:       user.city,
         email:      user.email,
         cell_num:   user.cell_num,
+        is_admin:   user.is_admin,  // bago — para alam ng frontend
       },
     });
  
