@@ -52,12 +52,18 @@ footer img {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  list-style-type: none;
 }
 
 .footer-section a {
   color: var(--color-text-light);
   text-decoration: none;
   transition: opacity 0.3s ease;
+}
+
+.footer-section li {
+  margin: 0;
+  padding: 0;
 }
 
 .footer-section a:hover {
