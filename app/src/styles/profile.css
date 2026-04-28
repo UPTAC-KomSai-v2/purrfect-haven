@@ -164,22 +164,22 @@
 }
 
 .status-badge.status-pending {
-  background-color: #FFF4D6;
+  background-color: #ffffff;
   color: #8B6914;
 }
 
 .status-badge.status-appointment_scheduled {
-  background-color: #D6E9FF;
+  background-color: #ffffff;
   color: #1A4D8A;
 }
 
 .status-badge.status-under_review {
-  background-color: #E8D6FF;
+  background-color: #ffffff;
   color: #5A2B8A;
 }
 
 .status-badge.status-approved {
-  background-color: #D6F4DE;
+  background-color: #ffffff;
   color: #1A6A2E;
 }
 
@@ -191,4 +191,99 @@
 .status-badge.status-completed {
   background-color: #E5E5E5;
   color: #555555;
+}
+
+/* wrapper para sa application item + expanded details */
+.application-item-wrapper {
+  border: 1px solid #F0E6DC;
+  border-radius: 8px;
+  background-color: #FFFEFB;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.application-item-wrapper:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* override yung .application-item para maging button — buong row clickable */
+.application-item {
+  display: flex;
+  gap: 16px;
+  padding: 14px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  align-items: center;
+  font-family: inherit;
+}
+
+/* dahil naka-button na, kalimutan natin yung dating border */
+.application-item-wrapper .application-item {
+  border: none;
+  background: transparent;
+}
+
+/* chevron sa kanan */
+.application-chevron {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.application-chevron.up {
+  transform: rotate(180deg);
+}
+
+/* expanded details panel */
+.application-details {
+  padding: 16px 20px 20px 20px;
+  border-top: 1px solid #F0E6DC;
+  background-color: #FFFFFF;
+}
+
+.detail-section {
+  margin-bottom: 16px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary, #5A3923);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px 0;
+}
+
+.detail-section p {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.detail-quote {
+  font-style: italic;
+  padding: 8px 12px;
+  background-color: #FAF4ED;
+  border-radius: 6px;
+}
+
+.detail-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0 0;
+}
+
+.detail-checklist li {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 3px 0;
 }
