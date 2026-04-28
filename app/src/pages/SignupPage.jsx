@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../services/api.js';
-import '../styles/auth.css';
+import '../styles/forms.css';
 import passHideIcon from '../assets/icons/pass-hide.svg';
 import passSeeIcon from '../assets/icons/pass-see.svg';
 

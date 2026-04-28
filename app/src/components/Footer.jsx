@@ -43,11 +43,11 @@ function Footer() {
         {/* Quick Links */}
         <div className="footer-section">
           <h3>Quick Links</h3>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/pets">Find a Pet</a></li>
-            <li><a href="#privacy">Privacy Policy</a></li>
-          </ul>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/pets">Find a Pet</a></li>
+              <li><a href="#privacy">Privacy Policy</a></li>
+            </ul>
         </div>
 
         {/* About */}

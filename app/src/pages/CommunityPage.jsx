@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import FormCard from '../components/FormCard.jsx';
+import '../styles/forms.css';
 import '../styles/community.css';
 
 function CommunityPage() {

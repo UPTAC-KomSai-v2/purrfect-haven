@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import FormCard from '../components/FormCard.jsx';
 import api from '../services/api.js';
-import '../styles/auth.css';
+import '../styles/forms.css';
 import passHideIcon from '../assets/icons/pass-hide.svg';
 import passSeeIcon from '../assets/icons/pass-see.svg';
 import { useSearchParams } from "react-router-dom";
@@ -56,76 +57,80 @@ function LoginPage() {
     }
   };
 
+  const subtitle = extraText ? (
+    <>
+      <strong>{extraText}</strong>
+      <br />
+      Sign in to your account to continue
+    </>
+  ) : (
+    'Sign in to your account to continue'
+  );
+
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1>{loginH1}</h1>
-        <p><strong>{extraText}</strong></p>
-        <p>Sign in to your account to continue</p>
-        
-        {generalError && <div className="error-banner">{generalError}</div>}
-        
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className={`form-group ${errors.email ? 'form-group-error' : ''}`}>
-            <label htmlFor="email">Email address</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={errors.email ? 'input-error' : ''}
-              required
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-          </div>
-
-          <div className={`form-group password-field ${errors.password ? 'form-group-error' : ''}`}>
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={errors.password ? 'input-error' : ''}
-              required
-            />
-            <button
-              type="button"
-              className="password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              <img src={showPassword ? passSeeIcon : passHideIcon} alt={showPassword ? 'Hide password' : 'Show password'} />
-            </button>
-            {errors.password && <span className="error-text">{errors.password}</span>}
-          </div>
-
-          <div className="checkbox-group">
-            <input
-              id="remember"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <label htmlFor="remember">Remember me</label>
-          </div>
-
-          <div className="form-link">
-            <Link to="/forgotPassword">Forgot password?</Link>
-          </div>
-
-          <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'LOGGING IN...' : 'LOG IN'}
-          </button>
-        </form>
-
-        <div className="auth-footer-link">
-          Don't have an account? <Link to="/signup">Sign up</Link>
+    <FormCard title={loginH1} subtitle={subtitle}>
+      {generalError && <div className="error-banner">{generalError}</div>}
+      
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <div className={`form-group ${errors.email ? 'form-group-error' : ''}`}>
+          <label htmlFor="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={errors.email ? 'input-error' : ''}
+            required
+          />
+          {errors.email && <span className="error-text">{errors.email}</span>}
         </div>
+
+        <div className={`form-group password-field ${errors.password ? 'form-group-error' : ''}`}>
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={errors.password ? 'input-error' : ''}
+            required
+          />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            <img src={showPassword ? passSeeIcon : passHideIcon} alt={showPassword ? 'Hide password' : 'Show password'} />
+          </button>
+          {errors.password && <span className="error-text">{errors.password}</span>}
+        </div>
+
+        <div className="checkbox-group">
+          <input
+            id="remember"
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="remember">Remember me</label>
+        </div>
+
+        <div className="form-link">
+          <Link to="/forgotPassword">Forgot password?</Link>
+        </div>
+
+        <button type="submit" className="auth-button" disabled={loading}>
+          {loading ? 'LOGGING IN...' : 'LOG IN'}
+        </button>
+      </form>
+
+      <div className="auth-footer-link">
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </div>
-    </div>
+    </FormCard>
   );
 }
 

@@ -265,3 +265,4 @@ Recommended order (smallest first):
 - **Pet creation + photo upload** — multer involved, more complex
 
 ---
+>>>>>>> main

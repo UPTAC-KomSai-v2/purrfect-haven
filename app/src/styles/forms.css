@@ -1,4 +1,40 @@
-/* Auth Pages Styling */
+/* Universal Form Styling - Shared across Auth, Report, and Community pages */
+
+.form-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 40px 20px;
+  background-color: var(--color-background);
+}
+
+.form-card {
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 50px 40px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-card h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.form-card > p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+/* Legacy Auth Styles (for backward compatibility) */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -34,6 +70,7 @@
   line-height: 1.5;
 }
 
+/* Form Styling */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -201,6 +238,14 @@
   }
 
   .auth-card h1 {
+    font-size: 24px;
+  }
+
+  .form-card {
+    padding: 35px 25px;
+  }
+
+  .form-card h1 {
     font-size: 24px;
   }
 

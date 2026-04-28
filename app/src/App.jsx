@@ -8,6 +8,7 @@ import Signup from './pages/SignupPage.jsx';
 import AdoptionList from './pages/AdoptionListPage.jsx';
 import PetDetail from './pages/PetDetailPage.jsx';
 import ReportRescue from './pages/ReportRescue.jsx'; //delete when done testing
+import ReportDetailsPage from './pages/ReportDetailsPage.jsx';
 import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/AdoptionFormPage.jsx';
 import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
@@ -22,12 +23,13 @@ function App() {
       <main>
         <Routes>
           {/* Public routes — anyone can view */}
-          <Route path="/"          element={<Landing />} />
-          <Route path="/login"     element={<Login />} />
-          <Route path="/signup"    element={<Signup />} />
-          <Route path="/pets"      element={<AdoptionList />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/pets" element={<AdoptionList />} />
           <Route path="/pets/:id"  element={<PetDetail />} />
           <Route path="/report" element={<ReportRescue />} /> {/*delete when done testing*/}
+          <Route path="/report/:reportId" element={<ReportDetailsPage />} />
           <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
           <Route path="/settings" element={<AccountSettingsPage />} />
