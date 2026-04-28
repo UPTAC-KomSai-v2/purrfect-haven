@@ -8,11 +8,18 @@ import usersRoutes from './routes/users.js';
 import petsRoutes from './routes/pets.js';
 import rescueRoutes from './routes/rescue.js';
 import adoptionsRoutes from './routes/adoptions.js';
+import storiesRoutes from './routes/stories.js';
+import welfareChecksRoutes from './routes/welfareChecks.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -38,6 +45,10 @@ app.use('/api/users', usersRoutes);
 app.use('/api/pets',  petsRoutes);
 app.use('/api/rescue',  rescueRoutes);
 app.use('/api/adoptions', adoptionsRoutes);
+app.use('/api/stories', storiesRoutes);
+app.use('/api/welfare-checks', welfareChecksRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // health endpoint
 app.get('/api/health', async (req, res) => {

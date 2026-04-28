@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
-import { getPets, getAdoptedPets } from '../../services/petsService.js';
+import { useAuth } from '../../context/AuthContext.jsx';
+import {
+  getPets,
+  getAdoptedPets,
+  getPetById,
+  deletePet,
+} from '../../services/petsService.js';
 import PetCard from '../../components/PetCard.jsx';
+import PetFormModal from '../../components/PetFormModal.jsx';
 import '../../styles/pets.css';
 
 const SPECIES_FILTERS = [
@@ -8,17 +15,27 @@ const SPECIES_FILTERS = [
   { label: 'Cats',      value: 'cat' },
   { label: 'Dogs',      value: 'dog' },
   { label: 'Birds',     value: 'bird' },
-  { label: 'Others',    value: 'other' }, 
+  { label: 'Others',    value: 'other' },
 ];
 
 function AdoptionListPage() {
-  // --- State ---
-  const [availablePets, setAvailablePets] = useState([]); 
+  const { user } = useAuth();
+  const isAdmin = user?.is_admin === 1;
+
+  // --- existing state ---
+  const [availablePets, setAvailablePets] = useState([]);
   const [adoptedPets, setAdoptedPets]     = useState([]);
-  const [selectedSpecies, setSelectedSpecies] = useState(''); 
-  const [locationSearch, setLocationSearch] = useState(''); 
+  const [selectedSpecies, setSelectedSpecies] = useState('');
+  const [locationSearch, setLocationSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // --- admin state ---
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingPet, setEditingPet] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     async function fetchAvailablePets() {
@@ -55,6 +72,76 @@ function AdoptionListPage() {
     fetchAdoptedPets();
   }, []);
 
+  // auto-dismiss toast after 3s
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  function showToast(message, kind = 'success') {
+    setToast({ message, kind });
+  }
+
+  // i-reload ang both lists pagkatapos ng add/edit/delete
+  async function refreshAllPets() {
+    try {
+      const [available, adopted] = await Promise.all([
+        getPets({ species: selectedSpecies, location: locationSearch }),
+        getAdoptedPets(),
+      ]);
+      setAvailablePets(available);
+      setAdoptedPets(adopted);
+    } catch (err) {
+      console.error('Refresh error:', err);
+    }
+  }
+
+  // ============ admin handlers ============
+
+  // pag-edit, kailangan natin yung full pet data (kasama yung age, sex, atbp.).
+  // yung list view minimal lang ang fields, kaya kailangang i-fetch ang full
+  // data mula sa /api/pets/:id muna.
+  async function handleEdit(pet) {
+    setLoadingEdit(true);
+    try {
+      const fullPet = await getPetById(pet.pet_id);
+      setEditingPet(fullPet);
+    } catch (err) {
+      console.error('Failed to load pet details:', err);
+      showToast('Failed to load pet details.', 'error');
+    } finally {
+      setLoadingEdit(false);
+    }
+  }
+
+  function handleDelete(pet) {
+    setDeleteConfirm(pet);
+  }
+
+  async function confirmDelete() {
+    if (!deleteConfirm) return;
+    try {
+      await deletePet(deleteConfirm.pet_id);
+      setAvailablePets((prev) =>
+        prev.filter((p) => p.pet_id !== deleteConfirm.pet_id)
+      );
+      showToast(`${deleteConfirm.name} has been removed.`);
+      setDeleteConfirm(null);
+    } catch (err) {
+      console.error('Delete error:', err);
+      showToast(err.response?.data?.error || 'Failed to delete pet.', 'error');
+      setDeleteConfirm(null);
+    }
+  }
+
+  function handleSaveSuccess(result) {
+    setShowAddModal(false);
+    setEditingPet(null);
+    showToast(result.message);
+    refreshAllPets();
+  }
+
   return (
     <div className="adopt-page">
       <section className="adopt-header">
@@ -64,6 +151,20 @@ function AdoptionListPage() {
           companion waiting to meet you!
         </p>
       </section>
+
+      {/* admin bar — visible kung admin lang */}
+      {isAdmin && (
+        <section className="admin-bar">
+          <p className="admin-bar-label">Admin Controls</p>
+          <button
+            className="admin-add-btn"
+            onClick={() => setShowAddModal(true)}
+            disabled={loadingEdit}
+          >
+            + Add a New Pet
+          </button>
+        </section>
+      )}
 
       <section className="adopt-filters">
         <div className="filter-chips">
@@ -107,7 +208,38 @@ function AdoptionListPage() {
         {!loading && !error && availablePets.length > 0 && (
           <div className="pets-grid">
             {availablePets.map((pet) => (
-              <PetCard key={pet.pet_id} pet={pet} />
+              <div key={pet.pet_id} className="pet-card-wrapper">
+                <PetCard pet={pet} />
+
+                {/* admin overlay — edit/delete buttons */}
+                {isAdmin && (
+                  <div className="pet-card-admin-overlay">
+                    <button
+                      className="pet-card-admin-btn pet-card-edit-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleEdit(pet);
+                      }}
+                      disabled={loadingEdit}
+                      title="Edit pet"
+                    >
+                      {loadingEdit ? '...' : 'Edit'}
+                    </button>
+                    <button
+                      className="pet-card-admin-btn pet-card-delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleDelete(pet);
+                      }}
+                      title="Delete pet"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -121,10 +253,91 @@ function AdoptionListPage() {
           </p>
           <div className="pets-grid">
             {adoptedPets.map((pet) => (
-              <PetCard key={pet.pet_id} pet={pet} />
+              <div key={pet.pet_id} className="pet-card-wrapper">
+                <PetCard pet={pet} />
+
+                {/* admin overlay para rin sa adopted pets */}
+                {isAdmin && (
+                  <div className="pet-card-admin-overlay">
+                    <button
+                      className="pet-card-admin-btn pet-card-edit-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleEdit(pet);
+                      }}
+                      disabled={loadingEdit}
+                      title="Edit pet"
+                    >
+                      {loadingEdit ? '...' : 'Edit'}
+                    </button>
+                    <button
+                      className="pet-card-admin-btn pet-card-delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleDelete(pet);
+                      }}
+                      title="Delete pet"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </section>
+      )}
+
+      {/* add modal */}
+      {showAddModal && (
+        <PetFormModal
+          mode="add"
+          onSave={handleSaveSuccess}
+          onCancel={() => setShowAddModal(false)}
+        />
+      )}
+
+      {/* edit modal */}
+      {editingPet && (
+        <PetFormModal
+          mode="edit"
+          pet={editingPet}
+          onSave={handleSaveSuccess}
+          onCancel={() => setEditingPet(null)}
+        />
+      )}
+
+      {/* delete confirmation modal */}
+      {deleteConfirm && (
+        <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <h2>Delete Pet</h2>
+            <p className="modal-confirm-text">
+              Are you sure you want to delete <strong>{deleteConfirm.name}</strong>?
+              This will also remove all associated photos and cannot be undone.
+            </p>
+            <div className="modal-actions">
+              <button
+                className="modal-cancel"
+                onClick={() => setDeleteConfirm(null)}
+              >
+                Cancel
+              </button>
+              <button className="reject-btn" onClick={confirmDelete}>
+                Delete Pet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* toast */}
+      {toast && (
+        <div className={`toast toast-${toast.kind}`}>
+          {toast.message}
+        </div>
       )}
     </div>
   );

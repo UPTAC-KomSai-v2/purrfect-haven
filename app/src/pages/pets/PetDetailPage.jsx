@@ -87,6 +87,10 @@ function PetDetailPage() {
     <div className="detail-page">
       <h1 className="detail-title">Pet Details</h1>
 
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
+
       <div className="detail-layout">
         {/* Left column: photos + adopt button */}
         <div className="detail-photos">
