@@ -6,7 +6,11 @@ import pool from './config/db.js';
 import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import petsRoutes from './routes/pets.js';
+<<<<<<< HEAD
 import rescueRoutes from './routes/rescue.js';
+=======
+import adoptionsRoutes from './routes/adoptions.js';
+>>>>>>> main
 
 dotenv.config();
 
@@ -36,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/pets',  petsRoutes);
 app.use('/api/rescue',  rescueRoutes);
+app.use('/api/adoptions', adoptionsRoutes);
 
 // health endpoint
 app.get('/api/health', async (req, res) => {

@@ -4,8 +4,9 @@ import pool from '../config/db.js';
 export async function getProfile(req, res) {
   try {
     const [rows] = await pool.query(
-      `SELECT user_id, first_name, last_name, city, email, cell_num, created_at
-       FROM Users WHERE user_id = ?`,
+      `SELECT user_id, first_name, last_name, city, email, cell_num,
+              is_admin, created_at
+      FROM Users WHERE user_id = ?`,
       [req.session.userId]
     );
 

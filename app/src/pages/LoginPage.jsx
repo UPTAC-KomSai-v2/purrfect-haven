@@ -33,7 +33,7 @@ function LoginPage() {
     setGeneralError('');
     setLoading(true);
 
-    // Validation
+    // basic validation muna bago tumawag sa api
     const newErrors = {};
     if (!email) newErrors.email = 'Email is required';
     if (!password) newErrors.password = 'Password is required';
@@ -49,13 +49,9 @@ function LoginPage() {
       login(response.data.user);
       navigate('/');
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Login failed. Please try again.';
+      // backend nagrereturn ng { error: "..." }, dati ang hinahanap natin .message
+      const errorMsg = err.response?.data?.error || 'Login failed. Please try again.';
       setGeneralError(errorMsg);
-      
-      // If API returns field-specific errors
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
-      }
     } finally {
       setLoading(false);
     }

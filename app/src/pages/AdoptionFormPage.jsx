@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';  // dagdag: useNavigate
+import { submitAdoptionApplication } from '../services/adoptionsService.js';  // bago
 
 import { getPetById } from '../services/petsService.js';
 import '../styles/adoptform.css';
@@ -13,6 +14,7 @@ function getPhotoUrl(filePath) {
 function AdoptFormPage() {
   // react use state
   const { id } = useParams(); // grabs the :id from the URL
+  const navigate = useNavigate();
   const [fullname, setFullname] = useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
@@ -63,19 +65,44 @@ function AdoptFormPage() {
     setGeneralError('');
     setLoading(true);
 
-    // Validation
+    // basic validation
     const newErrors = {};
-    if (!fullname) newErrors.fullname = 'Full Name is required';
-    if (!email) newErrors.email = 'Email is required';
-    if (!phoneNo) newErrors.phoneNo = 'Phone Number is required';
-    if (!location) newErrors.location = 'Location is required';
-    if (!aboutSelf) newErrors.aboutSelf = 'About Self is required';
-    if (!homeOwnership) newErrors.homeOwnership = 'Home Owenrship is required';
-    
+    if (!fullname)        newErrors.fullname        = 'Full Name is required';
+    if (!email)           newErrors.email           = 'Email is required';
+    if (!phoneNo)         newErrors.phoneNo         = 'Phone Number is required';
+    if (!location)        newErrors.location        = 'Location is required';
+    if (!aboutSelf)       newErrors.aboutSelf       = 'Please tell us why you want to adopt';
+    if (!homeOwnership)   newErrors.homeOwnership   = 'Home Ownership is required';
+    if (!financialCapTxt) newErrors.financialCapTxt = 'Financial capability is required';
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setLoading(false);
       return;
+    }
+
+    // ipasa sa backend.  hindi natin isinasama ang fullname/email/phone
+    // kasi ginagamit ng backend yung user record (galing sa session).
+    try {
+      await submitAdoptionApplication({
+        pet_id: parseInt(id),
+        applicant_address:    location,
+        is_first_pet:         firstPet,
+        has_experience:       petExperience,
+        has_other_pets:       otherPets,
+        has_children:         hasChildren,
+        owns_home:            homeOwnership === 'own',
+        financial_capability: financialCapTxt,
+        motivation:           aboutSelf,
+      });
+
+      // pag successful, dalhin sa profile para makita yung application
+      navigate('/profile');
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Failed to submit application. Please try again.';
+      setGeneralError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -7,17 +7,21 @@ import passHideIcon from '../assets/icons/pass-hide.svg';
 import passSeeIcon from '../assets/icons/pass-see.svg';
 
 function SignupPage() {
+  // mga form fields — naka-snake_case ang ilan para tugma sa backend
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [city, setCity] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [cellNum, setCellNum] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // mga ui states (show password, error, loading)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -25,31 +29,37 @@ function SignupPage() {
     e.preventDefault();
     setError('');
 
-    // Validation
+    // check kung tugma yung password at confirm
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    // backend requires 8 chars minimum, kaya ginawa ko ring 8 dito
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
       return;
     }
 
     setLoading(true);
 
     try {
+      // ipasa ang field names na pareho ng backend (snake_case)
       const response = await api.post('/auth/signup', {
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
+        city,
         email,
-        phoneNumber,
+        cell_num: cellNum,
         password,
       });
+
+      // pag successful, ilagay agad sa auth context at i-redirect sa home
       login(response.data.user);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      // backend nagrereturn ng { error: "..." }, hindi message
+      setError(err.response?.data?.error || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,35 +68,47 @@ function SignupPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Create Your Account</h1>
-        <p>Join our community and help pets find loving homes</p>
-        
-        {error && <div style={{ color: 'var(--color-error)', fontSize: '14px', marginBottom: '15px' }}>{error}</div>}
-        
+        <h1>Create Account</h1>
+        <p>Join Purrfect Haven to adopt or rescue pets</p>
+
+        {error && <div className="error-banner">{error}</div>}
+
         <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="form-group form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
-              <input
-                id="firstName"
-                type="text"
-                placeholder="Enter your first name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                id="lastName"
-                type="text"
-                placeholder="Enter your last name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="firstName">First Name</label>
+            <input
+              id="firstName"
+              type="text"
+              placeholder="Enter your first name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              id="lastName"
+              type="text"
+              placeholder="Enter your last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* bagong field — kailangan ng backend, dati wala sa form */}
+          <div className="form-group">
+            <label htmlFor="city">City</label>
+            <input
+              id="city"
+              type="text"
+              placeholder="e.g. Tacloban City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -94,7 +116,7 @@ function SignupPage() {
             <input
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -102,13 +124,13 @@ function SignupPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
+            <label htmlFor="cellNum">Phone Number</label>
             <input
-              id="phone"
+              id="cellNum"
               type="tel"
-              placeholder="Enter your phone number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="09171234567"
+              value={cellNum}
+              onChange={(e) => setCellNum(e.target.value)}
               required
             />
           </div>
@@ -118,7 +140,7 @@ function SignupPage() {
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Create a strong password"
+              placeholder="At least 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -129,7 +151,7 @@ function SignupPage() {
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              <img src={showPassword ? passSeeIcon : passHideIcon} alt={showPassword ? 'Hide password' : 'Show password'} />
+              <img src={showPassword ? passSeeIcon : passHideIcon} alt="" />
             </button>
           </div>
 
@@ -149,7 +171,7 @@ function SignupPage() {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
             >
-              <img src={showConfirmPassword ? passSeeIcon : passHideIcon} alt={showConfirmPassword ? 'Hide password' : 'Show password'} />
+              <img src={showConfirmPassword ? passSeeIcon : passHideIcon} alt="" />
             </button>
           </div>
 

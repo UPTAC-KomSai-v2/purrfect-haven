@@ -1,0 +1,289 @@
+/* container ng buong profile page */
+.profile-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* header section sa taas */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border, #e0d6cc);
+}
+
+.profile-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.profile-header p {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* link button papuntang settings */
+.profile-settings-link {
+  padding: 10px 20px;
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.profile-settings-link:hover {
+  background-color: var(--color-secondary);
+}
+
+/* grid ng dashboard cards */
+.profile-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* isang card sa dashboard */
+.dashboard-card {
+  background-color: var(--color-surface, #fff);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* mas malaki na card (full width sa grid) */
+.dashboard-card-wide {
+  grid-column: 1 / -1;
+}
+
+.dashboard-card h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+}
+
+/* text na ipinapakita kapag wala pang laman yung card */
+.empty-state {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.inline-link {
+  color: var(--color-secondary, #C0794A);
+  text-decoration: underline;
+}
+
+/* listahan ng applications sa loob ng card */
+.application-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* isang row ng application */
+.application-item {
+  display: flex;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid #F0E6DC;
+  border-radius: 8px;
+  background-color: #FFFEFB;
+  transition: box-shadow 0.2s ease;
+}
+
+.application-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* photo ng pet sa application row */
+.application-photo {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.application-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.application-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.application-top h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.application-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.application-note {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  margin: 4px 0 0 0;
+  padding: 6px 10px;
+  background-color: #FAF4ED;
+  border-radius: 4px;
+}
+
+/* status badges — color-coded per status */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.status-badge.status-pending {
+  background-color: #ffffff;
+  color: #8B6914;
+}
+
+.status-badge.status-appointment_scheduled {
+  background-color: #ffffff;
+  color: #1A4D8A;
+}
+
+.status-badge.status-under_review {
+  background-color: #ffffff;
+  color: #5A2B8A;
+}
+
+.status-badge.status-approved {
+  background-color: #ffffff;
+  color: #1A6A2E;
+}
+
+.status-badge.status-rejected {
+  background-color: #FFD6D6;
+  color: #8A1A1A;
+}
+
+.status-badge.status-completed {
+  background-color: #E5E5E5;
+  color: #555555;
+}
+
+/* wrapper para sa application item + expanded details */
+.application-item-wrapper {
+  border: 1px solid #F0E6DC;
+  border-radius: 8px;
+  background-color: #FFFEFB;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.application-item-wrapper:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* override yung .application-item para maging button — buong row clickable */
+.application-item {
+  display: flex;
+  gap: 16px;
+  padding: 14px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  align-items: center;
+  font-family: inherit;
+}
+
+/* dahil naka-button na, kalimutan natin yung dating border */
+.application-item-wrapper .application-item {
+  border: none;
+  background: transparent;
+}
+
+/* chevron sa kanan */
+.application-chevron {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.application-chevron.up {
+  transform: rotate(180deg);
+}
+
+/* expanded details panel */
+.application-details {
+  padding: 16px 20px 20px 20px;
+  border-top: 1px solid #F0E6DC;
+  background-color: #FFFFFF;
+}
+
+.detail-section {
+  margin-bottom: 16px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary, #5A3923);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px 0;
+}
+
+.detail-section p {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.detail-quote {
+  font-style: italic;
+  padding: 8px 12px;
+  background-color: #FAF4ED;
+  border-radius: 6px;
+}
+
+.detail-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0 0;
+}
+
+.detail-checklist li {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 3px 0;
+}
