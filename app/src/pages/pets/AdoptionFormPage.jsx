@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';  // dagdag: useNaviga
 import { submitAdoptionApplication } from '../../services/adoptionsService.js';  // bago
 
 import { getPetById } from '../../services/petsService.js';
+import '../../styles/forms.css';
 import '../../styles/adoptform.css';
 import Button from '../../components/Button.jsx';
 import { Paperclip } from "lucide-react";

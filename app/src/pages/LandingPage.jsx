@@ -98,7 +98,8 @@ function Landing() {
                 <p className="story-adopter" style={{ color: 'var(--color-text-secondary)', fontWeight: '400', fontSize: '12px' }}>
                   Adopted Henhen • Dec 2023
                 </p>
-                <button className="story-button" onClick={() => navigate('/pets')}>Adopt Now</button>
+                
+                <Button>Adopt Now</Button>
               </div>
             </>
           )}

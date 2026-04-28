@@ -108,8 +108,7 @@ label{
     height: 168px;
 }
 
-/* Checkbox and Remember Me */
-.checkbox-group, .radio-group {
+.radio-group {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -117,17 +116,11 @@ label{
   margin-left: 20px;
 }
 
-.checkbox-group input[type="checkbox"], .radio-group input[type="radio"]{
+.radio-group input[type="radio"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
   accent-color: var(--color-primary);
-}
-
-.checkbox-group label {
-  cursor: pointer;
-  color: var(--color-text-primary);
-  margin: 0;
 }
 
 .contact-info-container {
