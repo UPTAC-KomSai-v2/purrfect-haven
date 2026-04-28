@@ -1,18 +1,31 @@
-/* container ng buong profile page */
+/* ==============================================================
+   profile.css — adopter dashboard styles
+   adoption requests, stories, welfare timeline, modals
+   ============================================================== */
+
+
+/* =====================================================
+   PAGE LAYOUT
+   ===================================================== */
+
 .profile-container {
   max-width: 1100px;
   margin: 0 auto;
   padding: 40px 20px;
 }
 
-/* header section sa taas */
+
+/* =====================================================
+   PROFILE HEADER
+   ===================================================== */
+
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
   padding-bottom: 24px;
-  border-bottom: 1px solid var(--color-border, #e0d6cc);
+  border-bottom: 1px solid var(--color-border, #E0D6CC);
 }
 
 .profile-header h1 {
@@ -27,7 +40,6 @@
   font-size: 14px;
 }
 
-/* link button papuntang settings */
 .profile-settings-link {
   padding: 10px 20px;
   background-color: var(--color-primary);
@@ -43,22 +55,102 @@
   background-color: var(--color-secondary);
 }
 
-/* grid ng dashboard cards */
+
+/* =====================================================
+   ACTION REQUIRED BANNERS (mandatory items at top)
+   ===================================================== */
+
+.action-required-section {
+  margin-bottom: 30px;
+}
+
+.action-required-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 14px;
+}
+
+.action-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.action-banner-urgent {
+  background-color: #FFF4D6;
+}
+
+.action-banner-info {
+  background-color: #F0F9FA;
+}
+
+.action-banner-content {
+  flex: 1;
+  min-width: 250px;
+}
+
+.action-banner-content h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.action-banner-content p {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.action-banner-meta {
+  font-size: 11px !important;
+  color: var(--color-text-secondary) !important;
+  font-style: italic;
+}
+
+.action-banner-btn {
+  padding: 10px 20px;
+  background-color: var(--color-primary, #5A3923);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.action-banner-btn:hover {
+  background-color: var(--color-secondary, #C0794A);
+}
+
+
+/* =====================================================
+   DASHBOARD GRID & CARDS
+   ===================================================== */
+
 .profile-dashboard {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
-/* isang card sa dashboard */
 .dashboard-card {
-  background-color: var(--color-surface, #fff);
+  background-color: var(--color-surface, #FFFFFF);
   border-radius: 10px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* mas malaki na card (full width sa grid) */
 .dashboard-card-wide {
   grid-column: 1 / -1;
 }
@@ -70,7 +162,6 @@
   margin-bottom: 16px;
 }
 
-/* text na ipinapakita kapag wala pang laman yung card */
 .empty-state {
   color: var(--color-text-secondary);
   font-size: 14px;
@@ -82,29 +173,42 @@
   text-decoration: underline;
 }
 
-/* listahan ng applications sa loob ng card */
+
+/* =====================================================
+   APPLICATION LIST (collapsible cards)
+   ===================================================== */
+
 .application-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* isang row ng application */
+.application-item-wrapper {
+  border: 1px solid #F0E6DC;
+  border-radius: 8px;
+  background-color: #FFFEFB;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.application-item-wrapper:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
 .application-item {
   display: flex;
   gap: 16px;
   padding: 14px;
-  border: 1px solid #F0E6DC;
-  border-radius: 8px;
-  background-color: #FFFEFB;
-  transition: box-shadow 0.2s ease;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  align-items: center;
+  font-family: inherit;
 }
 
-.application-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-/* photo ng pet sa application row */
 .application-photo {
   width: 80px;
   height: 80px;
@@ -142,91 +246,16 @@
   margin: 0;
 }
 
-.application-note {
+.application-highlight {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 6px 12px;
+  background-color: #F5F0E6;
   font-size: 13px;
   color: var(--color-text-primary);
-  margin: 4px 0 0 0;
-  padding: 6px 10px;
-  background-color: #FAF4ED;
   border-radius: 4px;
 }
 
-/* status badges — color-coded per status */
-.status-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.status-badge.status-pending {
-  background-color: #ffffff;
-  color: #8B6914;
-}
-
-.status-badge.status-appointment_scheduled {
-  background-color: #ffffff;
-  color: #1A4D8A;
-}
-
-.status-badge.status-under_review {
-  background-color: #ffffff;
-  color: #5A2B8A;
-}
-
-.status-badge.status-approved {
-  background-color: #ffffff;
-  color: #1A6A2E;
-}
-
-.status-badge.status-rejected {
-  background-color: #FFD6D6;
-  color: #8A1A1A;
-}
-
-.status-badge.status-completed {
-  background-color: #E5E5E5;
-  color: #555555;
-}
-
-/* wrapper para sa application item + expanded details */
-.application-item-wrapper {
-  border: 1px solid #F0E6DC;
-  border-radius: 8px;
-  background-color: #FFFEFB;
-  overflow: hidden;
-  transition: box-shadow 0.2s ease;
-}
-
-.application-item-wrapper:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-/* override yung .application-item para maging button — buong row clickable */
-.application-item {
-  display: flex;
-  gap: 16px;
-  padding: 14px;
-  width: 100%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  align-items: center;
-  font-family: inherit;
-}
-
-/* dahil naka-button na, kalimutan natin yung dating border */
-.application-item-wrapper .application-item {
-  border: none;
-  background: transparent;
-}
-
-/* chevron sa kanan */
 .application-chevron {
   font-size: 12px;
   color: var(--color-text-secondary);
@@ -238,7 +267,11 @@
   transform: rotate(180deg);
 }
 
-/* expanded details panel */
+
+/* =====================================================
+   APPLICATION DETAILS (expanded panel)
+   ===================================================== */
+
 .application-details {
   padding: 16px 20px 20px 20px;
   border-top: 1px solid #F0E6DC;
@@ -286,4 +319,524 @@
   font-size: 13px;
   color: var(--color-text-secondary);
   padding: 3px 0;
+}
+
+
+/* =====================================================
+   STATUS BADGES (adoption status + story status)
+   ===================================================== */
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.status-badge.status-pending               { background-color: #FFF4D6; color: #8B6914; }
+.status-badge.status-appointment_scheduled { background-color: #D6E9FF; color: #1A4D8A; }
+.status-badge.status-under_review          { background-color: #E8D6FF; color: #5A2B8A; }
+.status-badge.status-approved              { background-color: #D6F4DE; color: #1A6A2E; }
+.status-badge.status-rejected              { background-color: #FFD6D6; color: #8A1A1A; }
+.status-badge.status-completed             { background-color: #E5E5E5; color: #555555; }
+
+.status-badge.story-status-pending   { background-color: #FFF4D6; color: #8B6914; }
+.status-badge.story-status-submitted { background-color: #D6E9FF; color: #1A4D8A; }
+.status-badge.story-status-published { background-color: #D6F4DE; color: #1A6A2E; }
+.status-badge.story-status-rejected  { background-color: #FFD6D6; color: #8A1A1A; }
+
+
+/* =====================================================
+   TIMELINE (welfare checks + adopter updates)
+   ===================================================== */
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.timeline-header h4 {
+  margin: 0;
+}
+
+.timeline-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.share-update-btn {
+  padding: 7px 14px;
+  background-color: #2D7A2F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.share-update-btn:hover {
+  background-color: #1F5A21;
+}
+
+.share-story-btn {
+  padding: 7px 14px;
+  background-color: #C0794A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.share-story-btn:hover {
+  background-color: #A8633A;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timeline-entry {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  border: 1px solid #F0E6DC;
+}
+
+
+
+.timeline-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.timeline-entry-author {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.timeline-entry-date {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.timeline-entry-meta {
+  font-size: 11px !important;
+  color: var(--color-text-secondary) !important;
+  font-style: italic;
+  margin-top: 6px !important;
+}
+
+.timeline-entry p {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.timeline-photos {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.timeline-photos a {
+  display: block;
+  width: 90px;
+  height: 90px;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.timeline-photos a:hover {
+  transform: scale(1.05);
+}
+
+.timeline-photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* =====================================================
+   CONDITION LABEL (in welfare check entries)
+   ===================================================== */
+
+.condition-label {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 12px !important;
+  margin: 4px 0 6px 0 !important;
+}
+
+
+
+.story-list-item {
+  /* button reset */
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  background-color: transparent;
+  cursor: pointer;
+ 
+  /* original styles */
+  padding: 12px 14px;
+  border: 1px solid #F0E6DC;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+ 
+.story-list-item:hover {
+  background-color: #FAF4ED;
+  border-color: #C0794A;
+}
+ 
+.story-list-item:active {
+  transform: scale(0.99);
+}
+ 
+ 
+/* ===== 2. IDAGDAG sa dulo ng profile.css — ViewStoryModal styles ===== */
+ 
+/* main story body sa view modal */
+.view-story-content {
+  padding: 16px 18px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+ 
+.view-story-content p {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+ 
+/* photo gallery sa loob ng view modal */
+.view-story-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+ 
+.view-story-photos a {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+ 
+.view-story-photos a:hover {
+  transform: scale(1.03);
+}
+ 
+.view-story-photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+ 
+/* metadata at footer info */
+.view-story-meta {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
+/* =====================================================
+   MODALS (welfare check, story write, share update)
+   ===================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-box {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-box-large {
+  max-width: 700px;
+}
+
+.modal-box h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 6px 0;
+}
+
+.modal-subtext {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0 0 18px 0;
+}
+
+.modal-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 18px;
+}
+
+.modal-label textarea,
+.modal-label input[type="text"] {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border, #E0D6CC);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-label textarea:focus,
+.modal-label input[type="text"]:focus {
+  border-color: var(--color-secondary, #C0794A);
+  box-shadow: 0 0 0 3px rgba(192, 121, 74, 0.15);
+}
+
+.modal-confirm-text {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  background-color: #FAF4ED;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-cancel {
+  padding: 10px 20px;
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border, #E0D6CC);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.modal-cancel:hover {
+  background-color: #F5EDE5;
+}
+
+.modal-actions .approve-btn {
+  padding: 10px 20px;
+  background-color: #2D7A2F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.modal-actions .approve-btn:hover {
+  background-color: #1F5A21;
+}
+
+.modal-actions .approve-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =====================================================
+   CONDITION PILLS (welfare modal selector)
+   ===================================================== */
+
+.condition-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.condition-pill {
+  flex: 1 1 auto;
+  padding: 10px 14px;
+  border: 2px solid var(--color-border, #E0D6CC);
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  color: var(--color-text-primary);
+}
+
+.condition-pill:hover {
+  border-color: var(--color-secondary, #C0794A);
+}
+
+.condition-pill.selected {
+  border-color: var(--color-primary, #5A3923);
+  background-color: #F5F0E6;
+}
+
+.condition-pill.condition-excellent.selected  { background-color: #D6F4DE; border-color: #1A6A2E; }
+.condition-pill.condition-good.selected       { background-color: #D6E9FF; border-color: #2D8A9E; }
+.condition-pill.condition-concerning.selected { background-color: #FFF4D6; border-color: #B8860B; }
+.condition-pill.condition-critical.selected   { background-color: #FFD6D6; border-color: #A52828; }
+
+
+/* =====================================================
+   PHOTO UPLOADER COMPONENT
+   ===================================================== */
+
+.photo-uploader {
+  margin-bottom: 18px;
+}
+
+.photo-uploader-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.photo-uploader-hint {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin: 0 0 10px 0;
+  font-style: italic;
+}
+
+.photo-uploader-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: var(--color-secondary, #C0794A);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.photo-uploader-button:hover {
+  background-color: var(--color-primary, #5A3923);
+}
+
+.photo-uploader-error {
+  font-size: 12px;
+  color: #A52828;
+  margin: 8px 0 0 0;
+  padding: 6px 10px;
+  background-color: #FFD6D6;
+  border-radius: 4px;
+}
+
+.photo-previews {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.photo-preview {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid #F0E6DC;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-preview-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.photo-preview-remove:hover {
+  background-color: rgba(165, 40, 40, 0.9);
 }

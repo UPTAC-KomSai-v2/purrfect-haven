@@ -136,3 +136,34 @@ INSERT IGNORE INTO Pets (
     '2025-08-01 09:00:00',
     1
   );
+
+-- -----------------------------------------------------
+-- Seed: Pet Photos
+-- IMPORTANT: place the actual image files in server/uploads/pets/
+-- with the exact filenames listed below.
+-- -----------------------------------------------------
+INSERT IGNORE INTO pet_photos (pet_pic_id, pet_id, file_path) VALUES
+  -- chico (pet_id 1) — 2 photos
+  (1, 1, 'uploads/pets/chico-1.jpg'),
+  (2, 1, 'uploads/pets/chico-2.jpg'),
+
+  -- luna (pet_id 2) — 2 photos
+  (3, 2, 'uploads/pets/luna-1.jpg'),
+  (4, 2, 'uploads/pets/luna-2.jpg'),
+
+  -- mochi (pet_id 3) — 2 photos
+  (5, 3, 'uploads/pets/mochi-1.jpg'),
+  (6, 3, 'uploads/pets/mochi-2.jpg'),
+
+  -- koko (pet_id 4) — 1 photo
+  (7, 4, 'uploads/pets/koko-1.jpg'),
+
+  -- cottonball (pet_id 5) — 2 photos
+  (8, 5, 'uploads/pets/cottonball-1.jpg'),
+  (9, 5, 'uploads/pets/cottonball-2.jpg'),
+
+  -- bantay (pet_id 6) — 1 photo (adopted)
+  (10, 6, 'uploads/pets/bantay-1.jpg'),
+
+  -- nala (pet_id 7) — 1 photo (adopted)
+  (11, 7, 'uploads/pets/nala-1.jpg');
