@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getPetById } from '../services/petsService.js';
+
 import '../styles/pets.css';
+
 
 // Same helper as PetCard — builds the full image URL from the DB file_path
 function getPhotoUrl(filePath) {
@@ -86,6 +88,10 @@ function PetDetailPage() {
   return (
     <div className="detail-page">
       <h1 className="detail-title">Pet Details</h1>
+
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
 
       <div className="detail-layout">
         {/* Left column: photos + adopt button */}
