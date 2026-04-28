@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import bg1 from '../assets/landing-bg-1.jpg';
 import bg2 from '../assets/landing-bg-2.jpg';
 import bg3 from '../assets/landing-bg-3.jpg';
-
-/**
- * Hero - Hero section component for landing page
- * Displays main headline, description, and call-to-action buttons
- * with rotating background slideshow
- * @returns {JSX.Element} Hero section component
- */
+import Button from './Button.jsx';
 function Hero() {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -38,8 +32,8 @@ function Hero() {
         <h1>Every Pet Deserves a Loving Home</h1>
         <p>Browse adoptable pets around Tacloban City, report animals in need, or post community adoptions. Together, we can make a difference for our Tacloban fur babies.</p>
         <div className="hero-buttons">
-          <button className="hero-button" onClick={() => navigate('/pets')}>Find a pet</button>
-          <button className="hero-button" onClick={() => navigate('/report')}>Report a rescue</button>
+          <Button variant="hero" onClick={() => navigate('/pets')}>Find a pet</Button>
+          <Button variant="hero" onClick={() => navigate('/report')}>Report a rescue</Button>
         </div>
       </div>
     </section>

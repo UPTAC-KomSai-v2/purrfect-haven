@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormCard from '../../components/FormCard.jsx';
+import Button from '../../components/Button.jsx';
 import api from '../../services/api.js';
 import '../../styles/forms.css';
 import '../../styles/report.css';
@@ -230,9 +231,9 @@ function ReportRescue() {
         )}
 
         <div className="submit-box" style={{ width: '100%' }}>
-          <button type="submit" className="submit-btn" disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? 'Submitting...' : 'Submit Rescue Report'}
-          </button>
+          </Button>
         </div>
       </form>
     </FormCard>

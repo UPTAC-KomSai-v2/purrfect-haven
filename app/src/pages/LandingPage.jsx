@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getPets } from '../services/petsService.js';
 import PetCard from '../components/PetCard.jsx';
 import Hero from '../components/Hero.jsx';
+import Button from '../components/Button.jsx';
 import '../styles/landing.css';
 import faqItems from '../data/faqs.json';
 import ResponsiveImage from '../components/ResponsiveImage';
@@ -48,7 +49,7 @@ function Landing() {
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
             <p className="story-adopter">Julie Anne Santos</p>
             <p className="story-adopter" style={{ color: 'var(--color-text-secondary)', fontWeight: '400', fontSize: '12px' }}>Adopted Henhen • Dec 2023</p>
-            <button className="story-button">Adopt Now</button>
+            <Button>Adopt Now</Button>
           </div>
         </div>
       </section>
@@ -68,7 +69,9 @@ function Landing() {
           ))}
         </div>
 
-        <button className="view-all-button" onClick={() => navigate('/pets')}>View All</button>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Button onClick={() => navigate('/pets')}>View All</Button>
+        </div>
       </section>
 
       {/* Loop over instead*/}

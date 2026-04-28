@@ -43,26 +43,6 @@
   flex-wrap: wrap;
 }
 
-.hero-button {
-  padding: 12px 28px;
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-  border: 2px solid var(--color-primary);
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.hero-button:hover {
-  background-color: transparent;
-  color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 /* Featured Story Section */
 .featured-story {
   padding: 60px 40px;
@@ -145,25 +125,6 @@
   margin-bottom: 8px;
 }
 
-.story-button {
-  padding: 12px 28px;
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.story-button:hover {
-  background-color: var(--color-secondary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(94, 48, 35, 0.3);
-}
-
 /* Available Pets Section */
 .pets-adoption {
   padding: 60px 40px;
@@ -233,26 +194,6 @@
   font-size: 13px;
   color: var(--color-text-secondary);
   margin-bottom: 3px;
-}
-
-.view-all-button {
-  display: block;
-  margin: 0 auto;
-  padding: 12px 28px;
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.view-all-button:hover {
-  background-color: var(--color-secondary);
-  transform: translateY(-2px);
 }
 
 /* FAQ Section */
@@ -365,7 +306,7 @@ To be fixed: */
     gap: 12px;
   }
 
-  .hero-button {
+  .button-hero {
     padding: 10px 24px;
     font-size: 13px;
   }
@@ -428,7 +369,7 @@ To be fixed: */
     gap: 10px;
   }
 
-  .hero-button {
+  .button-hero {
     width: 100%;
     padding: 10px 20px;
     font-size: 12px;
