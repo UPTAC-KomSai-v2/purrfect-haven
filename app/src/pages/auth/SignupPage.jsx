@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import api from '../../services/api.js';
 import '../../styles/forms.css';
+import Button from '../../components/Button.jsx';
 import passHideIcon from '../../assets/icons/pass-hide.svg';
 import passSeeIcon from '../../assets/icons/pass-see.svg';
 
@@ -175,9 +176,9 @@ function SignupPage() {
             </button>
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
-          </button>
+          </Button>
         </form>
 
         <div className="auth-footer-link">

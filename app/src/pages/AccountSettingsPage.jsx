@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../services/api.js';
 import '../styles/settings.css';
+import Button from '../components/Button.jsx';
 import passHideIcon from '../assets/icons/pass-hide.svg';
 import passSeeIcon from '../assets/icons/pass-see.svg';
 import { useSearchParams } from "react-router-dom";
@@ -129,9 +130,9 @@ function AccountSettingsPage() {
               {errors.contactNo && <span className="error-text">{errors.contactNo}</span>}
             </div>
 
-            <button type="submit" className="settings-button" disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading ? 'Updating Profile...' : 'Update Profile'}
-            </button>
+            </Button>
           </form> : 
           <form className="settings-form change-password" onSubmit={handleSubmit}>
             <div className="profile-info-title">
@@ -194,9 +195,9 @@ function AccountSettingsPage() {
               {errors.confirmPass && <span className="error-text">{errors.confirmPass}</span>}
             </div>
 
-            <button type="submit" className="settings-button" disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading ? 'Changing Password...' : 'Change Password'}
-            </button>
+            </Button>
           </form>
         }
         
