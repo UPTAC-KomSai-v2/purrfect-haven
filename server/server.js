@@ -6,11 +6,8 @@ import pool from './config/db.js';
 import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import petsRoutes from './routes/pets.js';
-<<<<<<< HEAD
 import rescueRoutes from './routes/rescue.js';
-=======
 import adoptionsRoutes from './routes/adoptions.js';
->>>>>>> main
 
 dotenv.config();
 

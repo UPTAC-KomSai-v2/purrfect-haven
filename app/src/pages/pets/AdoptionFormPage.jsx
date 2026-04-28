@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';  // dagdag: useNavigate
-import { submitAdoptionApplication } from '../services/adoptionsService.js';  // bago
+import { submitAdoptionApplication } from '../../services/adoptionsService.js';  // bago
 
-import { getPetById } from '../services/petsService.js';
-import '../styles/adoptform.css';
+import { getPetById } from '../../services/petsService.js';
+import '../../styles/adoptform.css';
 import { Paperclip } from "lucide-react";
 
 function getPhotoUrl(filePath) {

@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import api from '../services/api.js';
-import '../styles/report.css';
+import api from '../../services/api.js';
+import '../../styles/report.css';
 
 function ReportDetailsPage() {
   const { reportId } = useParams();

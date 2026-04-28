@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getPets, getAdoptedPets } from '../services/petsService.js';
-import PetCard from '../components/PetCard.jsx';
-import '../styles/pets.css';
+import { getPets, getAdoptedPets } from '../../services/petsService.js';
+import PetCard from '../../components/PetCard.jsx';
+import '../../styles/pets.css';
 
 const SPECIES_FILTERS = [
   { label: 'All Types', value: '' },

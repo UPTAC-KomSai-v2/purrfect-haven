@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import FormCard from '../components/FormCard.jsx';
-import api from '../services/api.js';
-import '../styles/forms.css';
-import '../styles/report.css';
+import FormCard from '../../components/FormCard.jsx';
+import api from '../../services/api.js';
+import '../../styles/forms.css';
+import '../../styles/report.css';
 
 function ReportRescue() {
   const navigate = useNavigate();
