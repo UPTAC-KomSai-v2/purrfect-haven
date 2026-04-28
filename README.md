@@ -264,5 +264,9 @@ Recommended order (smallest first):
 - **Welfare checks** — new feature, fairly self-contained
 - **Pet creation + photo upload** — multer involved, more complex
 
----
->>>>>>> main
+Something to work on (low priority)
+- Frontend styles fix to /profile
+- Clean up on redundant CSS files
+- Component creation for redundant lines of code that could be converted to components
+- Featured story recco:
+  - Random featured story showing based on DB query instead of just "Henhen" entry

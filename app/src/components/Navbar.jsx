@@ -4,7 +4,6 @@ import api from '../services/api.js';
 import '../styles/navbar.css';
 import favicon from '../assets/favicon.png';
 
-
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
