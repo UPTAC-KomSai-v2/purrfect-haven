@@ -11,9 +11,9 @@ import ReportRescue from './pages/report/ReportRescue.jsx'; //delete when done t
 import ReportDetailsPage from './pages/report/ReportDetailsPage.jsx';
 import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
-import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
+import AccountSettingsPage from './pages/profile/AccountSettingsPage.jsx';
 import AdminPage from './pages/AdminPage.jsx'
-import ProfilePage from './pages/ProfilePage.jsx';
+import ProfilePage from './pages/profile/ProfilePage.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
 
 function App() {

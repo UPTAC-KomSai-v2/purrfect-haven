@@ -4,6 +4,8 @@ import bg1 from '../assets/landing-bg-1.jpg';
 import bg2 from '../assets/landing-bg-2.jpg';
 import bg3 from '../assets/landing-bg-3.jpg';
 import Button from './Button.jsx';
+
+// This component is the Hero section used in Landing page
 function Hero() {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
