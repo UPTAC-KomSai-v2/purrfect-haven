@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+/* Note that this PetCard.jsx is the ones being shown in /pets view likewise
+in the landing page which is like the pets preview
+*/
 function getPhotoUrl(filePath, petName) {
   if (!filePath && !petName) {
     return 'https://placehold.co/200x200?text=No+Photo';
@@ -8,10 +11,13 @@ function getPhotoUrl(filePath, petName) {
   
   // Try to load from local assets first
   if (petName) {
-    const fileName = `${petName.charAt(0).toLowerCase()}${petName.slice(1)}.jpg`;
-    return `/assets/pets/${fileName}`;
+    // 1. Construct the filename/path relative to what the server expects
+    const fileName = `${petName.charAt(0).toLowerCase()}${petName.slice(1)}-1.jpg`;
+    const relativePath = `uploads/pets/${fileName}`;
+
+    // 2. Use the existing helper to wrap it in the base URL
+    return getPhotoUrl(relativePath);
   }
-  
   // Fallback to server path
   return `http://localhost:3000/${filePath}`;
 }

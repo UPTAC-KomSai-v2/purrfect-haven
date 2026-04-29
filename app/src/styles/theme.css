@@ -30,4 +30,22 @@
   
   /* Additional utility colors */
   --color-border-light: #f0f0f0;
+
+  /* Accent — lighter warm brown for gradients and interactive highlights */
+  --color-accent: #C0794A;
+  --color-accent-glow: rgba(192, 121, 74, 0.15);
+
+  /* State semantic colors — bg + text pairs for badges, pills, and banners */
+  --color-success-bg:   #D6F4DE;
+  --color-success-text: #1A6A2E;
+  --color-error-bg:     #FFD6D6;
+  --color-error-text:   #8A1A1A;
+  --color-pending-bg:   #FFF4D6;
+  --color-pending-text: #8B6914;
+  --color-info:         #1A4D8A;
+  --color-info-bg:      #D6E9FF;
+  --color-review:       #5A2B8A;
+  --color-review-bg:    #E8D6FF;
+  --color-neutral:      #555555;
+  --color-neutral-bg:   #E5E5E5;
 }
