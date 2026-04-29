@@ -70,15 +70,17 @@ ${description}
 }
 
 export async function getRescueReports(req, res) {
+  const filterByUser = req.query.mine === 'true' && req.session.userId;
+
   try {
     const [reports] = await pool.query(
-      'SELECT * FROM Rescue_Reports ORDER BY date_reported DESC'
+      filterByUser
+        ? 'SELECT * FROM Rescue_Reports WHERE user_id = ? ORDER BY date_reported DESC'
+        : 'SELECT * FROM Rescue_Reports ORDER BY date_reported DESC',
+      filterByUser ? [req.session.userId] : []
     );
 
-    res.json({
-      count: reports.length,
-      reports,
-    });
+    res.json({ count: reports.length, reports });
   } catch (err) {
     console.error('Error fetching rescue reports:', err);
     res.status(500).json({ error: 'Failed to fetch rescue reports.' });
