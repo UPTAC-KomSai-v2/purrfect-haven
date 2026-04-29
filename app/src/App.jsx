@@ -9,7 +9,8 @@ import AdoptionList from './pages/pets/AdoptionListPage.jsx';
 import PetDetail from './pages/pets/PetDetailPage.jsx';
 import ReportRescue from './pages/report/ReportRescue.jsx'; //delete when done testing
 import ReportDetailsPage from './pages/report/ReportDetailsPage.jsx';
-import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
+import CommunityPage from './pages/community/CommunityPage.jsx'; //delete when done testing
+import CommunityDetailsPage from './pages/community/CommunityDetailsPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
 import AccountSettingsPage from './pages/AccountSettingsPage.jsx';
 import AdminPage from './pages/AdminPage.jsx'
@@ -31,8 +32,10 @@ function App() {
           <Route path="/report" element={<ReportRescue />} /> {/*delete when done testing*/}
           <Route path="/report/:reportId" element={<ReportDetailsPage />} />
           <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
+          <Route path="/community/:postId" element={<CommunityDetailsPage />} /> {/*delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
           <Route path="/settings" element={<AccountSettingsPage />} />
+          
           <Route 
             path="/admin" 
             element={

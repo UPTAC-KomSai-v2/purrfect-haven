@@ -1,6 +1,8 @@
-.report-section {
+/* Container & Main Sections */
+.report-section, .report-container {
   text-align: center;
   background-color: var(--color-background);
+  padding: 20px;
 }
 
 .report-section h1 {
@@ -14,35 +16,19 @@
   color: var(--color-text-secondary);
 }
 
-.report-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  background-color: var(--color-background);
-}
-
+/* Form Styles */
 .report-form {
-  background: var(--color-surface);
-  padding: 30px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 800px;
-  box-shadow: 0 0 0 3px rgba(137, 87, 55, 0.1);
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  width: 100%;
 }
 
 .report-form p {
   width: 100%;
   font-weight: 600;
   color: var(--color-text-secondary);
-}
-
-.report-form p:first-child {
-  font-size: 22px;
-  color: var(--color-text-primary);
-  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .report-form-group {
@@ -69,13 +55,7 @@
   font-size: 14px;
   background: var(--color-surface);
   outline: none;
-  transition: 0.2s ease;
-}
-
-.report-form-group input::placeholder,
-.report-form-group textarea::placeholder {
-  color: #a89c92;
-  font-size: 13px;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
 .report-form-group input:focus,
@@ -85,17 +65,18 @@
 }
 
 .report-form-group textarea {
-  resize: none;
+  resize: vertical;
+  min-height: 100px;
 }
 
+/* Upload Box */
 .upload-box {
   border-radius: 12px;
   padding: 25px;
   text-align: center;
   background: var(--color-background);
   position: relative;
-  cursor: pointer;
-  border: 2px dashed var(--color-border)
+  border: 2px dashed var(--color-border);
 }
 
 .upload-box input {
@@ -105,68 +86,48 @@
   cursor: pointer;
 }
 
-.upload-icon {
-  font-size: 24px;
-  margin-bottom: 8px;
+.coming-soon {
+  display: block;
+  margin-top: 8px;
+  color: #999;
 }
 
-.upload-box p {
-  margin: 0;
-  font-weight: 600;
-}
-
-.upload-box small {
-  color: var(--color-text-secondary);
-  font-size: 12px;
-}
-
+/* Privacy & Status */
 .privacy-box {
   display: flex;
   gap: 10px;
   align-items: flex-start;
   font-size: 12px;
   color: var(--color-text-secondary);
+  width: 100%;
 }
 
-.privacy-box input {
-  margin-top: 3px;
+.status-message {
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
 }
 
 .submit-box {
   width: 100%;
-  display: flex;
-  justify-content: flex-end;
 }
 
-/* Report Details Page Styles */
+/* Report Details Card */
 .report-details-wrapper {
   background-color: var(--color-background);
-  padding: 40px 40px;
-}
-
-.report-details-header {
-  text-align: center;
-  margin-bottom: 40px;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.report-details-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: 12px;
-}
-
-.report-details-header p {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-}
-
-.report-details-container {
-  display: flex;
-  justify-content: center;
+  padding: 40px;
 }
 
 .report-details-card {
@@ -177,14 +138,7 @@
   width: 100%;
   max-width: 700px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.report-details-title {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  margin: 0 auto;
 }
 
 .report-details-grid {
@@ -194,26 +148,16 @@
   margin-bottom: 20px;
 }
 
-.report-detail-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.report-detail-item.full-width {
-  grid-column: 1 / -1;
-}
-
 .report-detail-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #999;
-  margin-bottom: 5px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: 500;
+  font-weight: 600;
+  margin-bottom: 4px;
 }
 
 .report-detail-value {
-  margin: 0;
   font-weight: 500;
   color: var(--color-text-primary);
   font-size: 14px;
@@ -227,52 +171,29 @@
 .report-detail-timestamp {
   font-size: 13px;
   color: #999;
-  padding: 20px 0;
+  padding-top: 20px;
   border-top: 1px solid var(--color-border);
-  margin: 20px 0;
-}
-
-.report-detail-timestamp p {
-  margin: 0;
+  margin-top: 20px;
 }
 
 .report-detail-actions {
   display: flex;
   gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
-.error-message {
-  color: #721c24;
-  background-color: #f8d7da;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 600px) {
-  .report-details-wrapper {
-    padding: 20px 10px;
-  }
-
-  .report-details-card {
-    padding: 25px;
-  }
-
-  .report-details-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-}
-
+/* Responsive */
 @media (max-width: 600px) {
   .report-form-group {
     width: 100%;
   }
+  
+  .report-details-grid {
+    grid-template-columns: 1fr;
+  }
 
-  .report-form {
-    padding: 20px;
+  .report-details-wrapper {
+    padding: 20px 10px;
   }
 }
