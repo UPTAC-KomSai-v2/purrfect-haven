@@ -62,8 +62,10 @@ export async function getPets(req, res) {
 // =====================================================
 export async function getAdoptedPets(req, res) {
   try {
-    const [rows] = await pool.query(
-      `SELECT
+    const { species, location } = req.query;
+
+    let query = `
+      SELECT
         p.pet_id, p.name, s.species_name, p.breed, p.sex, p.age, p.color,
         p.location_rescued, p.location_held, p.date_posted, p.is_adopted,
         MIN(ph.file_path) AS primary_photo
@@ -71,9 +73,26 @@ export async function getAdoptedPets(req, res) {
       JOIN Species s ON p.species_id = s.species_id
       LEFT JOIN pet_photos ph ON p.pet_id = ph.pet_id
       WHERE p.is_adopted = 1
-      GROUP BY p.pet_id
-      ORDER BY p.date_posted DESC`
-    );
+    `;
+
+    const params = [];
+
+    if (species) {
+      if (species.toLowerCase() === 'other') {
+        query += ` AND LOWER(s.species_name) NOT IN ('dog', 'cat', 'bird')`;
+      } else {
+        query += ` AND LOWER(s.species_name) = LOWER(?)`;
+        params.push(species);
+      }
+    }
+    if (location) {
+      query += ` AND LOWER(p.location_held) LIKE LOWER(?)`;
+      params.push(`%${location}%`);
+    }
+
+    query += ` GROUP BY p.pet_id ORDER BY p.date_posted DESC`;
+
+    const [rows] = await pool.query(query, params);
 
     return res.status(200).json({ count: rows.length, pets: rows });
 

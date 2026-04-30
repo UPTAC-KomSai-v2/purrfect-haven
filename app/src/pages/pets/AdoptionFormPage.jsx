@@ -8,10 +8,7 @@ import '../../styles/adoptform.css';
 import Button from '../../components/Button.jsx';
 import { Paperclip } from "lucide-react";
 
-function getPhotoUrl(filePath) {
-  if (!filePath) return 'https://placehold.co/400x400?text=No+Photo';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl } from '../../utils/photoUrl.js';
 
 function AdoptFormPage() {
   // react use state

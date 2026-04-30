@@ -8,11 +8,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { getPetById } from '../../services/petsService.js';
 import '../../styles/pets.css';
 
-// Same helper as PetCard — builds the full image URL from the DB file_path
-function getPhotoUrl(filePath) {
-  if (!filePath) return 'https://placehold.co/400x400?text=No+Photo';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl } from '../../utils/photoUrl.js';
 
 function PetDetailPage() {
   const { id } = useParams(); // grabs the :id from the URL
@@ -87,6 +83,7 @@ function PetDetailPage() {
     <div className="detail-page">
       <h1 className="detail-title">Pet Details</h1>
 
+      {/*Pagination? */}
       <button className="back-btn" onClick={() => navigate(-1)}>
         ← Back
       </button>
