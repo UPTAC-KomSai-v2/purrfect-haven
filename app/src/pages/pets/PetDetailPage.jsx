@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getPetById } from '../../services/petsService.js';
-import '../../styles/pets.css';
+import '../../styles/petdetail.css';
 
 import { getPhotoUrl } from '../../utils/photoUrl.js';
 
@@ -81,13 +81,8 @@ function PetDetailPage() {
 
   return (
     <div className="detail-page">
-      <h1 className="detail-title">Pet Details</h1>
-
+      {/* Add a back button */}
       {/*Pagination? */}
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
-
       <div className="detail-layout">
         {/* Left column: photos + adopt button */}
         <div className="detail-photos">
@@ -116,7 +111,7 @@ function PetDetailPage() {
           )}
 
           <button
-            className="adopt-now-button"
+            className="pd-adopt-btn"
             onClick={handleAdoptClick}
             disabled={pet.is_adopted === 1}
           >

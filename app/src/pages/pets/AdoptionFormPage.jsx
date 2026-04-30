@@ -5,6 +5,7 @@ import { submitAdoptionApplication } from '../../services/adoptionsService.js'; 
 import { getPetById } from '../../services/petsService.js';
 import '../../styles/forms.css';
 import '../../styles/adoptform.css';
+import '../../styles/petdetail.css';
 import Button from '../../components/Button.jsx';
 import { Paperclip } from "lucide-react";
 
@@ -129,11 +130,11 @@ function AdoptFormPage() {
       <p>Thank you for your interest in adopting Callie! Please fill out the form below to start the adoption process.</p>
       
       <div className="adoptpet-card">
-        <div className="info-card">
+        <div className="af-info-card">
           <img
             src={mainPhotoUrl}
             alt={pet.name}
-            className="detail-main-photo"
+            className="af-detail-main-photo"
           />
 
           <div>
