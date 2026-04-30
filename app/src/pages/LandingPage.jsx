@@ -13,15 +13,7 @@ function formatStoryDate(dateString) {
   return new Date(dateString).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 }
 
-function getPhotoUrl(filePath, petName) {
-  if (!filePath && !petName) return null;
-
-  if (petName) {
-    const fileName = `${petName.charAt(0).toLowerCase()}${petName.slice(1)}-1.jpg`;
-    return getPhotoUrl(`uploads/stories/${fileName}`);
-  }
-  return `http://localhost:3000/${filePath}`;
-}
+import { getStoryPhotoUrl as getPhotoUrl } from '../utils/photoUrl.js';
 
 function Landing() {
   const navigate = useNavigate();

@@ -19,8 +19,8 @@ export async function getPetById(id) {
   return response.data.pet;
 }
 
-export async function getAdoptedPets() {
-  const response = await api.get('/pets/adopted');
+export async function getAdoptedPets({ species, location } = {}) {
+  const response = await api.get('/pets/adopted', { params: { species, location } });
   return response.data.pets;
 }
 
