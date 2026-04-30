@@ -22,8 +22,12 @@ export async function getPets(req, res) {
     const params = [];
 
     if (species) {
-      query += ` AND LOWER(s.species_name) = LOWER(?)`;
-      params.push(species);
+      if (species.toLowerCase() === 'other') {
+        query += ` AND LOWER(s.species_name) NOT IN ('dog', 'cat', 'bird')`;
+      } else {
+        query += ` AND LOWER(s.species_name) = LOWER(?)`;
+        params.push(species);
+      }
     }
     if (breed) {
       query += ` AND LOWER(p.breed) LIKE LOWER(?)`;
