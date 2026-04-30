@@ -13,9 +13,8 @@ export async function submitRescueReport(req, res) {
     privacyConsent,
   } = req.body;
 
-  const userId = req.session.userId || null; // Optional — user may not be logged in
+  const userId = req.session.userId || null; 
 
-  // Validation
   if (!fullName || !contactNumber || !location || !description) {
     return res.status(400).json({
       error: 'Missing required fields: fullName, contactNumber, location, description',
@@ -29,7 +28,6 @@ export async function submitRescueReport(req, res) {
   }
 
   try {
-    // Construct structured description with all form details
     const structuredDescription = `
 **Reporter:** ${fullName}
 **Contact:** ${contactNumber}
@@ -42,16 +40,12 @@ export async function submitRescueReport(req, res) {
 ${description}
     `.trim();
 
-    // If user_id is null, we need to handle the NOT NULL constraint
-    // Either: 1) Create a generic "anonymous" user record, or 2) Modify schema
-    // For now, we'll require login or provide a fallback
     if (!userId) {
       return res.status(400).json({
         error: 'Please log in to submit a rescue report.',
       });
     }
 
-    // Insert rescue report into database
     const [result] = await pool.query(
       `INSERT INTO Rescue_Reports (user_id, location, description)
        VALUES (?, ?, ?)`,
@@ -71,8 +65,12 @@ ${description}
 
 export async function getRescueReports(req, res) {
   try {
+    // FIXED: Concatenating first_name and last_name to match the UI expectation
     const [reports] = await pool.query(
-      'SELECT * FROM Rescue_Reports ORDER BY date_reported DESC'
+      `SELECT r.*, CONCAT(u.first_name, ' ', u.last_name) as reporter_name 
+       FROM Rescue_Reports r
+       LEFT JOIN Users u ON r.user_id = u.user_id
+       ORDER BY r.date_reported DESC`
     );
 
     res.json({
@@ -87,17 +85,14 @@ export async function getRescueReports(req, res) {
 
 export async function getRescueReportById(req, res) {
   const { id } = req.params;
-
   try {
     const [reports] = await pool.query(
       'SELECT * FROM Rescue_Reports WHERE report_id = ?',
       [id]
     );
-
     if (reports.length === 0) {
       return res.status(404).json({ error: 'Rescue report not found.' });
     }
-
     res.json(reports[0]);
   } catch (err) {
     console.error('Error fetching rescue report:', err);
