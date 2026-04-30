@@ -7,16 +7,9 @@ import Login from './pages/auth/LoginPage.jsx';
 import Signup from './pages/auth/SignupPage.jsx';
 import AdoptionList from './pages/pets/AdoptionListPage.jsx';
 import PetDetail from './pages/pets/PetDetailPage.jsx';
-<<<<<<< HEAD
 import RequestRescue from './pages/rescue/RequestRescue.jsx'; //delete when done testing
 import RequestDetailsPage from './pages/rescue/RequestDetailsPage.jsx';
 import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
-=======
-import ReportRescue from './pages/report/ReportRescue.jsx'; //delete when done testing
-import ReportDetailsPage from './pages/report/ReportDetailsPage.jsx';
-import CommunityPage from './pages/community/CommunityPage.jsx'; //delete when done testing
-//import CommunityDetailsPage from './pages/community/CommunityDetailsPage.jsx'; //delete when done testing
->>>>>>> a8256d5ecff51e13aa4735cf473ac7137adc2237
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
 import AccountSettingsPage from './pages/profile/AccountSettingsPage.jsx';
 import AdminPage from './pages/AdminPage.jsx'
