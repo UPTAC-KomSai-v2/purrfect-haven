@@ -295,7 +295,7 @@ function ProfilePage() {
           <h1>Hello, {user.first_name}!</h1>
           <p>Welcome back to your dashboard.</p>
         </div>
-        <Link to="/settings" className="profile-settings-link">
+        <Link to="/profile/settings" className="profile-settings-link">
           Account Settings
         </Link>
       </section>

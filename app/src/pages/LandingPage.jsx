@@ -7,15 +7,19 @@ import Hero from '../components/Hero.jsx';
 import Button from '../components/Button.jsx';
 import '../styles/landing.css';
 import faqItems from '../data/faqs.json';
-import ResponsiveImage from '../components/ResponsiveImage';
 
 function formatStoryDate(dateString) {
   if (!dateString) return '';
   return new Date(dateString).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 }
 
-function getPhotoUrl(filePath) {
-  if (!filePath) return null;
+function getPhotoUrl(filePath, petName) {
+  if (!filePath && !petName) return null;
+
+  if (petName) {
+    const fileName = `${petName.charAt(0).toLowerCase()}${petName.slice(1)}-1.jpg`;
+    return getPhotoUrl(`uploads/stories/${fileName}`);
+  }
   return `http://localhost:3000/${filePath}`;
 }
 
@@ -61,14 +65,10 @@ function Landing() {
           {featuredStory ? (
             <>
               {/* prefer cover_photo (story photo o fallback pet_photo) */}
-              {featuredStory.cover_photo ? (
-                <img
-                  src={getPhotoUrl(featuredStory.cover_photo)}
-                  alt={featuredStory.pet.name}
-                />
-              ) : (
-                <ResponsiveImage name="julie-anne" type="stories" alt={featuredStory.pet.name} lazy={true} />
-              )}
+              <img
+                src={getPhotoUrl(featuredStory.cover_photo, featuredStory.cover_photo ? null : featuredStory.pet.name)}
+                alt={featuredStory.pet.name}
+              />
               <div className="story-text">
                 <p className="story-label">Adoption Success Story</p>
                 <h2>"{featuredStory.title}"</h2>
@@ -83,7 +83,7 @@ function Landing() {
           ) : (
             // hardcoded fallback
             <>
-              <ResponsiveImage name="julie-anne" type="stories" alt="Julie Anne with adopted cat Henhen" lazy={true} />
+              <img src={getPhotoUrl(null, 'Henhen')} alt="Julie Anne with adopted cat Henhen" loading="lazy" />
               <div className="story-text">
                 <p className="story-label">Adoption Success Story</p>
                 <h2>"Henhen changed our lives and we changed hers"</h2>

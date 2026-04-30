@@ -53,26 +53,10 @@
   font-size: 32px;
   font-weight: 700;
   color: var(--color-text-primary);
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   position: relative;
   padding-bottom: 15px;
 }
-
-/* To be fixed
-.featured-story h1::after {
-  content: 'New';
-  position: absolute;
-  right: auto;
-  left: 155px;
-  top: 0;
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-  */
 
 .story-content {
   display: flex;
