@@ -1,19 +1,14 @@
-html, 
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
+.cap-main-wrapper-parent {
   background-color: var(--color-background);
+  min-height: 100vh;
 }
 
 .cap-main-wrapper {
   display: flex;
   max-width: 1200px;
-  margin: 0px auto;
+  margin: 0 auto;
   padding: 50px 20px;
   gap: 40px;
-  background-color: var(--color-background);
   align-items: flex-start;
 }
 
@@ -22,13 +17,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  align-self: center;
 }
 
 .cap-title {
   font-size: 32px;
-  font-weight: 800;
   color: var(--color-text-primary);
-  margin-bottom: 10px;
 }
 
 .cap-description-text {
@@ -40,112 +34,23 @@ body {
 .cap-featured-img {
   width: 100%;
   border-radius: 16px;
-  margin-bottom: 15px;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .cap-form-section {
   flex: 1.2;
 }
 
-.cap-adoption-card {
-  background: var(--color-surface);
-  padding: 35px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px var(--color-overlay);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.cap-form-card-wrapper {
+  min-height: unset;
+  padding: 0;
+  background: transparent;
 }
 
-.cap-form-header {
-  text-align: center;
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--color-text-primary);
-  margin-bottom: 5px;
-}
-
-.cap-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.cap-input-row {
-  display: flex;
-  gap: 12px;
-}
-
-.cap-input-row .cap-input-group {
-  flex: 1;
-}
-
-.cap-adoption-card label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
-.cap-adoption-card input,
-.cap-adoption-card textarea {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  font-size: 14px;
-  background: var(--color-surface);
-  color: var(--color-text-primary);
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.cap-adoption-card input:focus,
-.cap-adoption-card textarea:focus {
-  border-color: var(--color-secondary);
-}
-
-.cap-adoption-card textarea {
-  resize: vertical;
-}
-
-.cap-upload-dropzone {
-  border: 2px dashed var(--color-border);
-  border-radius: 12px;
-  padding: 25px;
-  text-align: center;
-  background: #fdfaf7;
-  position: relative;
-  cursor: pointer;
-}
-
-.cap-hidden-file {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.cap-upload-icon {
-  font-size: 24px;
-  margin-bottom: 5px;
-}
-
-.cap-upload-dropzone p {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0;
-  color: var(--color-text-secondary);
-}
-
-.cap-upload-dropzone small {
-  font-size: 11px;
-  color: #9c8c82;
-}
-
-.cap-action-area {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+.cap-third {
+  width: calc(33.33% - 11px);
 }
 
 @media (max-width: 900px) {
@@ -153,9 +58,8 @@ body {
     flex-direction: column;
     padding: 30px 15px;
   }
-  
-  .cap-input-row {
-    flex-direction: column;
-    gap: 15px;
+
+  .cap-third {
+    width: 100%;
   }
 }

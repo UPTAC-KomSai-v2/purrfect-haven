@@ -35,7 +35,7 @@ function Hero() {
         <p>Browse adoptable pets around Tacloban City, report animals in need, or post community adoptions. Together, we can make a difference for our Tacloban fur babies.</p>
         <div className="hero-buttons">
           <Button variant="hero" onClick={() => navigate('/pets')}>Find a pet</Button>
-          <Button variant="hero" onClick={() => navigate('/report')}>Report a rescue</Button>
+          <Button variant="hero" onClick={() => navigate('/rescue')}>Report a rescue</Button>
         </div>
       </div>
     </section>
