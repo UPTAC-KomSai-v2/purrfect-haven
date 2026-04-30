@@ -69,7 +69,6 @@ function ReportRescue() {
       });
       setPrivacyConsent(false);
 
-      // Lock a one time access to navigating this page? (upon submitting only etc.)
       setTimeout(() => {
         navigate(`/report/${response.data.reportId}`);
       }, 2500);
@@ -89,7 +88,7 @@ function ReportRescue() {
       subtitle="Spotted an animal in distress in Tacloban City? You can report to save a life."
       maxWidth={600}
     >
-      <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+      <form onSubmit={handleSubmit} className="report-form">
         <div className="report-form-group">
           <label htmlFor='fullName'>Full Name</label>
           <input
@@ -116,7 +115,7 @@ function ReportRescue() {
           />
         </div>
 
-        <p style={{ width: '100%' }}>Animal Details</p>
+        <p>Animal Details</p>
 
         <div className="report-form-group">
           <label htmlFor='animalType'>Animal Type</label>
@@ -192,19 +191,18 @@ function ReportRescue() {
 
         <div className="report-form-group full">
           <label>Upload Photos or Videos</label>
-
           <div className="upload-box">
             <div className="upload-icon">📷</div>
             <p>Upload photos or videos of the animal</p>
             <small>JPG, PNG, MP4 up to 10MB each • Max 5 files</small>
             <input type="file" multiple accept="image/*,video/*" disabled />
-            <small style={{ display: 'block', marginTop: '8px', color: '#999' }}>
+            <small className="coming-soon">
               (Photo uploads coming soon)
             </small>
           </div>
         </div>
 
-        <div className="privacy-box" style={{ width: '100%' }}>
+        <div className="privacy-box">
           <input
             type="checkbox"
             id="privacy"
@@ -218,19 +216,10 @@ function ReportRescue() {
           </label>
         </div>
 
-        {error && (
-          <div style={{ width: '100%', backgroundColor: '#f8d7da', color: '#721c24', padding: '12px', borderRadius: '4px', marginBottom: '8px' }}>
-            {error}
-          </div>
-        )}
+        {error && <div className="status-message error">{error}</div>}
+        {success && <div className="status-message success">{success}</div>}
 
-        {success && (
-          <div style={{ width: '100%', backgroundColor: '#d4edda', color: '#155724', padding: '12px', borderRadius: '4px', marginBottom: '8px' }}>
-            {success}
-          </div>
-        )}
-
-        <div className="submit-box" style={{ width: '100%' }}>
+        <div className="submit-box">
           <Button type="submit" disabled={loading}>
             {loading ? 'Submitting...' : 'Submit Rescue Report'}
           </Button>
