@@ -6,13 +6,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getPetById } from '../../services/petsService.js';
-import '../../styles/pets.css';
+import '../../styles/petdetail.css';
 
-// Same helper as PetCard — builds the full image URL from the DB file_path
-function getPhotoUrl(filePath) {
-  if (!filePath) return 'https://placehold.co/400x400?text=No+Photo';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl } from '../../utils/photoUrl.js';
 
 function PetDetailPage() {
   const { id } = useParams(); // grabs the :id from the URL
@@ -85,12 +81,8 @@ function PetDetailPage() {
 
   return (
     <div className="detail-page">
-      <h1 className="detail-title">Pet Details</h1>
-
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
-
+      {/* Add a back button */}
+      {/*Pagination? */}
       <div className="detail-layout">
         {/* Left column: photos + adopt button */}
         <div className="detail-photos">
@@ -119,7 +111,7 @@ function PetDetailPage() {
           )}
 
           <button
-            className="adopt-now-button"
+            className="pd-adopt-btn"
             onClick={handleAdoptClick}
             disabled={pet.is_adopted === 1}
           >

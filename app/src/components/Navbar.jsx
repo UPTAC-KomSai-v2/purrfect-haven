@@ -39,8 +39,8 @@ export default function Navbar() {
 
       <div className="navbar-links">
         <Link to="/pets">Find a pet</Link>
-        <Link to="/report">
-          Report a rescue
+        <Link to="/rescue">
+          Request a rescue
         </Link>
         <Link to="/community">
           Community posts

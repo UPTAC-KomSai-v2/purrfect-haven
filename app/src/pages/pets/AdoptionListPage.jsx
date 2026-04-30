@@ -38,16 +38,18 @@ function AdoptionListPage() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    async function fetchAvailablePets() {
+    const filters = { species: selectedSpecies, location: locationSearch };
+
+    async function fetchAllPets() {
       setLoading(true);
       setError('');
-
       try {
-        const pets = await getPets({
-          species:  selectedSpecies,
-          location: locationSearch,
-        });
-        setAvailablePets(pets);
+        const [available, adopted] = await Promise.all([
+          getPets(filters),
+          getAdoptedPets(filters),
+        ]);
+        setAvailablePets(available);
+        setAdoptedPets(adopted);
       } catch (err) {
         console.error('Failed to load pets:', err);
         setError('Could not load pets. Please try again later.');
@@ -56,21 +58,8 @@ function AdoptionListPage() {
       }
     }
 
-    fetchAvailablePets();
+    fetchAllPets();
   }, [selectedSpecies, locationSearch]);
-
-  useEffect(() => {
-    async function fetchAdoptedPets() {
-      try {
-        const pets = await getAdoptedPets();
-        setAdoptedPets(pets);
-      } catch (err) {
-        console.error('Failed to load adopted pets:', err);
-      }
-    }
-
-    fetchAdoptedPets();
-  }, []);
 
   // auto-dismiss toast after 3s
   useEffect(() => {
@@ -85,10 +74,11 @@ function AdoptionListPage() {
 
   // i-reload ang both lists pagkatapos ng add/edit/delete
   async function refreshAllPets() {
+    const filters = { species: selectedSpecies, location: locationSearch };
     try {
       const [available, adopted] = await Promise.all([
-        getPets({ species: selectedSpecies, location: locationSearch }),
-        getAdoptedPets(),
+        getPets(filters),
+        getAdoptedPets(filters),
       ]);
       setAvailablePets(available);
       setAdoptedPets(adopted);

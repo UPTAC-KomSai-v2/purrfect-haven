@@ -4,9 +4,9 @@ import FormCard from '../../components/FormCard.jsx';
 import Button from '../../components/Button.jsx';
 import api from '../../services/api.js';
 import '../../styles/forms.css';
-import '../../styles/report.css';
+import '../../styles/rescue.css';
 
-function ReportRescue() {
+function RequestRescue() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -70,7 +70,7 @@ function ReportRescue() {
       setPrivacyConsent(false);
 
       setTimeout(() => {
-        navigate(`/report/${response.data.reportId}`);
+        navigate(`/rescue/${response.data.reportId}`);
       }, 2500);
     } catch (err) {
       console.error('Error submitting rescue report:', err);
@@ -84,7 +84,7 @@ function ReportRescue() {
 
   return (
     <FormCard 
-      title="Submit a Report"
+      title="Submit a Rescue Request"
       subtitle="Spotted an animal in distress in Tacloban City? You can report to save a life."
       maxWidth={600}
     >
@@ -229,4 +229,4 @@ function ReportRescue() {
   );
 }
 
-export default ReportRescue;
+export default RequestRescue;

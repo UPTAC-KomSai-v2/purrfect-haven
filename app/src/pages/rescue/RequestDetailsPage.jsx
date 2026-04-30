@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../../services/api.js';
-import '../../styles/report.css';
+import '../../styles/rescue.css';
 import Button from '../../components/Button.jsx';
 
-function ReportDetailsPage() {
+function RequestDetailsPage() {
   const { reportId } = useParams();
   const navigate = useNavigate();
   const [report, setReport] = useState(null);
@@ -173,4 +173,4 @@ function ReportDetailsPage() {
   );
 }
 
-export default ReportDetailsPage;
+export default RequestDetailsPage;

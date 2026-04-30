@@ -139,14 +139,14 @@ label{
     gap: 20px;
 }
 
-.detail-main-photo {
+.af-detail-main-photo {
   width: 250px;
   height: 250px;
   object-fit: cover;
   border-radius: 8px;
 }
 
-.info-card {
+.af-info-card {
   display: flex;
   flex-direction: row;
   background-color: var(--color-primary);
@@ -154,39 +154,6 @@ label{
   border-radius: 12px;
   padding: 30px;
   gap: 20px;
-}
-
-.info-card-name {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--color-text-light);
-}
-
-.info-card-location {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 20px;
-}
-
-.info-card-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.info-row {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 10px;
-}
-
-.info-label {
-  font-weight: 700;
-}
-
-.info-value {
-  font-weight: 400;
 }
 
 .adoptpet-upload-dropzone {

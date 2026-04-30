@@ -21,10 +21,8 @@ import CollapsibleItem from '../../components/CollapsibleItem.jsx';
 import { getMyRescueReports } from '../../services/rescueService.js';
 import '../../styles/profile.css';
 
-function getPhotoUrl(filePath) {
-  if (!filePath) return 'https://placehold.co/120x120?text=No+Photo';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl as buildPhotoUrl } from '../../utils/photoUrl.js';
+const getPhotoUrl = (filePath) => buildPhotoUrl(filePath, 'https://placehold.co/120x120?text=No+Photo');
 
 function formatDate(dateString) {
   if (!dateString) return '';
@@ -295,7 +293,7 @@ function ProfilePage() {
           <h1>Hello, {user.first_name}!</h1>
           <p>Welcome back to your dashboard.</p>
         </div>
-        <Link to="/settings" className="profile-settings-link">
+        <Link to="/profile/settings" className="profile-settings-link">
           Account Settings
         </Link>
       </section>
