@@ -7,42 +7,42 @@ import CommunityPostCard from "./admin/CommunityPostCard.jsx";
 
 import '../styles/admin.css';
 
-const SAMPLE_COMMUNITY_POSTS = [{
-  post_id: 1,
-  status: 'pending',
-  pet_name: '3 Kittens',
-  description: "Found 3 kittens behind SM Tacloban.",
-  species_name: 'Cat',
-  location: 'Downtown Tacloban',
-  poster: { full_name: 'Maria Santos', email: 'maria.santos@email.com', cell_num: '0917-555-0202', address: 'Downtown Tacloban' },
-  date_posted: 'March 26, 2026',
-  photos: ['https://placehold.co/200x200?text=Kitten+1'],
-}];
-
 function AdminPage() {
   const [activeTab, setActiveTab] = useState('adoptions');
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedCards, setExpandedCards] = useState({});
   
   const [adoptions, setAdoptions] = useState([]);
-  const [posts, setPosts] = useState(SAMPLE_COMMUNITY_POSTS);
+  const [posts, setPosts] = useState([]);
   const [rescues, setRescues] = useState([]);
   const [stories, setStories] = useState([]);
   
-  const [adoptionsLoading, setAdoptionsLoading] = useState(true);
-  const [storiesLoading, setStoriesLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { 
     const loadInitialData = async () => {
+      setLoading(true);
+      
+      // Load Adoptions independently
       try {
-        const [ads, res] = await Promise.all([
-          AdoptionsService.getAllAdoptions(),
-          api.get('/rescue')
-        ]);
-        setAdoptions(ads);
+        const ads = await AdoptionsService.getAllAdoptions();
+        setAdoptions(ads || []);
+      } catch (e) { console.error("Adoptions failed to load:", e); }
+
+      // Load Rescues independently
+      try {
+        const res = await api.get('/rescue');
         setRescues(res.data.reports || []);
-      } catch (err) { console.error(err); }
-      finally { setAdoptionsLoading(false); }
+      } catch (e) { console.error("Rescues failed to load:", e); }
+
+      // Load Community Posts independently
+      try {
+        const commRes = await api.get('/community');
+        // Check if data is coming through as .posts (from controller res.json)
+        setPosts(commRes.data.posts || []);
+      } catch (e) { console.error("Community posts failed to load:", e); }
+
+      setLoading(false);
     };
     loadInitialData();
   }, []);
@@ -95,8 +95,8 @@ function AdminPage() {
             <CommunityPostCard 
               key={post.post_id} post={post} isExpanded={!!expandedCards[`p-${post.post_id}`]} 
               onToggle={() => toggleCard(`p-${post.post_id}`)}
-              onApprove={() => setPosts(p => p.map(x => x.post_id === post.post_id ? {...x, status: 'approved'} : x))}
-              onReject={() => setPosts(p => p.map(x => x.post_id === post.post_id ? {...x, status: 'rejected'} : x))}
+              onApprove={() => {}} 
+              onReject={() => {}}  
             />
           ))}
 
@@ -106,6 +106,9 @@ function AdminPage() {
               onToggle={() => toggleCard(`r-${report.report_id}`)} 
             />
           ))}
+          
+          {loading && <p>Loading data...</p>}
+          {!loading && activeTab === 'community' && filteredPosts.length === 0 && <p>No community posts found.</p>}
         </div>
       </div>
     </div>
