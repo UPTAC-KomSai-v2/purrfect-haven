@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';  // dagdag: useNavigate
+import { submitAdoptionApplication } from '../../services/adoptionsService.js';  // bago
+
+import { getPetById } from '../../services/petsService.js';
+import '../../styles/forms.css';
+import '../../styles/adoptform.css';
+import '../../styles/petdetail.css';
+import Button from '../../components/Button.jsx';
 import { Paperclip } from "lucide-react";
 
-import { submitAdoptionApplication } from '../../services/adoptionsService.js';
-import { getPetById } from '../../services/petsService.js';
-import Button from '../../components/Button.jsx';
-import '../../styles/adoptform.css';
-
-function getPhotoUrl(filePath) {
-  if (!filePath) return 'https://placehold.co/400x400?text=No+Photo';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl } from '../../utils/photoUrl.js';
 
 function AdoptFormPage() {
   const { id } = useParams();
@@ -110,8 +109,13 @@ function AdoptFormPage() {
       <p>Thank you for your interest in adopting {pet.name}! Please fill out the form below to start the adoption process.</p>
       
       <div className="adoptpet-card">
-        <div className="info-card">
-          <img src={mainPhotoUrl} alt={pet.name} className="detail-main-photo" />
+        <div className="af-info-card">
+          <img
+            src={mainPhotoUrl}
+            alt={pet.name}
+            className="af-detail-main-photo"
+          />
+
           <div>
             <h2 className="info-card-name">{pet.name}</h2>
             {pet.location_held && <p className="info-card-location">{pet.location_held}</p>}

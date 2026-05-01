@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 import {
   getMyAdoptions,
   listPostAdoptionUpdates,
@@ -10,19 +10,19 @@ import {
   createPostAdoptionUpdate,
   respondToWelfareCheck,
   getMyPendingWelfareChecks,
-} from '../services/adoptionsService.js';
+} from '../../services/adoptionsService.js';
 import {
   getMyStories,
   submitStoryContent,
   initiateOwnStory,
-} from '../services/storiesService.js';
-import PhotoUploader from '../components/PhotoUploader.jsx';
-import '../styles/profile.css';
+} from '../../services/storiesService.js';
+import PhotoUploader from '../../components/PhotoUploader.jsx';
+import CollapsibleItem from '../../components/CollapsibleItem.jsx';
+import { getMyRescueReports } from '../../services/rescueService.js';
+import '../../styles/profile.css';
 
-function getPhotoUrl(filePath) {
-  if (!filePath) return 'https://placehold.co/120x120?text=No+Photo';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl as buildPhotoUrl } from '../../utils/photoUrl.js';
+const getPhotoUrl = (filePath) => buildPhotoUrl(filePath, 'https://placehold.co/120x120?text=No+Photo');
 
 function formatDate(dateString) {
   if (!dateString) return '';
@@ -81,27 +81,29 @@ function ProfilePage() {
   const [adoptions, setAdoptions] = useState([]);
   const [pendingChecks, setPendingChecks] = useState([]);
   const [stories, setStories] = useState([]);
+  const [rescueReports, setRescueReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [expanded, setExpanded] = useState({});
+  const [expandedAdoption, setExpandedAdoption] = useState(null);
+  const [expandedStory, setExpandedStory] = useState(null);
+  const [expandedReport, setExpandedReport] = useState(null);
 
   const [welfareModal, setWelfareModal]       = useState(null);
   const [storyModal, setStoryModal]           = useState(null);
   const [updateModal, setUpdateModal]         = useState(null);
   const [shareStoryModal, setShareStoryModal] = useState(null);
 
-  // bagong state — kapag may laman, ipapakita yung view modal ng story
-  const [viewStoryModal, setViewStoryModal] = useState(null);
 
   useEffect(() => {
     loadAll();
   }, []);
 
   async function loadAll() {
-    const [a, p, s] = await Promise.allSettled([
+    const [a, p, s, r] = await Promise.allSettled([
       getMyAdoptions(),
       getMyPendingWelfareChecks(),
       getMyStories(),
+      getMyRescueReports(),
     ]);
 
     if (a.status === 'fulfilled') setAdoptions(a.value);
@@ -113,15 +115,14 @@ function ProfilePage() {
     if (s.status === 'fulfilled') setStories(s.value);
     else console.error('Stories load failed:', s.reason);
 
+    if (r.status === 'fulfilled') setRescueReports(r.value);
+    else console.error('Rescue reports load failed:', r.reason);
+
     if (a.status === 'rejected') {
       setError('Could not load your adoption requests.');
     }
 
     setLoading(false);
-  }
-
-  function toggleExpand(adoptionId) {
-    setExpanded((prev) => ({ ...prev, [adoptionId]: !prev[adoptionId] }));
   }
 
   function refreshAdoption(adoptionId) {
@@ -172,7 +173,6 @@ function ProfilePage() {
   }
 
   // ============ story request response ============
-
   function openStoryModal(story) {
     setStoryModal({
       storyId: story.story_id,
@@ -282,18 +282,6 @@ function ProfilePage() {
     }
   }
 
-  // ============ view story (read-only) ============
-
-  function openViewStoryModal(story) {
-    // hindi natin papaakiks yung pending stories — wala pang content
-    if (story.status === 'pending') {
-      // i-redirect sa write modal instead
-      openStoryModal(story);
-      return;
-    }
-    setViewStoryModal(story);
-  }
-
   if (!user) return null;
 
   const pendingStoryRequests = stories.filter((s) => s.status === 'pending');
@@ -305,7 +293,7 @@ function ProfilePage() {
           <h1>Hello, {user.first_name}!</h1>
           <p>Welcome back to your dashboard.</p>
         </div>
-        <Link to="/settings" className="profile-settings-link">
+        <Link to="/profile/settings" className="profile-settings-link">
           Account Settings
         </Link>
       </section>
@@ -366,13 +354,17 @@ function ProfilePage() {
               <Link to="/pets" className="inline-link">Browse pets</Link> to get started.
             </p>
           ) : (
-            <div className="application-list">
+            <div className="dashboard-list">
               {adoptions.map((app) => (
                 <ApplicationItem
                   key={app.adoption_id}
                   application={app}
-                  isExpanded={!!expanded[app.adoption_id]}
-                  onToggle={() => toggleExpand(app.adoption_id)}
+                  isExpanded={expandedAdoption === app.adoption_id}
+                  onToggle={() =>
+                    setExpandedAdoption((prev) =>
+                      prev === app.adoption_id ? null : app.adoption_id
+                    )
+                  }
                   onShareUpdate={() => openUpdateModal(app)}
                   onShareStory={() => openShareStoryModal(app)}
                   storiesForThisAdoption={stories.filter(
@@ -389,30 +381,19 @@ function ProfilePage() {
           {stories.length === 0 ? (
             <p className="empty-state">No stories submitted yet.</p>
           ) : (
-            <div className="story-list">
+            <div className="dashboard-list">
               {stories.map((s) => (
-                <button
+                <StoryItem
                   key={s.story_id}
-                  className="story-list-item"
-                  onClick={() => openViewStoryModal(s)}
-                >
-                  <h4>{s.title || `Story for ${s.pet.name}`}</h4>
-                  <p className="story-list-status">
-                    <span className={`status-badge story-status-${s.status}`}>
-                      {getStoryStatusLabel(s.status)}
-                    </span>
-                  </p>
-                  {s.photos && s.photos.length > 0 && (
-                    <p className="story-list-photo-count">
-                      {s.photos.length} photo{s.photos.length === 1 ? '' : 's'}
-                    </p>
-                  )}
-                  {s.status === 'rejected' && s.admin_note && (
-                    <p className="story-list-note">
-                      <strong>Admin note:</strong> {s.admin_note}
-                    </p>
-                  )}
-                </button>
+                  story={s}
+                  onWriteStory={openStoryModal}
+                  isExpanded={expandedStory === s.story_id}
+                  onToggle={() =>
+                    setExpandedStory((prev) =>
+                      prev === s.story_id ? null : s.story_id
+                    )
+                  }
+                />
               ))}
             </div>
           )}
@@ -420,7 +401,25 @@ function ProfilePage() {
 
         <div className="dashboard-card">
           <h2>My Rescue Reports</h2>
-          <p className="empty-state">No rescue reports yet.</p>
+          {rescueReports.length === 0 ? (
+            <p className="empty-state">No rescue reports yet.</p>
+          ) : (
+            <div className="dashboard-list">
+              {rescueReports.map((r) => (
+                <RescueReportItem
+                  key={r.report_id}
+                  report={r}
+                  isExpanded={expandedReport === r.report_id}
+                  onToggle={() =>
+                    setExpandedReport((prev) =>
+                      prev === r.report_id ? null : r.report_id
+                    )
+                  }
+                />
+              ))}
+              
+            </div>
+          )}
         </div>
       </section>
 
@@ -487,12 +486,6 @@ function ProfilePage() {
         </div>
       )}
 
-      {viewStoryModal && (
-        <ViewStoryModal
-          story={viewStoryModal}
-          onClose={() => setViewStoryModal(null)}
-        />
-      )}
     </div>
   );
 }
@@ -549,105 +542,97 @@ function ApplicationItem({
 
   const hasExistingStory = storiesForThisAdoption.length > 0;
 
+  const highlight =
+    status === 'appointment_scheduled' && appointment_date ? (
+      <>Appointment: <strong>{formatDateTime(appointment_date)}</strong></>
+    ) : null;
+
   return (
-    <div className="application-item-wrapper">
-      <button className="application-item" onClick={onToggle}>
-        <img src={getPhotoUrl(pet.photo)} alt={pet.name} className="application-photo" />
-        <div className="application-info">
-          <div className="application-top">
-            <h3>{pet.name}</h3>
-            <span className={`status-badge status-${status}`}>{getStatusLabel(status)}</span>
-          </div>
-          <p className="application-meta">
-            {pet.breed || pet.species_name} · Applied {formatDate(date_applied)}
-          </p>
-          {status === 'appointment_scheduled' && appointment_date && (
-            <p className="application-highlight">
-              Appointment: <strong>{formatDateTime(appointment_date)}</strong>
-            </p>
-          )}
-        </div>
-        <span className={`application-chevron ${isExpanded ? 'up' : ''}`}>▼</span>
-      </button>
-
-      {isExpanded && (
-        <div className="application-details">
-          {(status === 'approved' || status === 'rejected') && decision_note && (
-            <div className="detail-section">
-              <h4>Decision Note from Foster Home</h4>
-              <p className="detail-quote">"{decision_note}"</p>
-            </div>
-          )}
-
-          {status === 'completed' && (
-            <div className="detail-section">
-              <div className="timeline-header">
-                <h4>Welfare & Updates Timeline</h4>
-                <div className="timeline-actions">
-                  <button
-                    className="share-update-btn"
-                    onClick={(e) => { e.stopPropagation(); onShareUpdate(); }}
-                  >
-                    Share Update
-                  </button>
-                  {!hasExistingStory && (
-                    <button
-                      className="share-story-btn"
-                      onClick={(e) => { e.stopPropagation(); onShareStory(); }}
-                    >
-                      Share Story
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {timelineLoading ? (
-                <p className="empty-state">Loading timeline...</p>
-              ) : timeline.length === 0 ? (
-                <p className="empty-state">
-                  No activity yet — share your first update for {pet.name}.
-                </p>
-              ) : (
-                <div className="timeline">
-                  {timeline.map((entry) => (
-                    <TimelineEntry
-                      key={`${entry.type}-${entry.data.update_id || entry.data.check_id}`}
-                      entry={entry}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="detail-section">
-            <h4>Your Motivation</h4>
-            <p>"{motivation}"</p>
-          </div>
-
-          <div className="detail-section">
-            <h4>Financial Capability</h4>
-            <p>"{financial_capability}"</p>
-          </div>
-
-          <div className="detail-section">
-            <h4>Application Details</h4>
-            <p><strong>Address:</strong> {applicant_address}</p>
-            <p><strong>Home Ownership:</strong> {owns_home ? 'Owns home' : 'Renting/leasing'}</p>
-          </div>
-
-          <div className="detail-section">
-            <h4>Your Checklist</h4>
-            <ul className="detail-checklist">
-              <li>{is_first_pet ? 'Yes' : 'No'} — First pet</li>
-              <li>{has_experience ? 'Yes' : 'No'} — Has pet care experience</li>
-              <li>{has_other_pets ? 'Yes' : 'No'} — Has other pets at home</li>
-              <li>{has_children ? 'Yes' : 'No'} — Has children at home</li>
-            </ul>
-          </div>
+    <CollapsibleItem
+      photo={getPhotoUrl(pet.photo)}
+      photoAlt={pet.name}
+      title={pet.name}
+      statusLabel={getStatusLabel(status)}
+      statusClass={`status-${status}`}
+      meta={`${pet.breed || pet.species_name} · Applied ${formatDate(date_applied)}`}
+      highlight={highlight}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+    >
+      {(status === 'approved' || status === 'rejected') && decision_note && (
+        <div className="detail-section">
+          <h4>Decision Note from Foster Home</h4>
+          <p className="detail-quote">"{decision_note}"</p>
         </div>
       )}
-    </div>
+
+      {status === 'completed' && (
+        <div className="detail-section">
+          <div className="timeline-header">
+            <h4>Welfare & Updates Timeline</h4>
+            <div className="timeline-actions">
+              <button
+                className="share-update-btn"
+                onClick={(e) => { e.stopPropagation(); onShareUpdate(); }}
+              >
+                Share Update
+              </button>
+              {!hasExistingStory && (
+                <button
+                  className="share-story-btn"
+                  onClick={(e) => { e.stopPropagation(); onShareStory(); }}
+                >
+                  Share Story
+                </button>
+              )}
+            </div>
+          </div>
+
+          {timelineLoading ? (
+            <p className="empty-state">Loading timeline...</p>
+          ) : timeline.length === 0 ? (
+            <p className="empty-state">
+              No activity yet — share your first update for {pet.name}.
+            </p>
+          ) : (
+            <div className="timeline">
+              {timeline.map((entry) => (
+                <TimelineEntry
+                  key={`${entry.type}-${entry.data.update_id || entry.data.check_id}`}
+                  entry={entry}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="detail-section">
+        <h4>Your Motivation</h4>
+        <p>"{motivation}"</p>
+      </div>
+
+      <div className="detail-section">
+        <h4>Financial Capability</h4>
+        <p>"{financial_capability}"</p>
+      </div>
+
+      <div className="detail-section">
+        <h4>Application Details</h4>
+        <p><strong>Address:</strong> {applicant_address}</p>
+        <p><strong>Home Ownership:</strong> {owns_home ? 'Owns home' : 'Renting/leasing'}</p>
+      </div>
+
+      <div className="detail-section">
+        <h4>Your Checklist</h4>
+        <ul className="detail-checklist">
+          <li>{is_first_pet ? 'Yes' : 'No'} — First pet</li>
+          <li>{has_experience ? 'Yes' : 'No'} — Has pet care experience</li>
+          <li>{has_other_pets ? 'Yes' : 'No'} — Has other pets at home</li>
+          <li>{has_children ? 'Yes' : 'No'} — Has children at home</li>
+        </ul>
+      </div>
+    </CollapsibleItem>
   );
 }
 
@@ -696,61 +681,116 @@ function TimelineEntry({ entry }) {
 }
 
 // =====================================================
-// ViewStoryModal — read-only display ng story
+// StoryItem
 // =====================================================
-function ViewStoryModal({ story, onClose }) {
+function StoryItem({ story, onWriteStory, isExpanded, onToggle }) {
+  const meta =
+    story.status === 'submitted' ? `Submitted ${formatDate(story.submitted_at)}` :
+    story.status === 'published'  ? `Published ${formatDate(story.published_at)}` :
+    null;
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box-large" onClick={(e) => e.stopPropagation()}>
-        <h2>{story.title || `Story for ${story.pet.name}`}</h2>
-        <p className="modal-subtext">
-          About <strong>{story.pet.name}</strong>
-          <span className={`status-badge story-status-${story.status}`} style={{ marginLeft: '10px' }}>
-            {getStoryStatusLabel(story.status)}
-          </span>
-        </p>
-
-        {/* main story content */}
-        <div className="view-story-content">
-          {story.content ? (
-            <p>{story.content}</p>
-          ) : (
-            <p className="empty-state">No content yet.</p>
-          )}
+    <CollapsibleItem
+      title={story.title || `Story for ${story.pet.name}`}
+      statusLabel={getStoryStatusLabel(story.status)}
+      statusClass={`story-status-${story.status}`}
+      meta={meta}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+    >
+      {story.status === 'pending' ? (
+        <div className="detail-section">
+          <p>
+            You've been invited to share your adoption story for{' '}
+            <strong>{story.pet.name}</strong>.
+          </p>
+          <button
+            className="share-story-btn"
+            style={{ marginTop: '10px' }}
+            onClick={(e) => { e.stopPropagation(); onWriteStory(story); }}
+          >
+            Write Story
+          </button>
         </div>
-
-        {/* photo gallery */}
-        {story.photos && story.photos.length > 0 && (
-          <div className="view-story-photos">
-            {story.photos.map((photo, i) => (
-              <a key={i} href={getPhotoUrl(photo)} target="_blank" rel="noopener noreferrer">
-                <img src={getPhotoUrl(photo)} alt={`Photo ${i + 1}`} />
-              </a>
-            ))}
-          </div>
-        )}
-
-        {/* timeline / metadata */}
-        <div className="view-story-meta">
-          {story.status === 'submitted' && (
-            <p>Submitted on {formatDate(story.submitted_at)}. Awaiting admin review.</p>
-          )}
-          {story.status === 'published' && (
-            <p>Published on {formatDate(story.published_at)}.</p>
-          )}
-          {story.status === 'rejected' && story.admin_note && (
-            <div className="view-story-rejection">
-              <h4>Admin Note</h4>
-              <p>{story.admin_note}</p>
+      ) : (
+        <>
+          {story.content && (
+            <div className="view-story-content">
+              <p>{story.content}</p>
             </div>
           )}
-        </div>
+          {story.photos && story.photos.length > 0 && (
+            <div className="view-story-photos">
+              {story.photos.map((photo, i) => (
+                <a key={i} href={getPhotoUrl(photo)} target="_blank" rel="noopener noreferrer">
+                  <img src={getPhotoUrl(photo)} alt={`Photo ${i + 1}`} />
+                </a>
+              ))}
+            </div>
+          )}
+          <div className="view-story-meta">
+            {story.status === 'submitted' && (
+              <p>Submitted on {formatDate(story.submitted_at)}. Awaiting admin review.</p>
+            )}
+            {story.status === 'published' && (
+              <p>Published on {formatDate(story.published_at)}.</p>
+            )}
+            {story.status === 'rejected' && story.admin_note && (
+              <div className="view-story-rejection">
+                <h4>Admin Note</h4>
+                <p>{story.admin_note}</p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </CollapsibleItem>
+  );
+}
 
-        <div className="modal-actions">
-          <button className="modal-cancel" onClick={onClose}>Close</button>
-        </div>
+// =====================================================
+// RescueReportItem
+// =====================================================
+
+function getRescueStatusLabel(status) {
+  const labels = {
+    pending:     'Pending Review',
+    in_progress: 'In Progress',
+    resolved:    'Resolved',
+    closed:      'Closed',
+  };
+  return labels[status] || status;
+}
+
+function RescueReportItem({ report, isExpanded, onToggle }) {
+  return (
+    <CollapsibleItem
+      title={report.location}
+      statusLabel={getRescueStatusLabel(report.status)}
+      statusClass={`rescue-status-${report.status}`}
+      meta={`Reported ${formatDate(report.date_reported)}`}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+    >
+      <div className="view-story-content">
+        <p>{report.description}</p>
       </div>
-    </div>
+
+      {(report.status === 'resolved' || report.status === 'closed') && report.date_resolved && (
+        <div className="view-story-meta">
+          <p>{getRescueStatusLabel(report.status)} on {formatDate(report.date_resolved)}.</p>
+        </div>
+      )}
+
+      {report.admin_note && (
+        <div className="view-story-meta">
+          <div className="view-story-rejection">
+            <h4>Admin Note</h4>
+            <p>{report.admin_note}</p>
+          </div>
+        </div>
+      )}
+    </CollapsibleItem>
   );
 }
 

@@ -16,10 +16,8 @@ import {
 } from '../services/petPhotosService.js';
 import PhotoUploader from './PhotoUploader.jsx';
 
-function getPhotoUrl(filePath) {
-  if (!filePath) return '';
-  return `http://localhost:3000/${filePath}`;
-}
+import { getPhotoUrl as buildPhotoUrl } from '../utils/photoUrl.js';
+const getPhotoUrl = (filePath) => buildPhotoUrl(filePath, '');
 
 function PetFormModal({ mode, pet, onSave, onCancel }) {
   const isEdit = mode === 'edit';

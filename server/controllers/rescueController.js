@@ -64,6 +64,8 @@ ${description}
 }
 
 export async function getRescueReports(req, res) {
+  const filterByUser = req.query.mine === 'true' && req.session.userId;
+
   try {
     // FIXED: Concatenating first_name and last_name to match the UI expectation
     const [reports] = await pool.query(
@@ -73,10 +75,7 @@ export async function getRescueReports(req, res) {
        ORDER BY r.date_reported DESC`
     );
 
-    res.json({
-      count: reports.length,
-      reports,
-    });
+    res.json({ count: reports.length, reports });
   } catch (err) {
     console.error('Error fetching rescue reports:', err);
     res.status(500).json({ error: 'Failed to fetch rescue reports.' });

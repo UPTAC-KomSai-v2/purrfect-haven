@@ -4,6 +4,8 @@ import bg1 from '../assets/landing-bg-1.jpg';
 import bg2 from '../assets/landing-bg-2.jpg';
 import bg3 from '../assets/landing-bg-3.jpg';
 import Button from './Button.jsx';
+
+// This component is the Hero section used in Landing page
 function Hero() {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -33,7 +35,7 @@ function Hero() {
         <p>Browse adoptable pets around Tacloban City, report animals in need, or post community adoptions. Together, we can make a difference for our Tacloban fur babies.</p>
         <div className="hero-buttons">
           <Button variant="hero" onClick={() => navigate('/pets')}>Find a pet</Button>
-          <Button variant="hero" onClick={() => navigate('/report')}>Report a rescue</Button>
+          <Button variant="hero" onClick={() => navigate('/rescue')}>Request a rescue</Button>
         </div>
       </div>
     </section>

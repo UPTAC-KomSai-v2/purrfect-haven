@@ -287,7 +287,9 @@ PUT /api/adoptions/5/status
 ### Partially done
 
 - Community posts — frontend mockup exists, no backend yet
-- Rescue reports — frontend form exists, no backend yet
+- Rescue reports — frontend and backend updated, photo uploading feature to follow. Also, fixed some styles issues by refactoring into components. 
+Added routing to report/:id as well (this route should have a protect mechanism to be added). Then addid a rescue report receipt page. **NOTE:** adoption 
+page reroutes to /profile showing the adoptions -- could be changed to receipt as well for uniformity. Also rescue report data should render on /profile.
 
 ### Not started
 
