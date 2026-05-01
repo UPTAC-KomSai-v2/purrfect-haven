@@ -12,122 +12,101 @@ import { Paperclip } from "lucide-react";
 import { getPhotoUrl } from '../../utils/photoUrl.js';
 
 function AdoptFormPage() {
-  // react use state
-  const { id } = useParams(); // grabs the :id from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  // Form State
   const [fullname, setFullname] = useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
   const [location, setLocation] = useState('');
   const [aboutSelf, setAboutSelf] = useState('');
+  const [financialCapTxt, setFinancialCapTxt] = useState('');
+  const [homeOwnership, setHomeOwnership] = useState('');
+
+  // Checkbox State
   const [firstPet, setFirstPet] = useState(false);
   const [petExperience, setPetExperience] = useState(false);
   const [otherPets, setOtherPets] = useState(false);
   const [hasChildren, setHasChildren] = useState(false);
-  const [homeOwnership, setHomeOwnerhsip] = useState('');
-  const [financialCapTxt, setFinancialCapTxt] = useState('');
+
+  // Pet & UI State
   const [pet, setPet] = useState(null);
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
-
-  const [errors, setErrors] = useState({});
-  const [error, setError] = useState('');
-  const [generalError, setGeneralError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-      async function fetchPet() {
-        setLoading(true);
-        setError('');
-  
-        try {
-          const fetched = await getPetById(id);
-          setPet(fetched);
-          setSelectedPhotoIndex(0); // reset photo selection when loading a new pet
-        } catch (err) {
-          console.error('Failed to load pet:', err);
-          if (err.response?.status === 404) {
-            setError('Pet not found.');
-          } else {
-            setError('Could not load pet details. Please try again later.');
-          }
-        } finally {
-          setLoading(false);
-        }
-      }
-  
-      fetchPet();
-    }, [id]);
+  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState('');
 
-  // handle submit POST req. connect to endpoint built
+  useEffect(() => {
+    async function fetchPet() {
+      setLoading(true);
+      setError('');
+      try {
+        const fetched = await getPetById(id);
+        setPet(fetched);
+      } catch (err) {
+        console.error('Failed to load pet:', err);
+        setError(err.response?.status === 404 ? 'Pet not found.' : 'Could not load pet details.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPet();
+  }, [id]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     setGeneralError('');
-    setLoading(true);
 
-    // basic validation
+    // Validation
     const newErrors = {};
-    if (!fullname)        newErrors.fullname        = 'Full Name is required';
-    if (!email)           newErrors.email           = 'Email is required';
-    if (!phoneNo)         newErrors.phoneNo         = 'Phone Number is required';
-    if (!location)        newErrors.location        = 'Location is required';
-    if (!aboutSelf)       newErrors.aboutSelf       = 'Please tell us why you want to adopt';
-    if (!homeOwnership)   newErrors.homeOwnership   = 'Home Ownership is required';
+    if (!fullname) newErrors.fullname = 'Full Name is required';
+    if (!email) newErrors.email = 'Email is required';
+    if (!phoneNo) newErrors.phoneNo = 'Phone Number is required';
+    if (!location) newErrors.location = 'Location is required';
+    if (!aboutSelf) newErrors.aboutSelf = 'Please tell us why you want to adopt';
+    if (!homeOwnership) newErrors.homeOwnership = 'Home Ownership is required';
     if (!financialCapTxt) newErrors.financialCapTxt = 'Financial capability is required';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setLoading(false);
       return;
     }
 
-    // ipasa sa backend.  hindi natin isinasama ang fullname/email/phone
-    // kasi ginagamit ng backend yung user record (galing sa session).
+    setLoading(true);
     try {
       await submitAdoptionApplication({
         pet_id: parseInt(id),
-        applicant_address:    location,
-        is_first_pet:         firstPet,
-        has_experience:       petExperience,
-        has_other_pets:       otherPets,
-        has_children:         hasChildren,
-        owns_home:            homeOwnership === 'own',
+        applicant_address: location,
+        is_first_pet: firstPet,
+        has_experience: petExperience,
+        has_other_pets: otherPets,
+        has_children: hasChildren,
+        owns_home: homeOwnership === 'own',
         financial_capability: financialCapTxt,
-        motivation:           aboutSelf,
+        motivation: aboutSelf,
       });
-
-      // pag successful, dalhin sa profile para makita yung application
       navigate('/profile');
     } catch (err) {
-      const msg = err.response?.data?.error || 'Failed to submit application. Please try again.';
-      setGeneralError(msg);
+      setGeneralError(err.response?.data?.error || 'Failed to submit application.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return <p className="status-message">Loading pet details...</p>;
-  }
+  if (loading && !pet) return <p className="status-message">Loading pet details...</p>;
+  if (error) return <p className="status-message error-message">{error}</p>;
+  if (!pet) return null;
 
-  if (error) {
-    return <p className="status-message error-message">{error}</p>;
-  }
-
-  if (!pet) {
-    return null; // shouldn't happen, but just in case
-  }
-
-  const photos = pet.photos || [];
-  const mainPhoto = photos[selectedPhotoIndex];
-  const mainPhotoUrl = mainPhoto
-    ? getPhotoUrl()
+  const mainPhotoUrl = pet.photos && pet.photos.length > 0 
+    ? getPhotoUrl(pet.photos[0]) 
     : getPhotoUrl(null);
 
   return (
     <div className="adoptpet-container">
       <h1>Adoption Form</h1>
-      <p>Thank you for your interest in adopting Callie! Please fill out the form below to start the adoption process.</p>
+      <p>Thank you for your interest in adopting {pet.name}! Please fill out the form below to start the adoption process.</p>
       
       <div className="adoptpet-card">
         <div className="af-info-card">
@@ -139,11 +118,8 @@ function AdoptFormPage() {
 
           <div>
             <h2 className="info-card-name">{pet.name}</h2>
-            {pet.location_held && (
-              <p className="info-card-location">{pet.location_held}</p>
-            )}
+            {pet.location_held && <p className="info-card-location">{pet.location_held}</p>}
 
-            {/* Info rows — only render the ones that have data */}
             <div className="info-card-rows">
               {pet.species_name && (
                 <div className="info-row">
@@ -163,12 +139,10 @@ function AdoptFormPage() {
                   <span className="info-value">{pet.sex}</span>
                 </div>
               )}
-              {pet.age !== null && pet.age !== undefined && (
+              {pet.age !== null && (
                 <div className="info-row">
                   <span className="info-label">Age</span>
-                  <span className="info-value">
-                    {pet.age} {pet.age === 1 ? 'year' : 'years'}
-                  </span>
+                  <span className="info-value">{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
                 </div>
               )}
               {pet.color && (
@@ -200,8 +174,6 @@ function AdoptFormPage() {
                     placeholder="e.g. Juan dela Cruz"
                     value={fullname}
                     onChange={(e) => setFullname(e.target.value)}
-                    className={errors.fullname ? 'input-error' : ''}
-                    required
                   />
                   {errors.fullname && <span className="error-text">{errors.fullname}</span>}
                 </div>
@@ -214,12 +186,11 @@ function AdoptFormPage() {
                     placeholder="09xxx-xxx-xxxx"
                     value={phoneNo}
                     onChange={(e) => setPhoneNo(e.target.value)}
-                    className={errors.phoneNo ? 'input-error' : ''}
-                    required
                   />
                   {errors.phoneNo && <span className="error-text">{errors.phoneNo}</span>}
                 </div>
               </div>
+
               <div className="flex-col contact-info-container">
                 <div className={`form-group ${errors.email ? 'form-group-error' : ''}`}>
                   <label htmlFor="email">Email Address</label>
@@ -229,8 +200,6 @@ function AdoptFormPage() {
                     placeholder="example@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={errors.email ? 'input-error' : ''}
-                    required
                   />
                   {errors.email && <span className="error-text">{errors.email}</span>}
                 </div>
@@ -243,63 +212,40 @@ function AdoptFormPage() {
                     placeholder="e.g. Barangay 83-B, San Jose, Tacloban City"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className={errors.location ? 'input-error' : ''}
-                    required
                   />
                   {errors.location && <span className="error-text">{errors.location}</span>}
                 </div>
               </div>
             </div>
+
             <div className="flex-col">
               <div className={`form-group ${errors.aboutSelf ? 'form-group-error' : ''}`}>
                 <h3>Tell us about yourself</h3>
-                <label htmlFor="aboutSelf">Why do you want to adopt Callie?</label>
+                <label htmlFor="aboutSelf">Why do you want to adopt {pet.name}?</label>
                 <textarea
                   id="aboutSelf"
                   placeholder="Please share experiences with pets, living situation, and why you think Callie would be a good fit for your family..."
                   value={aboutSelf}
                   onChange={(e) => setAboutSelf(e.target.value)}
-                  className={errors.aboutSelf ? 'input-error' : ''}
-                  required
                 />
                 {errors.aboutSelf && <span className="error-text">{errors.aboutSelf}</span>}
               </div>
 
               <h4>Please Check all that apply:</h4>
               <div className="checkbox-group">
-                <input
-                  id="firstPet"
-                  type="checkbox"
-                  checked={firstPet}
-                  onChange={(e) => setFirstPet(e.target.checked)}
-                />
+                <input id="firstPet" type="checkbox" checked={firstPet} onChange={(e) => setFirstPet(e.target.checked)} />
                 <label htmlFor="firstPet">This would be my first pet</label>
               </div>
               <div className="checkbox-group">
-                <input
-                  id="petExperience"
-                  type="checkbox"
-                  checked={petExperience}
-                  onChange={(e) => setPetExperience(e.target.checked)}
-                />
+                <input id="petExperience" type="checkbox" checked={petExperience} onChange={(e) => setPetExperience(e.target.checked)} />
                 <label htmlFor="petExperience">I have experience taking care of a cat/dog</label>
               </div>
               <div className="checkbox-group">
-                <input
-                  id="otherPets"
-                  type="checkbox"
-                  checked={otherPets}
-                  onChange={(e) => setOtherPets(e.target.checked)}
-                />
+                <input id="otherPets" type="checkbox" checked={otherPets} onChange={(e) => setOtherPets(e.target.checked)} />
                 <label htmlFor="otherPets">I have other pets at home</label>
               </div>
               <div className="checkbox-group">
-                <input
-                  id="hasChildren"
-                  type="checkbox"
-                  checked={hasChildren}
-                  onChange={(e) => setHasChildren(e.target.checked)}
-                />
+                <input id="hasChildren" type="checkbox" checked={hasChildren} onChange={(e) => setHasChildren(e.target.checked)} />
                 <label htmlFor="hasChildren">I have children at home</label>
               </div>
 
@@ -309,6 +255,7 @@ function AdoptFormPage() {
                 <input
                   id="ownHome"
                   type="radio"
+                  name="homeOwnership"
                   checked={homeOwnership === 'own'}
                   onChange={() => setHomeOwnership('own')}
                 />
@@ -318,11 +265,13 @@ function AdoptFormPage() {
                 <input
                   id="rentHome"
                   type="radio"
+                  name="homeOwnership"
                   checked={homeOwnership === 'rent'}
-                  onChange={(e) => setHomeOwnerhsip('rent')}
+                  onChange={() => setHomeOwnership('rent')}
                 />
                 <label htmlFor="rentHome">I rent/lease my home (with landlord approval for pets)</label>
-              </div>              
+              </div>
+
               <div>
                 <h5>Financial Capability Proof*</h5>
                 <p>Please provide proof of your financial capability to care for the pet. This can Include:</p>
@@ -332,16 +281,12 @@ function AdoptFormPage() {
                   <li>Professional credential ors certifications</li>
                   <li>Previous pet ownership experience with veterinary care history</li>
                 </ul>
-                <div className={`form-group ${errors.aboutSelf ? 'form-group-error' : ''}`}>
-                  <h3>Tell us about yourself</h3>
-                  <label htmlFor="financialCapTxt">Why do you want to adopt Callie?</label>
+                <div className={`form-group ${errors.financialCapTxt ? 'form-group-error' : ''}`}>
                   <textarea
                     id="financialCapTxt"
                     placeholder="Provide financial capability proof here..."
                     value={financialCapTxt}
                     onChange={(e) => setFinancialCapTxt(e.target.value)}
-                    className={errors.financialCapTxt ? 'input-error' : ''}
-                    required
                   />
                   {errors.financialCapTxt && <span className="error-text">{errors.financialCapTxt}</span>}
                 </div>
@@ -351,17 +296,14 @@ function AdoptFormPage() {
                     <Paperclip size={30} />
                     <p>Upload Proof of Financial Capability (File)</p>
                     <small>PDF, Doc up to 10MB each • Max 5 files</small>
-                    <input type="file" multiple accept="image/*,video/*" className="adoptpet-hidden-file" />
+                    <input type="file" multiple className="adoptpet-hidden-file" />
                   </div>
                 </div>
-
               </div>
-              
             </div>
 
-
             <Button type="submit" disabled={loading}>
-              Submit Adoption Application
+              {loading ? 'Submitting...' : 'Submit Adoption Application'}
             </Button>
           </div>
         </form>

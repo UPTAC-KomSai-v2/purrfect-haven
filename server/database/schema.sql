@@ -161,6 +161,9 @@ CREATE TABLE IF NOT EXISTS Community_Posts (
   sex         VARCHAR(10)  NOT NULL,
   age         INT,
   color       VARCHAR(100),
+  personality TEXT, 
+  organization VARCHAR(255),  
+  health      TEXT,
   description TEXT,
   location    VARCHAR(255) NOT NULL,
 
