@@ -72,8 +72,6 @@ function SignupPage() {
         <h1>Create Account</h1>
         <p>Join Purrfect Haven to adopt or rescue pets</p>
 
-        {error && <div className="error-banner">{error}</div>}
-
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="firstName">First Name</label>
@@ -175,6 +173,8 @@ function SignupPage() {
               <img src={showConfirmPassword ? passSeeIcon : passHideIcon} alt="" />
             </button>
           </div>
+
+          {error && <div className="status-message error" style={{ fontSize: '12px', marginTop: '10px' }}>{error}</div>}
 
           <Button type="submit" disabled={loading} className="button-full">
             {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}

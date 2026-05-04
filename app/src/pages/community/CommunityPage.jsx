@@ -179,17 +179,8 @@ function CommunityPage() {
                                 </div>
                             </div>
 
-                            {error && (
-                                <div className="cap-message-error">
-                                    {error}
-                                </div>
-                            )}
-
-                            {success && (
-                                <div className="cap-message-success">
-                                    {success}
-                                </div>
-                            )}
+                            {error && <div className="status-message error">{error}</div>}
+                            {success && <div className="status-message success">{success}</div>}
 
                             <div className="submit-box">
                                 <Button type="submit" disabled={loading} className="button-full">

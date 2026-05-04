@@ -102,23 +102,6 @@
   width: 100%;
 }
 
-.status-message {
-  width: 100%;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.status-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.status-message.success {
-  background-color: #d4edda;
-  color: #155724;
-}
 
 .submit-box {
   width: 100%;

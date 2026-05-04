@@ -70,8 +70,6 @@ function LoginPage() {
 
   return (
     <FormCard title={loginH1} subtitle={subtitle}>
-      {generalError && <div className="error-banner">{generalError}</div>}
-      
       <form className="auth-form" onSubmit={handleSubmit}>
         <div className={`form-group ${errors.email ? 'form-group-error' : ''}`}>
           <label htmlFor="email">Email address</label>
@@ -122,6 +120,8 @@ function LoginPage() {
         <div className="form-link">
           <Link to="/forgotPassword">Forgot password?</Link>
         </div>
+
+        {generalError && <div className="status-message error" style={{ fontSize: '12px', marginTop: '10px' }}>{generalError}</div>}
 
         <Button type="submit" disabled={loading} className="button-full">
           {loading ? 'LOGGING IN...' : 'LOG IN'}
