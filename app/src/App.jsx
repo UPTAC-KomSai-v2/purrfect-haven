@@ -9,12 +9,12 @@ import AdoptionList from './pages/pets/AdoptionListPage.jsx';
 import PetDetail from './pages/pets/PetDetailPage.jsx';
 import RequestRescue from './pages/rescue/RequestRescue.jsx'; //delete when done testing
 import RequestDetailsPage from './pages/rescue/RequestDetailsPage.jsx';
-import CommunityPage from './pages/CommunityPage.jsx'; //delete when done testing
+import CommunityPage from './pages/community/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
 import AccountSettingsPage from './pages/profile/AccountSettingsPage.jsx';
-import AdminPage from './pages/AdminPage.jsx'
 import ProfilePage from './pages/profile/ProfilePage.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
 function App() {
   return (
@@ -33,19 +33,17 @@ function App() {
           <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
           {/*<Route path="/community/:postId" element={<CommunityDetailsPage />} /> delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
-          <Route 
-            path="/admin" 
-            element={
-              <AdminRoute>
-                <AdminPage />
-              </AdminRoute>
-            } 
-          />
+
+          {/* Combined profile/ for users and admin view */}
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/settings" element={<AccountSettingsPage />} />
          
           {/* Protected routes — only for logged-in users */}
           {/* Add back protected routes after testing */}
+
+          {/* 404 — named route + catch-all */}
+          <Route path="/404" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <Footer />

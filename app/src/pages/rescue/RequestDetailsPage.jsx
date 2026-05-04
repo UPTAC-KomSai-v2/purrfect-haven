@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../../services/api.js';
 import '../../styles/rescue.css';
@@ -7,6 +7,11 @@ import Button from '../../components/Button.jsx';
 function RequestDetailsPage() {
   const { reportId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  if (!location.state?.fromSubmission) {
+    return <Navigate to="/404" replace />;
+  }
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

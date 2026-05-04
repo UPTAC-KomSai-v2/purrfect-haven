@@ -123,7 +123,7 @@ function LoginPage() {
           <Link to="/forgotPassword">Forgot password?</Link>
         </div>
 
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="button-full">
           {loading ? 'LOGGING IN...' : 'LOG IN'}
         </Button>
       </form>

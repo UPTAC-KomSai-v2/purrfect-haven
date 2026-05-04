@@ -2,69 +2,150 @@
    admin.css — moderation page styles
    adoption requests, community posts, stories, timeline, modals
    ============================================================== */
-
-
+   
 /* =====================================================
-   PAGE LAYOUT
+   SIDEBAR LAYOUT
    ===================================================== */
 
-.admin-container {
-  min-height: calc(100vh - 100px);
-  background-color: var(--color-background);
-  padding: 30px 20px;
+.admin-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
 }
 
-.admin-content {
-  max-width: 950px;
-  margin: 0 auto;
+.admin-sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: sticky;
+  top: 20px;
 }
 
-.admin-label {
-  text-align: right;
+.admin-sidebar-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   color: var(--color-text-secondary);
-  font-size: 13px;
+  padding: 0 10px;
   margin: 0 0 8px 0;
 }
 
-
-/* =====================================================
-   TABS
-   ===================================================== */
-
-.admin-tabs {
+.admin-sidebar-item {
   display: flex;
-  gap: 8px;
-  background-color: #FFFFFF;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 24px;
-  width: fit-content;
-}
-
-.admin-tab {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  width: 100%;
   background: transparent;
   border: none;
-  padding: 10px 24px;
+  padding: 10px 12px;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   color: var(--color-text-primary);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  text-align: left;
   font-family: inherit;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.admin-tab:hover {
+.admin-sidebar-item:hover {
   background-color: #F5EDE5;
 }
 
-.admin-tab.active {
+.admin-sidebar-item.active {
   background-color: var(--color-primary, #5A3923);
   color: #FFFFFF;
+}
+
+.admin-sidebar-item.active .tab-badge {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-main-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.admin-tab-filter {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #E0D6CC;
+  background-color: #FFFFFF;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary, #2C1A0E);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235A3923' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.admin-tab-filter:hover:not(:disabled) {
+  border-color: var(--color-secondary, #C0794A);
+  background-color: #F5EDE5;
+}
+
+.admin-tab-filter:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-tab-filter {
+  margin-left: auto;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #E0D6CC;
+  background-color: #FFFFFF;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary, #2C1A0E);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235A3923' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.admin-tab-filter:hover:not(:disabled) {
+  border-color: var(--color-secondary, #C0794A);
+  background-color: #F5EDE5;
+}
+
+.admin-tab-filter:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .tab-badge {
@@ -91,7 +172,6 @@
   gap: 10px;
   justify-content: center;
   margin-bottom: 24px;
-  flex-wrap: wrap;
 }
 
 .filter-pill {

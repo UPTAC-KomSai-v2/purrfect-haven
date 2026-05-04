@@ -63,7 +63,6 @@
 }
 
 .settings-form {
-  display: flex;
   padding: 20px 20px;
   flex-direction: column;
   gap: 20px;
@@ -71,6 +70,7 @@
 
 .profile-info-title > p {
   font-size: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group {

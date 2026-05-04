@@ -10,10 +10,10 @@ import { useSearchParams } from "react-router-dom";
 
 function AccountSettingsPage() {
   // react use state
-  const [firstName, setFirstName] = useState('Placeholder');
-  const [lastName, setLastName] = useState('Placeholder');
-  const [email, setEmail] = useState('placeholder@email.com');
-  const [contactNo, setContactNo] = useState('+63 999 999 9999');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [contactNo, setContactNo] = useState('');
   const [currentPass, setCurrentPass] = useState('');
   const [showCurrentPass, setShowCurrentPass] = useState(false);
   const [newPass, setNewPass] = useState('');
@@ -86,6 +86,7 @@ function AccountSettingsPage() {
                   id="firstName"
                   type="text"
                   value={firstName}
+                  placeholder="Enter new first name"
                   onChange={(e) => setFirstName(e.target.value)}
                   className={errors.firstName ? 'input-error' : ''}
                   required
@@ -98,8 +99,9 @@ function AccountSettingsPage() {
                   id="lastName"
                   type="text"
                   value={lastName}
+                  placeholder="Enter new last name"
                   onChange={(e) => setLastName(e.target.value)}
-                  className={errors.lastName ? 'input-error' : ''}
+                  className={errors.firstName ? 'input-error' : ''}
                   required
                 />
                 {errors.lastName && <span className="error-text">{errors.lastName}</span>}
@@ -108,35 +110,39 @@ function AccountSettingsPage() {
             <div className={`form-group ${errors.email ? 'form-group-error' : ''}`}>
               <label htmlFor="email">Email address</label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={errors.email ? 'input-error' : ''}
-                required
-              />
+                  id="email"
+                  type="email"
+                  value={email}
+                  placeholder="Enter new email address"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={errors.email ? 'input-error' : ''}
+                  required
+                />
               {errors.email && <span className="error-text">{errors.email}</span>}
             </div>
             <div className={`form-group ${errors.contactNo ? 'form-group-error' : ''}`}>
               <label htmlFor="contactNo">Phone Number</label>
               <input
-                id="contactNo"
-                type="tel"
-                value={contactNo}
-                onChange={(e) => setContactNo(e.target.value)}
-                className={errors.contactNo ? 'input-error' : ''}
+                  id="contactNo"
+                  type="tel"
+                  value={contactNo}
+                  placeholder="Enter new phone number"
+                  onChange={(e) => setContactNo(e.target.value)}
+                  className={errors.contactNo ? 'input-error' : ''}
                 required
-              />
+                />
               {errors.contactNo && <span className="error-text">{errors.contactNo}</span>}
             </div>
 
             <Button type="submit" disabled={loading}>
+              {/*Currently, no implementation of loading=useState */}
               {loading ? 'Updating Profile...' : 'Update Profile'}
             </Button>
-          </form> : 
+          </form> :
           <form className="settings-form change-password" onSubmit={handleSubmit}>
             <div className="profile-info-title">
               <h2>Change Password</h2>
+              <p>Change your password regularly to protect your account.</p>
             </div>
 
             <div className={`form-group password-field ${errors.currentPass ? 'form-group-error' : ''}`}>

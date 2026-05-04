@@ -1,10 +1,11 @@
 // profile dashboard — adoptions, welfare checks, stories, photo uploads.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import {
   getMyAdoptions,
+  getAllAdoptions,
   listPostAdoptionUpdates,
   listWelfareChecks,
   createPostAdoptionUpdate,
@@ -13,12 +14,17 @@ import {
 } from '../../services/adoptionsService.js';
 import {
   getMyStories,
+  getAllStories,
   submitStoryContent,
   initiateOwnStory,
 } from '../../services/storiesService.js';
+import api from '../../services/api.js';
 import PhotoUploader from '../../components/PhotoUploader.jsx';
 import CollapsibleItem from '../../components/CollapsibleItem.jsx';
 import { getMyRescueReports } from '../../services/rescueService.js';
+import CommunityPostCard from '../admin/CommunityPostCard.jsx';
+import RescueReportCard from '../admin/RescueReportCard.jsx';
+import '../../styles/admin.css';
 import '../../styles/profile.css';
 
 import { getPhotoUrl as buildPhotoUrl } from '../../utils/photoUrl.js';
@@ -88,6 +94,15 @@ function ProfilePage() {
   const [expandedStory, setExpandedStory] = useState(null);
   const [expandedReport, setExpandedReport] = useState(null);
 
+  // Admin state
+  const [adminAdoptions, setAdminAdoptions] = useState([]);
+  const [adminPosts, setAdminPosts]         = useState([]);
+  const [adminRescues, setAdminRescues]     = useState([]);
+  const [adminStories, setAdminStories]     = useState([]);
+  const [activeTab, setActiveTab]           = useState('adoptions');
+  const [statusFilter, setStatusFilter]     = useState('all');
+  const [expandedCards, setExpandedCards]   = useState({});
+
   const [welfareModal, setWelfareModal]       = useState(null);
   const [storyModal, setStoryModal]           = useState(null);
   const [updateModal, setUpdateModal]         = useState(null);
@@ -95,8 +110,13 @@ function ProfilePage() {
 
 
   useEffect(() => {
-    loadAll();
-  }, []);
+    if (!user) return;
+    if (user.is_admin) {
+      loadAdminData();
+    } else {
+      loadAll();
+    }
+  }, [user?.user_id]);
 
   async function loadAll() {
     const [a, p, s, r] = await Promise.allSettled([
@@ -125,6 +145,31 @@ function ProfilePage() {
     setLoading(false);
   }
 
+  async function loadAdminData() {
+    setLoading(true);
+    try {
+      const ads = await getAllAdoptions();
+      setAdminAdoptions(ads || []);
+    } catch (e) { console.error('Admin adoptions failed:', e); }
+
+    try {
+      const res = await api.get('/rescue');
+      setAdminRescues(res.data.reports || []);
+    } catch (e) { console.error('Admin rescues failed:', e); }
+
+    try {
+      const commRes = await api.get('/community');
+      setAdminPosts(commRes.data.posts || []);
+    } catch (e) { console.error('Admin community posts failed:', e); }
+
+    try {
+      const s = await getAllStories();
+      setAdminStories(s || []);
+    } catch (e) { console.error('Admin stories failed:', e); }
+
+    setLoading(false);
+  }
+
   function refreshAdoption(adoptionId) {
     setAdoptions((prev) =>
       prev.map((a) =>
@@ -134,6 +179,29 @@ function ProfilePage() {
       )
     );
   }
+
+  // ============ admin helpers ============
+
+  const filteredAdminAdoptions = useMemo(
+    () => statusFilter === 'all' ? adminAdoptions : adminAdoptions.filter(a => a.status === statusFilter),
+    [adminAdoptions, statusFilter]
+  );
+  const filteredAdminPosts = useMemo(
+    () => statusFilter === 'all' ? adminPosts : adminPosts.filter(p => p.status === statusFilter),
+    [adminPosts, statusFilter]
+  );
+  const filteredAdminRescues = useMemo(
+    () => statusFilter === 'all' ? adminRescues : adminRescues.filter(r => r.status === statusFilter),
+    [adminRescues, statusFilter]
+  );
+
+  const pendingAdoptionsCount = adminAdoptions.filter(a => a.status === 'pending').length;
+  const pendingPostsCount     = adminPosts.filter(p => p.status === 'pending').length;
+  const pendingRescuesCount   = adminRescues.filter(r => r.status === 'pending').length;
+  const submittedStoriesCount = adminStories.filter(s => s.status === 'submitted').length;
+
+  const toggleCard = (key) =>
+    setExpandedCards(prev => ({ ...prev, [key]: !prev[key] }));
 
   // ============ welfare check response ============
 
@@ -286,12 +354,109 @@ function ProfilePage() {
 
   const pendingStoryRequests = stories.filter((s) => s.status === 'pending');
 
+  if (user.is_admin) {
+    return (
+      <div className="profile-container">
+        <section className="profile-header">
+          <div>
+            <h1>Hello, {user.first_name}!</h1>
+            <p>Welcome back to your admin dashboard.</p>
+          </div>
+          <Link to="/profile/settings" className="profile-settings-link">
+            Account Settings
+          </Link>
+        </section>
+
+        <div className="admin-layout">
+          <aside className="admin-sidebar">
+            {/* Remove side bar label  <p className="admin-sidebar-label">Admin</p> */}
+            <button
+              className={`admin-sidebar-item ${activeTab === 'adoptions' ? 'active' : ''}`}
+              onClick={() => setActiveTab('adoptions')}
+            >
+              <span>Adoption Requests</span>
+              {pendingAdoptionsCount > 0 && <span className="tab-badge">{pendingAdoptionsCount}</span>}
+            </button>
+            <button
+              className={`admin-sidebar-item ${activeTab === 'community' ? 'active' : ''}`}
+              onClick={() => setActiveTab('community')}
+            >
+              <span>Community Posts</span>
+              {pendingPostsCount > 0 && <span className="tab-badge">{pendingPostsCount}</span>}
+            </button>
+            <button
+              className={`admin-sidebar-item ${activeTab === 'rescues' ? 'active' : ''}`}
+              onClick={() => setActiveTab('rescues')}
+            >
+              <span>Rescue Reports</span>
+              {pendingRescuesCount > 0 && <span className="tab-badge">{pendingRescuesCount}</span>}
+            </button>
+            <button
+              className={`admin-sidebar-item ${activeTab === 'stories' ? 'active' : ''}`}
+              onClick={() => setActiveTab('stories')}
+            >
+              <span>Stories</span>
+              {submittedStoriesCount > 0 && <span className="tab-badge">{submittedStoriesCount}</span>}
+            </button>
+          </aside>
+
+          <div className="admin-main">
+            <div className="admin-main-header">
+              <h2 className="admin-main-title">
+                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Reports', stories: 'Stories' }[activeTab]}
+              </h2>
+              <select
+                className="admin-tab-filter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                disabled={activeTab === 'stories'}
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div className="admin-cards">
+              {activeTab === 'community' && filteredAdminPosts.map(post => (
+                <CommunityPostCard
+                  key={post.post_id}
+                  post={post}
+                  isExpanded={!!expandedCards[`p-${post.post_id}`]}
+                  onToggle={() => toggleCard(`p-${post.post_id}`)}
+                  onApprove={() => {}}
+                  onReject={() => {}}
+                />
+              ))}
+              {activeTab === 'rescues' && filteredAdminRescues.map(report => (
+                <RescueReportCard
+                  key={report.report_id}
+                  report={report}
+                  isExpanded={!!expandedCards[`r-${report.report_id}`]}
+                  onToggle={() => toggleCard(`r-${report.report_id}`)}
+                />
+              ))}
+              {loading && <p className="empty-state">Loading...</p>}
+              {!loading && activeTab === 'community' && filteredAdminPosts.length === 0 && (
+                <p className="empty-state">No community posts found.</p>
+              )}
+              {!loading && activeTab === 'rescues' && filteredAdminRescues.length === 0 && (
+                <p className="empty-state">No rescue reports found.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-container">
       <section className="profile-header">
         <div>
           <h1>Hello, {user.first_name}!</h1>
-          <p>Welcome back to your dashboard.</p>
+          <p>Welcome back to your user</p>
         </div>
         <Link to="/profile/settings" className="profile-settings-link">
           Account Settings

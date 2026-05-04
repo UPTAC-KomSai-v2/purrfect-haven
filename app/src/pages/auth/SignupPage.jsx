@@ -176,7 +176,7 @@ function SignupPage() {
             </button>
           </div>
 
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="button-full">
             {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
           </Button>
         </form>

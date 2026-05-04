@@ -51,13 +51,6 @@ export default function Navbar() {
       <div className="navbar-links">
         {isAuthenticated ? (
           <>
-            {/* admin link — lumalabas lang kung admin yung user */}
-            {user?.is_admin === 1 && (
-              <Link to="/admin" className="navbar-admin">
-                Admin
-              </Link>
-            )}
-
             <Link to="/profile" className="navbar-profile">
               {user && `${user.first_name} ${user.last_name}`}
             </Link>

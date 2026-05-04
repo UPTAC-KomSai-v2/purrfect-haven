@@ -70,7 +70,7 @@ function RequestRescue() {
       setPrivacyConsent(false);
 
       setTimeout(() => {
-        navigate(`/rescue/${response.data.reportId}`);
+        navigate(`/rescue/${response.data.reportId}`, { state: { fromSubmission: true } });
       }, 2500);
     } catch (err) {
       console.error('Error submitting rescue report:', err);
@@ -220,9 +220,9 @@ function RequestRescue() {
         {success && <div className="status-message success">{success}</div>}
 
         <div className="submit-box">
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Submitting...' : 'Submit Rescue Report'}
-          </Button>
+            <Button type="submit" disabled={loading} className="button-full">
+              {loading ? 'Submitting...' : 'Submit Rescue Request'}
+            </Button>
         </div>
       </form>
     </FormCard>
