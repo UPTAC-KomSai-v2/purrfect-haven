@@ -50,8 +50,39 @@
   background: transparent;
 }
 
+/* Form Layout */
+.cap-adoption-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 .cap-third {
   width: calc(33.33% - 11px);
+}
+
+/* Feedback Messages */
+.cap-message-error {
+  width: 100%;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.cap-message-success {
+  width: 100%;
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+/* Media Upload UI */
+.cap-upload-notice {
+  display: block;
+  margin-top: 8px;
+  color: #999;
 }
 
 @media (max-width: 900px) {

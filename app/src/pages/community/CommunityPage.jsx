@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import FormCard from '../../components/FormCard.jsx';
 import Button from '../../components/Button.jsx';
-import '../../styles/forms.css';
-import '../../styles/rescue.css';
-import '../../styles/community.css';
-
-import bg1 from '../../assets/landing-bg-1.jpg';
-import bg2 from '../../assets/landing-bg-2.jpg';
-import bg3 from '../../assets/landing-bg-3.jpg';
+import api from '../../services/api.js'; 
+import "../../styles/forms.css";
+import "../../styles/rescue.css";
+import "../../styles/community.css";
+import bg1 from "../../assets/landing-bg-1.jpg";
+import bg2 from "../../assets/landing-bg-2.jpg";
+import bg3 from "../../assets/landing-bg-3.jpg";
 
 function CommunityPage() {
     const [loading, setLoading] = useState(false);
@@ -37,7 +37,25 @@ function CommunityPage() {
 
         setLoading(true);
         try {
-            // TODO: wire to POST /api/community-posts
+            await api.post('/community', {
+                pet_name: formData.petName,
+                species_name: formData.type, 
+                breed: formData.breed,
+                sex: formData.gender,       
+                age: parseInt(formData.age) || 0, 
+                color: formData.color,
+                personality: formData.personality,
+                organization: formData.organization,
+                health: formData.health,
+                location: formData.location,
+                description: formData.about,
+                
+                petName: formData.petName,
+                gender: formData.gender,
+                type: formData.type,
+                about: formData.about
+            });
+
             setSuccess('Community adoption post submitted successfully!');
             setFormData({
                 petName: '', age: '', weight: '', gender: '',
@@ -54,7 +72,6 @@ function CommunityPage() {
     return (
         <div className='cap-main-wrapper-parent'>
             <div className="cap-main-wrapper">
-                {/* LEFT COLUMN: Narrative & Media */}
                 <section className="cap-info-section">
                     <h1 className="cap-title">Community Adoption</h1>
 
@@ -163,13 +180,13 @@ function CommunityPage() {
                             </div>
 
                             {error && (
-                                <div style={{ width: '100%', backgroundColor: '#f8d7da', color: '#721c24', padding: '12px', borderRadius: '4px' }}>
+                                <div className="cap-message-error">
                                     {error}
                                 </div>
                             )}
 
                             {success && (
-                                <div style={{ width: '100%', backgroundColor: '#d4edda', color: '#155724', padding: '12px', borderRadius: '4px' }}>
+                                <div className="cap-message-success">
                                     {success}
                                 </div>
                             )}

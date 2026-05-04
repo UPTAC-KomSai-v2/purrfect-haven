@@ -32,7 +32,6 @@ function CommunityPostCard({ post, isExpanded, onToggle, onApprove, onReject }) 
                 <p>{post.species_name}</p>
               </div>
 
-              {/* Added Weight here so it's not lost */}
               <div className="detail-item">
                 <h4>Weight (kg)</h4>
                 <p>{post.weight || 'N/A'}</p>

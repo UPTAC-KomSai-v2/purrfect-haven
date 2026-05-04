@@ -32,8 +32,8 @@ export async function createCommunityPost(req, res) {
     // We now pass raw values to specific columns and only the 'about' text to 'description'.
     const [result] = await pool.query(
       `INSERT INTO Community_Posts 
-      (user_id, pet_name, species_id, breed, sex, age, color, personality, organization, health, weight, location, description) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (user_id, pet_name, species_id, breed, sex, age, color, personality, organization, health, location, description) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         userId, 
         petName, 
@@ -45,7 +45,6 @@ export async function createCommunityPost(req, res) {
         personality || null, 
         organization || null, 
         health || null, 
-        weight || null,
         location,
         about || null  
       ]
