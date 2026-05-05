@@ -22,6 +22,7 @@ import api from '../../services/api.js';
 import PhotoUploader from '../../components/PhotoUploader.jsx';
 import CollapsibleItem from '../../components/CollapsibleItem.jsx';
 import { getMyRescueReports } from '../../services/rescueService.js';
+import AdoptionRequestCard from '../admin/AdoptionRequestCard.jsx';
 import CommunityPostCard from '../admin/CommunityPostCard.jsx';
 import RescueReportCard from '../admin/RescueReportCard.jsx';
 import '../../styles/admin.css';
@@ -354,6 +355,9 @@ function ProfilePage() {
 
   const pendingStoryRequests = stories.filter((s) => s.status === 'pending');
 
+  console.log('activeTab:', activeTab);
+console.log('adminAdoptions:', adminAdoptions);
+console.log('filteredAdminAdoptions:', filteredAdminAdoptions);
   if (user.is_admin) {
     return (
       <div className="profile-container">
@@ -437,7 +441,22 @@ function ProfilePage() {
                   onToggle={() => toggleCard(`r-${report.report_id}`)}
                 />
               ))}
+
+              {activeTab === 'adoptions' && (filteredAdminAdoptions || []).map(request => (
+                <AdoptionRequestCard
+                  key={request.adoption_id}
+                  request={request}
+                  isExpanded={!!expandedCards[`a-${request.adoption_id}`]}
+                  onToggle={() => toggleCard(`a-${request.adoption_id}`)}
+                  onApprove={() => {}}
+                  onReject={() => {}}
+                />
+              ))}
               {loading && <p className="empty-state">Loading...</p>}
+              {!loading && activeTab === 'adoptions' && filteredAdminAdoptions.length === 0 && (
+                <p className="empty-state">No adoption requests found.</p>
+              )}
+
               {!loading && activeTab === 'community' && filteredAdminPosts.length === 0 && (
                 <p className="empty-state">No community posts found.</p>
               )}

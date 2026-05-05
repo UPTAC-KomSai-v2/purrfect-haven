@@ -26,7 +26,7 @@ function RescueReportCard({ report, isExpanded, onToggle }) {
       <button className="card-header card-header-gradient" onClick={onToggle}>
         <div className="card-header-text">
           <h2>Rescue Spotting at {report.location}</h2>
-          <p>Reported by {report.reporter_name} <span className="dot">⋅</span> {formatDate(report.date_reported)}</p>
+          <p className="header-meta">Reported by {report.reporter_name} <span className="dot">⋅</span> {formatDate(report.date_reported)}</p>
         </div>
         <span className={`chevron ${isExpanded ? 'up' : ''}`}>▼</span>
       </button>
