@@ -26,7 +26,6 @@ function AdoptionListPage() {
   const [availablePets, setAvailablePets] = useState([]);
   const [adoptedPets, setAdoptedPets]     = useState([]);
   const [selectedSpecies, setSelectedSpecies] = useState('');
-  const [locationSearch, setLocationSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -38,7 +37,7 @@ function AdoptionListPage() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    const filters = { species: selectedSpecies, location: locationSearch };
+    const filters = { species: selectedSpecies };
 
     async function fetchAllPets() {
       setLoading(true);
@@ -59,7 +58,7 @@ function AdoptionListPage() {
     }
 
     fetchAllPets();
-  }, [selectedSpecies, locationSearch]);
+  }, [selectedSpecies]);
 
   // auto-dismiss toast after 3s
   useEffect(() => {
@@ -74,7 +73,7 @@ function AdoptionListPage() {
 
   // i-reload ang both lists pagkatapos ng add/edit/delete
   async function refreshAllPets() {
-    const filters = { species: selectedSpecies, location: locationSearch };
+    const filters = { species: selectedSpecies};
     try {
       const [available, adopted] = await Promise.all([
         getPets(filters),
@@ -170,17 +169,6 @@ function AdoptionListPage() {
               {filter.label}
             </button>
           ))}
-        </div>
-
-        <div className="location-search">
-          <label htmlFor="location-input">Location</label>
-          <input
-            id="location-input"
-            type="text"
-            placeholder="Search for a pet location"
-            value={locationSearch}
-            onChange={(e) => setLocationSearch(e.target.value)}
-          />
         </div>
       </section>
 
