@@ -29,18 +29,6 @@ import CommunityPostCard from './admin/CommunityPostCard.jsx';
 import RescueReportCard from './admin/RescueRequestCard.jsx';
 import '../styles/admin.css';
 import '../styles/dashboard.css';
-=======
-} from '../../services/storiesService.js';
-import api from '../../services/api.js';
-import PhotoUploader from '../../components/PhotoUploader.jsx';
-import CollapsibleItem, { CollapsibleGroup } from '../../components/CollapsibleItem.jsx';
-import { getMyRescueReports } from '../../services/rescueService.js';
-import AdoptionRequestCard from '../admin/AdoptionRequestCard.jsx';
-import CommunityPostCard from '../admin/CommunityPostCard.jsx';
-import RescueReportCard from '../admin/RescueRequestCard.jsx';
-import '../../styles/admin.css';
-import '../../styles/profile.css';
->>>>>>> main:app/src/pages/profile/ProfilePage.jsx
 
 import { getPhotoUrl as buildPhotoUrl } from '../utils/photoUrl.js';
 const getPhotoUrl = (filePath) => buildPhotoUrl(filePath, 'https://placehold.co/120x120?text=No+Photo');
