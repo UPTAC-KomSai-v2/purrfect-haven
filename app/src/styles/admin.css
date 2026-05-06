@@ -206,6 +206,12 @@
   gap: 14px;
 }
 
+.admin-card-container {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 .admin-card {
   background-color: #FFFFFF;
   border-radius: 12px;
@@ -220,8 +226,8 @@
 
 .card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 16px;
   width: 100%;
   background: transparent;
   border: none;
@@ -229,6 +235,11 @@
   cursor: pointer;
   text-align: left;
   font-family: inherit;
+}
+
+.card-header-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .card-header-text h2 {
@@ -251,7 +262,7 @@
 
 /* gradient header — para sa community posts */
 .card-header-gradient {
-  background: linear-gradient(to right, #5A3923, #C0794A);
+  background: linear-gradient(to right, var(--color-header-gradient-end), var(--color-header-gradient-start));
 }
 
 .card-header-gradient .card-header-text h2,
@@ -259,6 +270,7 @@
   color: #FFFFFF;
 }
 
+/* Remove this */
 .header-meta {
   font-weight: 400;
   font-size: 13px;
@@ -280,11 +292,21 @@
   transform: rotate(180deg);
 }
 
+.card-header .dashboard-item-chevron {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.2s ease;
+}
+
+.card-header .dashboard-item-chevron.up {
+  transform: rotate(180deg);
+}
+
 .card-content {
   padding: 22px 24px 24px 24px;
   border-top: 1px solid #F0E6DC;
 }
-
 
 /* =====================================================
    CARD GRID (info sections inside expanded card)
@@ -292,13 +314,13 @@
 
 .card-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
   margin-bottom: 18px;
 }
 
 .card-grid-two {
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 
 .info-section h3 {
@@ -763,6 +785,10 @@
 .story-status-submitted { background-color: #D6E9FF; color: #1A4D8A; }
 .story-status-published { background-color: #D6F4DE; color: #1A6A2E; }
 .story-status-rejected  { background-color: #FFD6D6; color: #8A1A1A; }
+
+.status-badge.status-in_progress { background-color: var(--color-info-bg);     color: var(--color-info); }
+.status-badge.status-resolved    { background-color: var(--color-success-bg);  color: var(--color-success-text); }
+.status-badge.status-closed      { background-color: var(--color-neutral-bg);  color: var(--color-neutral); }
 
 .meta-tag {
   display: inline-block;

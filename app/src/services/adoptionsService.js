@@ -47,6 +47,11 @@ export async function listPostAdoptionUpdates(adoptionId) {
 // welfare checks
 // =====================================================
 
+export async function getAdminWelfareChecks() {
+  const response = await api.get('/welfare-checks');
+  return response.data.checks;
+}
+
 export async function requestWelfareCheck(adoptionId) {
   const response = await api.post(`/adoptions/${adoptionId}/welfare-checks`);
   return response.data;

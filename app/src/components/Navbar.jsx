@@ -1,12 +1,28 @@
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../services/api.js';
 import '../styles/navbar.css';
 import favicon from '../assets/favicon.png';
+import dashboardIcon from '../assets/icons/dashboard.svg';
+import logoutIcon from '../assets/icons/logout.svg';
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
 
   async function handleLogout() {
     try {
@@ -37,37 +53,49 @@ export default function Navbar() {
         <img src={favicon} alt="Purrfect Haven Logo" />
       </Link>
 
-      <div className="navbar-links">
-        <Link to="/pets">Find a pet</Link>
-        <Link to="/rescue">
-          Request a rescue
-        </Link>
-        <Link to="/community">
-          Community posts
-        </Link>
-      </div>
+      <div className="navbar-right">
+        <div className="navbar-links">
+          <Link to="/pets">Find a pet</Link>
+          <Link to="/rescue">Request a rescue</Link>
+          <Link to="/community">Community posts</Link>
+        </div>
 
-      {/* Changing view */}
-      <div className="navbar-links">
-        {isAuthenticated ? (
-          <>
-            <Link to="/profile" className="navbar-profile">
-              {user && `${user.first_name} ${user.last_name}`}
-            </Link>
-            <button onClick={handleLogout} className="navbar-logout">
-              Log out
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login">Log in</Link>
-            <Link to="/signup" className="navbar-signup">
-              Sign up
-            </Link>
-          </>
-        )}
-
-        {/* Add view when authenticated */}
+        <div className="navbar-links">
+          {isAuthenticated ? (
+            <div className="navbar-user-dropdown" ref={dropdownRef}>
+              <button
+                className="navbar-user-trigger"
+                onClick={() => setDropdownOpen((o) => !o)}
+              >
+                {user && `${user.first_name} ${user.last_name}`}
+              </button>
+              {dropdownOpen && (
+                <div className="navbar-user-menu">
+                  <Link
+                    to="/profile"
+                    className="navbar-user-item"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    <img src={dashboardIcon} alt="Dashboard Icon" className="navbar-user-item-icon" /> Dashboard
+                  </Link>
+                  <button
+                    className="navbar-user-item"
+                    onClick={handleLogout}
+                  >
+                    <img src={logoutIcon} alt="Logout Icon" className="navbar-user-item-icon" /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link to="/login">Log in</Link>
+              <Link to="/signup" className="navbar-signup">
+                Sign up
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
     </nav>

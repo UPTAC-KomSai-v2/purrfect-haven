@@ -8,6 +8,7 @@ import {
 } from '../../services/petsService.js';
 import PetCard from '../../components/PetCard.jsx';
 import PetFormModal from '../../components/PetFormModal.jsx';
+import addIcon from '../../assets/icons/add.svg';
 import '../../styles/pets.css';
 
 const SPECIES_FILTERS = [
@@ -139,21 +140,17 @@ function AdoptionListPage() {
           Browse through list of pets up for adoption and find the perfect
           companion waiting to meet you!
         </p>
-      </section>
-
-      {/* admin bar — visible kung admin lang */}
-      {isAdmin && (
-        <section className="admin-bar">
-          <p className="admin-bar-label">Admin Controls</p>
+        {isAdmin && (
           <button
             className="admin-add-btn"
             onClick={() => setShowAddModal(true)}
             disabled={loadingEdit}
           >
-            + Add a New Pet
+            <img src={addIcon} alt="" className="admin-add-icon" />
+            Add a New Pet
           </button>
-        </section>
-      )}
+        )}
+      </section>
 
       <section className="adopt-filters">
         <div className="filter-chips">

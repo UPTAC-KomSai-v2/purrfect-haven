@@ -91,7 +91,7 @@ function Landing() {
                   Adopted Henhen • Dec 2023
                 </p>
                 
-                <Button>Adopt Now</Button>
+                <Button className="story-button" onClick={() => navigate('/pets')}>Adopt Now</Button>
               </div>
             </>
           )}

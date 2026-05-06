@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { getPetById } from '../../services/petsService.js';
 import '../../styles/petdetail.css';
 
-import { getPhotoUrl } from '../../utils/photoUrl.js';
+import { getPhotoUrl, getPetPhotoUrl } from '../../utils/photoUrl.js';
 
 function PetDetailPage() {
   const { id } = useParams(); // grabs the :id from the URL
@@ -77,7 +77,7 @@ function PetDetailPage() {
   const mainPhoto = photos[selectedPhotoIndex];
   const mainPhotoUrl = mainPhoto
     ? getPhotoUrl(mainPhoto.file_path)
-    : getPhotoUrl(null);
+    : getPetPhotoUrl(null, pet.name);
 
   return (
     <div className="detail-page">
@@ -90,6 +90,7 @@ function PetDetailPage() {
             src={mainPhotoUrl}
             alt={pet.name}
             className="detail-main-photo"
+            onError={(e) => { e.currentTarget.src = 'https://placehold.co/400x400?text=No+Photo'; }}
           />
 
           {/* Thumbnails — only show if there are multiple photos */}
@@ -104,6 +105,7 @@ function PetDetailPage() {
                     'detail-thumbnail ' +
                     (index === selectedPhotoIndex ? 'detail-thumbnail-active' : '')
                   }
+                  onError={(e) => { e.currentTarget.src = 'https://placehold.co/200x200?text=No+Photo'; }}
                   onClick={() => setSelectedPhotoIndex(index)}
                 />
               ))}

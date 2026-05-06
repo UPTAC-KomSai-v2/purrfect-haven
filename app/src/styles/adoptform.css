@@ -29,13 +29,6 @@ h1 {
   font-size: 40px;
 }
 
-h3 {
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  font-size: 15px;
-  margin: 10px 0;
-}
-
 .adoptpet-container > p {
   font-size: 14px;
   color: var(--color-text-secondary);
@@ -113,7 +106,17 @@ label{
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  margin-left: 20px;
+}
+
+/* Space below the p sub-label before checkbox/radio options */
+.report-form-group > p {
+  margin-bottom: 6px;
+}
+
+/* Gap between consecutive option rows */
+.report-form-group .checkbox-group + .checkbox-group,
+.report-form-group .radio-group + .radio-group {
+  margin-top: 6px;
 }
 
 .radio-group input[type="radio"] {

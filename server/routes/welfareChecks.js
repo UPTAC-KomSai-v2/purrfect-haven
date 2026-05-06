@@ -1,9 +1,11 @@
 import express from 'express';
 import {
+  getAllWelfareChecks,
   respondToWelfareCheck,
   getMyPendingChecks,
 } from '../controllers/welfareChecksController.js';
-import { requireAuth } from '../middleware/requireAuth.js';
+import { requireAuth }  from '../middleware/requireAuth.js';
+import { requireAdmin } from '../middleware/requireAdmin.js';
 import { makeUploader, handleUploadError } from '../middleware/upload.js';
 
 const router = express.Router();
@@ -25,6 +27,9 @@ router.put(
   },
   respondToWelfareCheck
 );
+
+// admin sees all welfare checks
+router.get('/', requireAdmin, getAllWelfareChecks);
 
 // adopter sees their own pending checks
 router.get('/pending', requireAuth, getMyPendingChecks);

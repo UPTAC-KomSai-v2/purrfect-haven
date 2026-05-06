@@ -1,11 +1,14 @@
 // profile dashboard — adoptions, welfare checks, stories, photo uploads.
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import {
   getMyAdoptions,
   getAllAdoptions,
+  updateAdoptionStatus,
+  requestWelfareCheck,
+  getAdminWelfareChecks,
   listPostAdoptionUpdates,
   listWelfareChecks,
   createPostAdoptionUpdate,
@@ -20,11 +23,11 @@ import {
 } from '../../services/storiesService.js';
 import api from '../../services/api.js';
 import PhotoUploader from '../../components/PhotoUploader.jsx';
-import CollapsibleItem from '../../components/CollapsibleItem.jsx';
+import CollapsibleItem, { CollapsibleGroup } from '../../components/CollapsibleItem.jsx';
 import { getMyRescueReports } from '../../services/rescueService.js';
 import AdoptionRequestCard from '../admin/AdoptionRequestCard.jsx';
 import CommunityPostCard from '../admin/CommunityPostCard.jsx';
-import RescueReportCard from '../admin/RescueReportCard.jsx';
+import RescueReportCard from '../admin/RescueRequestCard.jsx';
 import '../../styles/admin.css';
 import '../../styles/profile.css';
 
@@ -96,18 +99,21 @@ function ProfilePage() {
   const [expandedReport, setExpandedReport] = useState(null);
 
   // Admin state
-  const [adminAdoptions, setAdminAdoptions] = useState([]);
-  const [adminPosts, setAdminPosts]         = useState([]);
-  const [adminRescues, setAdminRescues]     = useState([]);
-  const [adminStories, setAdminStories]     = useState([]);
+  const [adminAdoptions, setAdminAdoptions]       = useState([]);
+  const [adminPosts, setAdminPosts]               = useState([]);
+  const [adminRescues, setAdminRescues]           = useState([]);
+  const [adminStories, setAdminStories]           = useState([]);
+  const [adminWelfareChecks, setAdminWelfareChecks] = useState([]);
   const [activeTab, setActiveTab]           = useState('adoptions');
   const [statusFilter, setStatusFilter]     = useState('all');
-  const [expandedCards, setExpandedCards]   = useState({});
 
-  const [welfareModal, setWelfareModal]       = useState(null);
-  const [storyModal, setStoryModal]           = useState(null);
-  const [updateModal, setUpdateModal]         = useState(null);
-  const [shareStoryModal, setShareStoryModal] = useState(null);
+  const [welfareModal, setWelfareModal]             = useState(null);
+  const [storyModal, setStoryModal]                 = useState(null);
+  const [updateModal, setUpdateModal]               = useState(null);
+  const [shareStoryModal, setShareStoryModal]       = useState(null);
+  const [adoptionActionModal, setAdoptionActionModal] = useState(null);
+  const [actionSubmitting, setActionSubmitting]       = useState(false);
+  const [toast, setToast]                             = useState(null);
 
 
   useEffect(() => {
@@ -168,7 +174,80 @@ function ProfilePage() {
       setAdminStories(s || []);
     } catch (e) { console.error('Admin stories failed:', e); }
 
+    try {
+      const wc = await getAdminWelfareChecks();
+      setAdminWelfareChecks(wc || []);
+    } catch (e) { console.error('Admin welfare checks failed:', e); }
+
     setLoading(false);
+  }
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  function showToast(message, kind = 'success') {
+    setToast({ message, kind });
+  }
+
+  // ============ admin adoption actions ============
+
+  function openAdoptionAction(request, type) {
+    setAdoptionActionModal({ type, request, note: '', date: '' });
+  }
+
+  async function confirmAdoptionAction() {
+    if (!adoptionActionModal) return;
+    const { type, request, note, date } = adoptionActionModal;
+
+    const statusMap = {
+      schedule:     'appointment_scheduled',
+      under_review: 'under_review',
+      approve:      'approved',
+      reject:       'rejected',
+      complete:     'completed',
+    };
+
+    const extras = {};
+    if (type === 'schedule')                     extras.appointment_date = date;
+    if (type === 'approve' || type === 'reject') extras.decision_note = note || null;
+
+    setActionSubmitting(true);
+    try {
+      await updateAdoptionStatus(request.adoption_id, statusMap[type], extras);
+      setAdminAdoptions((prev) =>
+        prev.map((a) =>
+          a.adoption_id === request.adoption_id
+            ? {
+                ...a,
+                status: statusMap[type],
+                ...(type === 'schedule' ? { appointment_date: date } : {}),
+                ...(type === 'approve' || type === 'reject'
+                  ? { decision_note: note || null }
+                  : {}),
+              }
+            : a
+        )
+      );
+      setAdoptionActionModal(null);
+      showToast('Adoption status updated successfully.');
+    } catch (err) {
+      console.error('Adoption action error:', err);
+      showToast(err.response?.data?.error || 'Failed to update adoption status.', 'error');
+    } finally {
+      setActionSubmitting(false);
+    }
+  }
+
+  async function handleRequestWelfareCheck(adoptionId) {
+    try {
+      await requestWelfareCheck(adoptionId);
+      showToast('Welfare check requested. The adopter will be notified.');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to request welfare check.', 'error');
+    }
   }
 
   function refreshAdoption(adoptionId) {
@@ -196,13 +275,11 @@ function ProfilePage() {
     [adminRescues, statusFilter]
   );
 
-  const pendingAdoptionsCount = adminAdoptions.filter(a => a.status === 'pending').length;
-  const pendingPostsCount     = adminPosts.filter(p => p.status === 'pending').length;
-  const pendingRescuesCount   = adminRescues.filter(r => r.status === 'pending').length;
-  const submittedStoriesCount = adminStories.filter(s => s.status === 'submitted').length;
-
-  const toggleCard = (key) =>
-    setExpandedCards(prev => ({ ...prev, [key]: !prev[key] }));
+  const pendingAdoptionsCount  = adminAdoptions.filter(a => a.status === 'pending').length;
+  const pendingPostsCount      = adminPosts.filter(p => p.status === 'pending').length;
+  const pendingRescuesCount    = adminRescues.filter(r => r.status === 'pending').length;
+  const submittedStoriesCount  = adminStories.filter(s => s.status === 'submitted').length;
+  const pendingWelfareCount    = adminWelfareChecks.filter(w => w.status === 'pending').length;
 
   // ============ welfare check response ============
 
@@ -355,9 +432,6 @@ function ProfilePage() {
 
   const pendingStoryRequests = stories.filter((s) => s.status === 'pending');
 
-  console.log('activeTab:', activeTab);
-console.log('adminAdoptions:', adminAdoptions);
-console.log('filteredAdminAdoptions:', filteredAdminAdoptions);
   if (user.is_admin) {
     return (
       <div className="profile-container">
@@ -381,6 +455,15 @@ console.log('filteredAdminAdoptions:', filteredAdminAdoptions);
               <span>Adoption Requests</span>
               {pendingAdoptionsCount > 0 && <span className="tab-badge">{pendingAdoptionsCount}</span>}
             </button>
+
+            <button
+              className={`admin-sidebar-item ${activeTab === 'welfare' ? 'active' : ''}`}
+              onClick={() => setActiveTab('welfare')}
+            >
+              <span>Welfare Checks</span>
+              {pendingWelfareCount > 0 && <span className="tab-badge">{pendingWelfareCount}</span>}
+            </button>
+
             <button
               className={`admin-sidebar-item ${activeTab === 'community' ? 'active' : ''}`}
               onClick={() => setActiveTab('community')}
@@ -402,70 +485,94 @@ console.log('filteredAdminAdoptions:', filteredAdminAdoptions);
               <span>Stories</span>
               {submittedStoriesCount > 0 && <span className="tab-badge">{submittedStoriesCount}</span>}
             </button>
+
           </aside>
 
           <div className="admin-main">
             <div className="admin-main-header">
               <h2 className="admin-main-title">
-                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Reports', stories: 'Stories' }[activeTab]}
+                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Reports', stories: 'Stories', welfare: 'Welfare Checks' }[activeTab]}
               </h2>
-              <select
+              <AutoSizeSelect
                 className="admin-tab-filter"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                disabled={activeTab === 'stories'}
+                disabled={activeTab === 'stories' || activeTab === 'welfare'}
               >
                 <option value="all">All</option>
                 <option value="pending">Pending</option>
+                <option value="appointment_scheduled">Appointment Scheduled</option>
+                <option value="under_review">Under Review</option>
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
-              </select>
+                <option value="completed">Completed</option>
+              </AutoSizeSelect>
             </div>
 
-            <div className="admin-cards">
-              {activeTab === 'community' && filteredAdminPosts.map(post => (
-                <CommunityPostCard
-                  key={post.post_id}
-                  post={post}
-                  isExpanded={!!expandedCards[`p-${post.post_id}`]}
-                  onToggle={() => toggleCard(`p-${post.post_id}`)}
-                  onApprove={() => {}}
-                  onReject={() => {}}
-                />
-              ))}
-              {activeTab === 'rescues' && filteredAdminRescues.map(report => (
-                <RescueReportCard
-                  key={report.report_id}
-                  report={report}
-                  isExpanded={!!expandedCards[`r-${report.report_id}`]}
-                  onToggle={() => toggleCard(`r-${report.report_id}`)}
-                />
-              ))}
-
-              {activeTab === 'adoptions' && (filteredAdminAdoptions || []).map(request => (
-                <AdoptionRequestCard
-                  key={request.adoption_id}
-                  request={request}
-                  isExpanded={!!expandedCards[`a-${request.adoption_id}`]}
-                  onToggle={() => toggleCard(`a-${request.adoption_id}`)}
-                  onApprove={() => {}}
-                  onReject={() => {}}
-                />
-              ))}
-              {loading && <p className="empty-state">Loading...</p>}
-              {!loading && activeTab === 'adoptions' && filteredAdminAdoptions.length === 0 && (
-                <p className="empty-state">No adoption requests found.</p>
-              )}
-
-              {!loading && activeTab === 'community' && filteredAdminPosts.length === 0 && (
-                <p className="empty-state">No community posts found.</p>
-              )}
-              {!loading && activeTab === 'rescues' && filteredAdminRescues.length === 0 && (
-                <p className="empty-state">No rescue reports found.</p>
-              )}
-            </div>
+            <CollapsibleGroup>
+              <div className="admin-cards">
+                {activeTab === 'community' && filteredAdminPosts.map(post => (
+                  <CommunityPostCard
+                    key={post.post_id}
+                    post={post}
+                    onApprove={() => {}}
+                    onReject={() => {}}
+                  />
+                ))}
+                {activeTab === 'rescues' && filteredAdminRescues.map(report => (
+                  <RescueReportCard
+                    key={report.report_id}
+                    report={report}
+                  />
+                ))}
+                {activeTab === 'adoptions' && (filteredAdminAdoptions || []).map(request => (
+                  <AdoptionRequestCard
+                    key={request.adoption_id}
+                    request={request}
+                    onScheduleAppointment={() => openAdoptionAction(request, 'schedule')}
+                    onMarkUnderReview={() => openAdoptionAction(request, 'under_review')}
+                    onApprove={() => openAdoptionAction(request, 'approve')}
+                    onReject={() => openAdoptionAction(request, 'reject')}
+                    onComplete={() => openAdoptionAction(request, 'complete')}
+                    onRequestWelfareCheck={() => handleRequestWelfareCheck(request.adoption_id)}
+                  />
+                ))}
+                {activeTab === 'welfare' && adminWelfareChecks.map((check) => (
+                  <WelfareCheckCard key={check.check_id} check={check} />
+                ))}
+                {loading && <p className="empty-state">Loading...</p>}
+                {!loading && activeTab === 'adoptions' && filteredAdminAdoptions.length === 0 && (
+                  <p className="empty-state">No adoption requests found.</p>
+                )}
+                {!loading && activeTab === 'community' && filteredAdminPosts.length === 0 && (
+                  <p className="empty-state">No community posts found.</p>
+                )}
+                {!loading && activeTab === 'rescues' && filteredAdminRescues.length === 0 && (
+                  <p className="empty-state">No rescue reports found.</p>
+                )}
+                {!loading && activeTab === 'welfare' && adminWelfareChecks.length === 0 && (
+                  <p className="empty-state">No welfare checks yet.</p>
+                )}
+              </div>
+            </CollapsibleGroup>
           </div>
         </div>
+
+        {adoptionActionModal && (
+          <AdoptionActionModal
+            modal={adoptionActionModal}
+            onChangeField={(field, value) =>
+              setAdoptionActionModal((prev) => ({ ...prev, [field]: value }))
+            }
+            onConfirm={confirmAdoptionAction}
+            onCancel={() => setAdoptionActionModal(null)}
+            isSubmitting={actionSubmitting}
+          />
+        )}
+
+        {toast && (
+          <div className={`toast toast-${toast.kind}`}>{toast.message}</div>
+        )}
       </div>
     );
   }
@@ -475,7 +582,7 @@ console.log('filteredAdminAdoptions:', filteredAdminAdoptions);
       <section className="profile-header">
         <div>
           <h1>Hello, {user.first_name}!</h1>
-          <p>Welcome back to your user</p>
+          <p>Welcome back to your user dashboard</p>
         </div>
         <Link to="/profile/settings" className="profile-settings-link">
           Account Settings
@@ -1094,6 +1201,238 @@ function StoryWriteModal({ modal, onChangeField, onConfirm, onCancel, isResponse
             disabled={!modal.title.trim() || !modal.content.trim()}
           >
             Submit for Review
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =====================================================
+// WelfareCheckCard — admin view of a single welfare check
+// =====================================================
+const CONDITION_LABELS = {
+  excellent: 'Excellent',
+  good:      'Good',
+  concerning:'Concerning',
+  critical:  'Critical',
+};
+
+function WelfareCheckCard({ check }) {
+  const isPending = check.status === 'pending';
+
+  return (
+    <CollapsibleItem
+      wrapperClassName={`admin-card status-${check.status}`}
+      headerClassName="card-header card-header-gradient"
+      titleContainerClassName="card-header-text"
+      contentClassName="card-content"
+      TitleTag="h2"
+      title={`Welfare Check — ${check.pet.name}`}
+      meta={`Adopter: ${check.adopter.full_name} · Requested ${formatDate(check.requested_at)}`}
+      statusLabel={isPending ? 'Awaiting Response' : 'Response Received'}
+      statusClass={isPending ? 'status-pending' : 'status-completed'}
+    >
+      <div className="card-grid card-grid-two">
+        <div className="info-section">
+          <h3 className="section-title">PET & ADOPTER</h3>
+          <div className="detail-item">
+            <h4>Pet</h4>
+            <p>{check.pet.name}</p>
+          </div>
+          <div className="detail-item">
+            <h4>Adopter</h4>
+            <p>{check.adopter.full_name}</p>
+          </div>
+          <div className="detail-item">
+            <h4>Email</h4>
+            <p>{check.adopter.email}</p>
+          </div>
+        </div>
+
+        <div className="info-section">
+          <h3 className="section-title">CHECK DETAILS</h3>
+          <div className="detail-item">
+            <h4>Requested</h4>
+            <p>{formatDate(check.requested_at)}</p>
+          </div>
+          {!isPending && (
+            <>
+              <div className="detail-item">
+                <h4>Responded</h4>
+                <p>{formatDate(check.responded_at)}</p>
+              </div>
+              <div className="detail-item">
+                <h4>Condition</h4>
+                <p className={`condition-label condition-${check.condition_status}`}>
+                  {CONDITION_LABELS[check.condition_status] || check.condition_status}
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {!isPending && check.notes && (
+        <div className="info-section" style={{ marginTop: '14px' }}>
+          <h3 className="section-title">ADOPTER NOTES</h3>
+          <p style={{ whiteSpace: 'pre-wrap', fontSize: '13px', color: 'var(--color-text-primary)' }}>
+            {check.notes}
+          </p>
+        </div>
+      )}
+
+      {!isPending && check.photos.length > 0 && (
+        <div className="info-section" style={{ marginTop: '14px' }}>
+          <h3 className="section-title">PHOTOS</h3>
+          <div className="post-photos">
+            {check.photos.map((photo, i) => (
+              <a key={i} href={getPhotoUrl(photo)} target="_blank" rel="noopener noreferrer">
+                <img src={getPhotoUrl(photo)} alt={`Welfare photo ${i + 1}`} />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isPending && (
+        <p className="status-note">Waiting for adopter to submit their response.</p>
+      )}
+    </CollapsibleItem>
+  );
+}
+
+// =====================================================
+// AutoSizeSelect — resizes to fit the selected option
+// =====================================================
+function AutoSizeSelect({ value, onChange, disabled, className, children }) {
+  const selectRef = useRef(null);
+  const spanRef   = useRef(null);
+
+  useEffect(() => {
+    if (!selectRef.current || !spanRef.current) return;
+    const opt = Array.from(selectRef.current.options).find((o) => o.value === value);
+    if (!opt) return;
+    spanRef.current.textContent = opt.text;
+    selectRef.current.style.width = Math.max(spanRef.current.offsetWidth + 10, 80) + 'px';
+  }, [value]);
+
+  return (
+    <>
+      <span
+        ref={spanRef}
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          visibility: 'hidden',
+          whiteSpace: 'nowrap',
+          fontSize: '13px',
+          fontWeight: 600,
+          fontFamily: 'inherit',
+          padding: '10px 30px 10px 14px',
+          pointerEvents: 'none',
+        }}
+      />
+      <select
+        ref={selectRef}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className={className}
+      >
+        {children}
+      </select>
+    </>
+  );
+}
+
+// =====================================================
+// AdoptionActionModal
+// =====================================================
+function AdoptionActionModal({ modal, onChangeField, onConfirm, onCancel, isSubmitting }) {
+  const titles = {
+    schedule:     'Schedule Appointment',
+    under_review: 'Mark as Under Review',
+    approve:      'Approve Adoption',
+    reject:       'Reject Application',
+    complete:     'Mark as Completed',
+  };
+
+  const confirmLabels = {
+    schedule:     'Schedule',
+    under_review: 'Mark as Under Review',
+    approve:      'Approve',
+    reject:       'Reject',
+    complete:     'Mark as Completed',
+  };
+
+  const confirmBtnClass = modal.type === 'reject' ? 'reject-btn' : 'approve-btn';
+  const isDisabled = (modal.type === 'schedule' && !modal.date) || isSubmitting;
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+        <h2>{titles[modal.type]}</h2>
+        <p className="modal-subtext">
+          For <strong>{modal.request.pet?.name}</strong> — applicant:{' '}
+          <strong>{modal.request.applicant?.full_name}</strong>
+        </p>
+
+        {modal.type === 'schedule' && (
+          <label className="modal-label">
+            Appointment Date & Time <span style={{ color: '#A52828' }}>*</span>
+            <input
+              type="datetime-local"
+              value={modal.date}
+              onChange={(e) => onChangeField('date', e.target.value)}
+            />
+          </label>
+        )}
+
+        {(modal.type === 'approve' || modal.type === 'reject') && (
+          <label className="modal-label">
+            Decision Note{' '}
+            <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+            <textarea
+              value={modal.note}
+              onChange={(e) => onChangeField('note', e.target.value)}
+              placeholder={
+                modal.type === 'approve'
+                  ? 'Optional message to the applicant...'
+                  : 'Reason for rejection (optional)...'
+              }
+              rows={4}
+            />
+          </label>
+        )}
+
+        {modal.type === 'under_review' && (
+          <p className="modal-confirm-text">
+            This moves the application to <strong>Under Review</strong>, indicating
+            the appointment is complete and you are now evaluating the applicant.
+          </p>
+        )}
+
+        {modal.type === 'complete' && (
+          <p className="modal-confirm-text">
+            This marks the adoption as <strong>Completed</strong>, confirming the pet
+            has been claimed. The pet will be marked as adopted and removed from the
+            available listings.
+          </p>
+        )}
+
+        <div className="modal-actions">
+          <button className="modal-cancel" onClick={onCancel} disabled={isSubmitting}>
+            Cancel
+          </button>
+          <button
+            className={confirmBtnClass}
+            onClick={onConfirm}
+            disabled={isDisabled}
+          >
+            {isSubmitting ? 'Saving...' : confirmLabels[modal.type]}
           </button>
         </div>
       </div>

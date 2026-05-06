@@ -115,7 +115,7 @@ function RequestRescue() {
           />
         </div>
 
-        <p>Animal Details</p>
+        <h3>Animal Details</h3>
 
         <div className="report-form-group">
           <label htmlFor='animalType'>Animal Type</label>

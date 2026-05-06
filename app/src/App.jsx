@@ -1,5 +1,6 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { useAuth } from './context/AuthContext.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Landing from './pages/LandingPage.jsx';
@@ -16,6 +17,13 @@ import ProfilePage from './pages/profile/ProfilePage.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
+// Redirects admins to /profile; renders the given element for regular users.
+function UserOnlyRoute({ element }) {
+  const { user } = useAuth();
+  if (user?.is_admin === 1) return <Navigate to="/profile" replace />;
+  return element;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -23,14 +31,14 @@ function App() {
       <main>
         <Routes>
           {/* Public routes — anyone can view */}
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<UserOnlyRoute element={<Landing />} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/pets" element={<AdoptionList />} />
           <Route path="/pets/:id"  element={<PetDetail />} />
-          <Route path="/rescue" element={<RequestRescue />} /> {/*delete when done testing*/}
+          <Route path="/rescue" element={<UserOnlyRoute element={<RequestRescue />} />} />
           <Route path="/rescue/:reportId" element={<RequestDetailsPage />} />
-          <Route path="/community" element={<CommunityPage />} /> {/*delete when done testing*/}
+          <Route path="/community" element={<UserOnlyRoute element={<CommunityPage />} />} />
           {/*<Route path="/community/:postId" element={<CommunityDetailsPage />} /> delete when done testing*/}
           <Route path="/adopt/:id" element={<AdoptionFormPage />} />
 

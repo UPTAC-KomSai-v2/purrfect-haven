@@ -222,6 +222,66 @@ export async function listWelfareChecks(req, res) {
 }
 
 // =====================================================
+// GET /api/welfare-checks
+// admin only — all welfare checks across all adoptions.
+// =====================================================
+export async function getAllWelfareChecks(req, res) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT
+        wc.check_id, wc.adoption_id, wc.status,
+        wc.condition_status, wc.notes,
+        wc.requested_at, wc.responded_at,
+        p.pet_id, p.name AS pet_name,
+        u.user_id AS adopter_id,
+        u.first_name AS adopter_first,
+        u.last_name  AS adopter_last,
+        u.email      AS adopter_email
+      FROM Welfare_Checks wc
+      JOIN Adoptions a ON wc.adoption_id = a.adoption_id
+      JOIN Pets p      ON a.pet_id       = p.pet_id
+      JOIN Users u     ON a.user_id      = u.user_id
+      ORDER BY wc.requested_at DESC`
+    );
+
+    const completedIds = rows.filter((r) => r.status === 'completed').map((r) => r.check_id);
+    const photosByCheck = {};
+    if (completedIds.length > 0) {
+      const [photoRows] = await pool.query(
+        `SELECT check_id, file_path FROM welfare_check_photos WHERE check_id IN (?)`,
+        [completedIds]
+      );
+      for (const p of photoRows) {
+        if (!photosByCheck[p.check_id]) photosByCheck[p.check_id] = [];
+        photosByCheck[p.check_id].push(p.file_path);
+      }
+    }
+
+    const checks = rows.map((r) => ({
+      check_id:         r.check_id,
+      adoption_id:      r.adoption_id,
+      status:           r.status,
+      condition_status: r.condition_status,
+      notes:            r.notes,
+      requested_at:     r.requested_at,
+      responded_at:     r.responded_at,
+      pet:     { pet_id: r.pet_id, name: r.pet_name },
+      adopter: {
+        user_id:   r.adopter_id,
+        full_name: `${r.adopter_first} ${r.adopter_last}`,
+        email:     r.adopter_email,
+      },
+      photos: photosByCheck[r.check_id] || [],
+    }));
+
+    return res.status(200).json({ count: checks.length, checks });
+  } catch (err) {
+    console.error('Get all welfare checks error:', err.message);
+    return res.status(500).json({ error: 'Server error. Please try again.' });
+  }
+}
+
+// =====================================================
 // GET /api/welfare-checks/pending
 // =====================================================
 export async function getMyPendingChecks(req, res) {

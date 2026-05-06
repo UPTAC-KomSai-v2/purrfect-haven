@@ -1,41 +1,36 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';  // dagdag: useNavigate
-import { submitAdoptionApplication } from '../../services/adoptionsService.js';  // bago
-
+import { useParams, useNavigate } from 'react-router-dom';
+import { submitAdoptionApplication } from '../../services/adoptionsService.js';
 import { getPetById } from '../../services/petsService.js';
+import { getPetPhotoUrl } from '../../utils/photoUrl.js';
+import FormCard from '../../components/FormCard.jsx';
+import Button from '../../components/Button.jsx';
+import { Paperclip } from 'lucide-react';
 import '../../styles/forms.css';
+import '../../styles/rescue.css';
 import '../../styles/adoptform.css';
 import '../../styles/petdetail.css';
-import Button from '../../components/Button.jsx';
-import { Paperclip } from "lucide-react";
-
-import { getPhotoUrl } from '../../utils/photoUrl.js';
 
 function AdoptFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Form State
-  const [fullname, setFullname] = useState('');
-  const [phoneNo, setPhoneNo] = useState('');
-  const [email, setEmail] = useState('');
-  const [location, setLocation] = useState('');
-  const [aboutSelf, setAboutSelf] = useState('');
+  const [fullname, setFullname]               = useState('');
+  const [phoneNo, setPhoneNo]                 = useState('');
+  const [email, setEmail]                     = useState('');
+  const [location, setLocation]               = useState('');
+  const [aboutSelf, setAboutSelf]             = useState('');
   const [financialCapTxt, setFinancialCapTxt] = useState('');
-  const [homeOwnership, setHomeOwnership] = useState('');
+  const [homeOwnership, setHomeOwnership]     = useState('');
 
-  // Checkbox State
-  const [firstPet, setFirstPet] = useState(false);
+  const [firstPet, setFirstPet]           = useState(false);
   const [petExperience, setPetExperience] = useState(false);
-  const [otherPets, setOtherPets] = useState(false);
-  const [hasChildren, setHasChildren] = useState(false);
+  const [otherPets, setOtherPets]         = useState(false);
+  const [hasChildren, setHasChildren]     = useState(false);
 
-  // Pet & UI State
-  const [pet, setPet] = useState(null);
+  const [pet, setPet]       = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [errors, setErrors] = useState({});
-  const [generalError, setGeneralError] = useState('');
+  const [error, setError]   = useState('');
 
   useEffect(() => {
     async function fetchPet() {
@@ -54,72 +49,53 @@ function AdoptFormPage() {
     fetchPet();
   }, [id]);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setErrors({});
-    setGeneralError('');
-
-    // Validation
-    const newErrors = {};
-    if (!fullname) newErrors.fullname = 'Full Name is required';
-    if (!email) newErrors.email = 'Email is required';
-    if (!phoneNo) newErrors.phoneNo = 'Phone Number is required';
-    if (!location) newErrors.location = 'Location is required';
-    if (!aboutSelf) newErrors.aboutSelf = 'Please tell us why you want to adopt';
-    if (!homeOwnership) newErrors.homeOwnership = 'Home Ownership is required';
-    if (!financialCapTxt) newErrors.financialCapTxt = 'Financial capability is required';
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
+    setError('');
     setLoading(true);
     try {
       await submitAdoptionApplication({
-        pet_id: parseInt(id),
-        applicant_address: location,
-        is_first_pet: firstPet,
-        has_experience: petExperience,
-        has_other_pets: otherPets,
-        has_children: hasChildren,
-        owns_home: homeOwnership === 'own',
+        pet_id:              parseInt(id),
+        applicant_address:   location,
+        is_first_pet:        firstPet,
+        has_experience:      petExperience,
+        has_other_pets:      otherPets,
+        has_children:        hasChildren,
+        owns_home:           homeOwnership === 'own',
         financial_capability: financialCapTxt,
-        motivation: aboutSelf,
+        motivation:          aboutSelf,
       });
       navigate('/profile');
     } catch (err) {
-      setGeneralError(err.response?.data?.error || 'Failed to submit application.');
+      setError(err.response?.data?.error || 'Failed to submit application. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   if (loading && !pet) return <p className="status-message">Loading pet details...</p>;
-  if (error) return <p className="status-message error-message">{error}</p>;
-  if (!pet) return null;
+  if (error && !pet)   return <p className="status-message error">{error}</p>;
+  if (!pet)            return null;
 
-  const mainPhotoUrl = pet.photos && pet.photos.length > 0 
-    ? getPhotoUrl(pet.photos[0]) 
-    : getPhotoUrl(null);
+  const mainPhotoUrl = pet.photos?.length > 0
+    ? getPetPhotoUrl(pet.photos[0].file_path, pet.name)
+    : getPetPhotoUrl(null, pet.name);
 
   return (
     <div className="adoptpet-container">
-      <h1>Adoption Form</h1>
-      <p>Thank you for your interest in adopting {pet.name}! Please fill out the form below to start the adoption process.</p>
-      
-      <div className="adoptpet-card">
+      {/* Pet info card */}
         <div className="af-info-card">
           <img
             src={mainPhotoUrl}
             alt={pet.name}
             className="af-detail-main-photo"
+            onError={(e) => { e.currentTarget.src = 'https://placehold.co/200x200?text=No+Photo'; }}
           />
-
           <div>
             <h2 className="info-card-name">{pet.name}</h2>
-            {pet.location_held && <p className="info-card-location">{pet.location_held}</p>}
-
+            {pet.location_held && (
+              <p className="info-card-location">{pet.location_held}</p>
+            )}
             <div className="info-card-rows">
               {pet.species_name && (
                 <div className="info-row">
@@ -139,10 +115,12 @@ function AdoptFormPage() {
                   <span className="info-value">{pet.sex}</span>
                 </div>
               )}
-              {pet.age !== null && (
+              {pet.age !== null && pet.age !== undefined && (
                 <div className="info-row">
                   <span className="info-label">Age</span>
-                  <span className="info-value">{pet.age} {pet.age === 1 ? 'year' : 'years'}</span>
+                  <span className="info-value">
+                    {pet.age} {pet.age === 1 ? 'year' : 'years'}
+                  </span>
                 </div>
               )}
               {pet.color && (
@@ -154,160 +132,193 @@ function AdoptFormPage() {
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="adoptpet-card">
-        {generalError && <div className="error-banner">{generalError}</div>}
-        
-        <h2>Adoption Application</h2>
-        <h3>Your Contact Info</h3>
+      {/* Application form */}
+      <FormCard 
+        title="Adoption Application" 
+        maxWidth={800}
+        subtitle={
+          `Thank you for your interest in adopting ${pet.name}! Please fill out the
+          form below to start the adoption process.
+        `}>
+        <form
+          onSubmit={handleSubmit}
+          className="report-form"
+        >
+          {/* Contact Info */}
+          <div className="report-form-group full">
+            <h3>Your Contact Info</h3>
+          </div>
 
-        <form className="adoptpet-form" onSubmit={handleSubmit}>
-          <div className="flex-col">
-            <div className="flex-row">
-              <div className="flex-col contact-info-container">
-                <div className={`form-group ${errors.fullname ? 'form-group-error' : ''}`}>
-                  <label htmlFor="fullname">Full Name</label>
-                  <input
-                    id="fullname"
-                    type="text"
-                    placeholder="e.g. Juan dela Cruz"
-                    value={fullname}
-                    onChange={(e) => setFullname(e.target.value)}
-                  />
-                  {errors.fullname && <span className="error-text">{errors.fullname}</span>}
-                </div>
+          <div className="report-form-group">
+            <label htmlFor="fullname">Full Name</label>
+            <input
+              id="fullname"
+              type="text"
+              placeholder="e.g. Juan dela Cruz"
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+              required
+            />
+          </div>
 
-                <div className={`form-group ${errors.phoneNo ? 'form-group-error' : ''}`}>
-                  <label htmlFor="phoneNo">Phone No.</label>
-                  <input
-                    id="phoneNo"
-                    type="text"
-                    placeholder="09xxx-xxx-xxxx"
-                    value={phoneNo}
-                    onChange={(e) => setPhoneNo(e.target.value)}
-                  />
-                  {errors.phoneNo && <span className="error-text">{errors.phoneNo}</span>}
-                </div>
-              </div>
+          <div className="report-form-group">
+            <label htmlFor="phoneNo">Phone No.</label>
+            <input
+              id="phoneNo"
+              type="text"
+              placeholder="09xxx-xxx-xxxx"
+              value={phoneNo}
+              onChange={(e) => setPhoneNo(e.target.value)}
+              required
+            />
+          </div>
 
-              <div className="flex-col contact-info-container">
-                <div className={`form-group ${errors.email ? 'form-group-error' : ''}`}>
-                  <label htmlFor="email">Email Address</label>
-                  <input
-                    id="email"
-                    type="text"
-                    placeholder="example@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  {errors.email && <span className="error-text">{errors.email}</span>}
-                </div>
+          <div className="report-form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="text"
+              placeholder="example@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-                <div className={`form-group ${errors.location ? 'form-group-error' : ''}`}>
-                  <label htmlFor="location">Location</label>
-                  <input
-                    id="location"
-                    type="text"
-                    placeholder="e.g. Barangay 83-B, San Jose, Tacloban City"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
-                  {errors.location && <span className="error-text">{errors.location}</span>}
-                </div>
-              </div>
+          <div className="report-form-group">
+            <label htmlFor="location">Location</label>
+            <input
+              id="location"
+              type="text"
+              placeholder="e.g. Barangay 83-B, San Jose, Tacloban City"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* About */}
+          <div className="report-form-group full">
+            <h3>Tell Us About Yourself</h3>
+          </div>
+
+          <div className="report-form-group full">
+            <label htmlFor="aboutSelf">Why do you want to adopt {pet.name}?</label>
+            <textarea
+              id="aboutSelf"
+              placeholder="Share your experience with pets, living situation, and why you'd be a great fit..."
+              value={aboutSelf}
+              onChange={(e) => setAboutSelf(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="report-form-group full">
+            <label>Please check all that apply:</label>
+            <div className="checkbox-group">
+              <input
+                id="firstPet"
+                type="checkbox"
+                checked={firstPet}
+                onChange={(e) => setFirstPet(e.target.checked)}
+              />
+              <label htmlFor="firstPet">This would be my first pet</label>
             </div>
-
-            <div className="flex-col">
-              <div className={`form-group ${errors.aboutSelf ? 'form-group-error' : ''}`}>
-                <h3>Tell us about yourself</h3>
-                <label htmlFor="aboutSelf">Why do you want to adopt {pet.name}?</label>
-                <textarea
-                  id="aboutSelf"
-                  placeholder="Please share experiences with pets, living situation, and why you think Callie would be a good fit for your family..."
-                  value={aboutSelf}
-                  onChange={(e) => setAboutSelf(e.target.value)}
-                />
-                {errors.aboutSelf && <span className="error-text">{errors.aboutSelf}</span>}
-              </div>
-
-              <h4>Please Check all that apply:</h4>
-              <div className="checkbox-group">
-                <input id="firstPet" type="checkbox" checked={firstPet} onChange={(e) => setFirstPet(e.target.checked)} />
-                <label htmlFor="firstPet">This would be my first pet</label>
-              </div>
-              <div className="checkbox-group">
-                <input id="petExperience" type="checkbox" checked={petExperience} onChange={(e) => setPetExperience(e.target.checked)} />
-                <label htmlFor="petExperience">I have experience taking care of a cat/dog</label>
-              </div>
-              <div className="checkbox-group">
-                <input id="otherPets" type="checkbox" checked={otherPets} onChange={(e) => setOtherPets(e.target.checked)} />
-                <label htmlFor="otherPets">I have other pets at home</label>
-              </div>
-              <div className="checkbox-group">
-                <input id="hasChildren" type="checkbox" checked={hasChildren} onChange={(e) => setHasChildren(e.target.checked)} />
-                <label htmlFor="hasChildren">I have children at home</label>
-              </div>
-
-              <h4>Verification Information</h4>
-              <h5>Home Ownership*</h5>
-              <div className="radio-group">
-                <input
-                  id="ownHome"
-                  type="radio"
-                  name="homeOwnership"
-                  checked={homeOwnership === 'own'}
-                  onChange={() => setHomeOwnership('own')}
-                />
-                <label htmlFor="ownHome">I own my home</label>
-              </div>
-              <div className="radio-group">
-                <input
-                  id="rentHome"
-                  type="radio"
-                  name="homeOwnership"
-                  checked={homeOwnership === 'rent'}
-                  onChange={() => setHomeOwnership('rent')}
-                />
-                <label htmlFor="rentHome">I rent/lease my home (with landlord approval for pets)</label>
-              </div>
-
-              <div>
-                <h5>Financial Capability Proof*</h5>
-                <p>Please provide proof of your financial capability to care for the pet. This can Include:</p>
-                <ul>
-                  <li>LinkedIn profile URL</li>
-                  <li>Employment details (company name, position)</li>
-                  <li>Professional credential ors certifications</li>
-                  <li>Previous pet ownership experience with veterinary care history</li>
-                </ul>
-                <div className={`form-group ${errors.financialCapTxt ? 'form-group-error' : ''}`}>
-                  <textarea
-                    id="financialCapTxt"
-                    placeholder="Provide financial capability proof here..."
-                    value={financialCapTxt}
-                    onChange={(e) => setFinancialCapTxt(e.target.value)}
-                  />
-                  {errors.financialCapTxt && <span className="error-text">{errors.financialCapTxt}</span>}
-                </div>
-                
-                <div className="adoptpet-upload-container">
-                  <div className="adoptpet-upload-dropzone">
-                    <Paperclip size={30} />
-                    <p>Upload Proof of Financial Capability (File)</p>
-                    <small>PDF, Doc up to 10MB each • Max 5 files</small>
-                    <input type="file" multiple className="adoptpet-hidden-file" />
-                  </div>
-                </div>
-              </div>
+            <div className="checkbox-group">
+              <input
+                id="petExperience"
+                type="checkbox"
+                checked={petExperience}
+                onChange={(e) => setPetExperience(e.target.checked)}
+              />
+              <label htmlFor="petExperience">I have experience taking care of a cat/dog</label>
             </div>
+            <div className="checkbox-group">
+              <input
+                id="otherPets"
+                type="checkbox"
+                checked={otherPets}
+                onChange={(e) => setOtherPets(e.target.checked)}
+              />
+              <label htmlFor="otherPets">I have other pets at home</label>
+            </div>
+            <div className="checkbox-group">
+              <input
+                id="hasChildren"
+                type="checkbox"
+                checked={hasChildren}
+                onChange={(e) => setHasChildren(e.target.checked)}
+              />
+              <label htmlFor="hasChildren">I have children at home</label>
+            </div>
+          </div>
 
-            <Button type="submit" disabled={loading}>
+          {/* Verification */}
+          <div className="report-form-group full">
+            <h3>Verification Information</h3>
+          </div>
+
+          <div className="report-form-group full">
+            <label>Home Ownership</label>
+            <div className="radio-group">
+              <input
+                id="ownHome"
+                type="radio"
+                name="homeOwnership"
+                checked={homeOwnership === 'own'}
+                onChange={() => setHomeOwnership('own')}
+                required
+              />
+              <label htmlFor="ownHome">I own my home</label>
+            </div>
+            <div className="radio-group">
+              <input
+                id="rentHome"
+                type="radio"
+                name="homeOwnership"
+                checked={homeOwnership === 'rent'}
+                onChange={() => setHomeOwnership('rent')}
+              />
+              <label htmlFor="rentHome">
+                I rent/lease my home (with landlord approval for pets)
+              </label>
+            </div>
+          </div>
+
+          <div className="report-form-group full">
+            <label htmlFor="financialCapTxt">Financial Capability</label>
+            <textarea
+              id="financialCapTxt"
+              placeholder="Provide proof such as employment details, LinkedIn profile, or veterinary care history."
+              value={financialCapTxt}
+              onChange={(e) => setFinancialCapTxt(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="report-form-group full">
+            <label>Supporting Documents</label>
+            <div className="upload-box">
+              <Paperclip size={28} />
+              <p>Upload Proof of Financial Capability</p>
+              <small>PDF, Doc up to 10MB each · Max 5 files</small>
+              <input type="file" multiple disabled />
+              <small style={{ display: 'block', marginTop: '8px', color: '#999' }}>
+                (File uploads coming soon)
+              </small>
+            </div>
+          </div>
+
+          {error && <div className="status-message error">{error}</div>}
+
+          <div className="submit-box">
+            <Button type="submit" disabled={loading} className="button-full">
               {loading ? 'Submitting...' : 'Submit Adoption Application'}
             </Button>
           </div>
         </form>
-      </div>
+      </FormCard>
     </div>
   );
 }

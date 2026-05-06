@@ -24,7 +24,8 @@
   width: 100%;
 }
 
-.report-form p {
+.report-form p,
+.report-form h3 {
   width: 100%;
   font-weight: 600;
   color: var(--color-text-secondary);
