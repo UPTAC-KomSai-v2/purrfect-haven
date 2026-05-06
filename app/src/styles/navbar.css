@@ -180,6 +180,11 @@
   flex-shrink: 0;
 }
 
+.navbar-user-item-icon[alt="Settings Icon"],
+.navbar-user-item-icon[alt="Notifications Icon"] {
+  margin-right: 3px;
+}
+
 .navbar-user-item-icon[alt="Logout Icon"] {
   margin-right: 4px;
 }

@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
 // guard component — pinaglalagyan ng admin-only routes.
-// kung hindi admin, ire-redirect sa home (or login kung wala pa nakaloin).
+// kung hindi admin, ire-redirect sa unauthorized page (or login kung wala pa nakaloin).
 export default function AdminRoute({ children }) {
   const { user, loading } = useAuth();
 
@@ -22,14 +22,14 @@ export default function AdminRoute({ children }) {
     );
   }
 
-  // hindi naka-login — balik sa login page
+  // hindi naka-login — unauthorized
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
-  // naka-login pero hindi admin — balik sa home
+  // naka-login pero hindi admin — unauthorized
   if (user.is_admin !== 1) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
   // i-render yung admin page

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import {
   getMyAdoptions,
   getAllAdoptions,
@@ -12,14 +12,24 @@ import {
   listPostAdoptionUpdates,
   listWelfareChecks,
   createPostAdoptionUpdate,
-  respondToWelfareCheck,
-  getMyPendingWelfareChecks,
-} from '../../services/adoptionsService.js';
+} from '../services/adoptionsService.js';
 import {
   getMyStories,
   getAllStories,
   submitStoryContent,
   initiateOwnStory,
+<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
+} from '../services/storiesService.js';
+import api from '../services/api.js';
+import PhotoUploader from '../components/PhotoUploader.jsx';
+import CollapsibleItem, { CollapsibleGroup } from '../components/CollapsibleItem.jsx';
+import { getMyRescueReports } from '../services/rescueService.js';
+import AdoptionRequestCard from './admin/AdoptionRequestCard.jsx';
+import CommunityPostCard from './admin/CommunityPostCard.jsx';
+import RescueReportCard from './admin/RescueRequestCard.jsx';
+import '../styles/admin.css';
+import '../styles/dashboard.css';
+=======
 } from '../../services/storiesService.js';
 import api from '../../services/api.js';
 import PhotoUploader from '../../components/PhotoUploader.jsx';
@@ -30,8 +40,9 @@ import CommunityPostCard from '../admin/CommunityPostCard.jsx';
 import RescueReportCard from '../admin/RescueRequestCard.jsx';
 import '../../styles/admin.css';
 import '../../styles/profile.css';
+>>>>>>> main:app/src/pages/profile/ProfilePage.jsx
 
-import { getPhotoUrl as buildPhotoUrl } from '../../utils/photoUrl.js';
+import { getPhotoUrl as buildPhotoUrl } from '../utils/photoUrl.js';
 const getPhotoUrl = (filePath) => buildPhotoUrl(filePath, 'https://placehold.co/120x120?text=No+Photo');
 
 function formatDate(dateString) {
@@ -85,11 +96,9 @@ function getStoryStatusLabel(status) {
   return labels[status] || status;
 }
 
-function ProfilePage() {
+function DashboardPage() {
   const { user } = useAuth();
-
   const [adoptions, setAdoptions] = useState([]);
-  const [pendingChecks, setPendingChecks] = useState([]);
   const [stories, setStories] = useState([]);
   const [rescueReports, setRescueReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +116,10 @@ function ProfilePage() {
   const [activeTab, setActiveTab]           = useState('adoptions');
   const [statusFilter, setStatusFilter]     = useState('all');
 
+<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
+=======
   const [welfareModal, setWelfareModal]             = useState(null);
+>>>>>>> main:app/src/pages/profile/ProfilePage.jsx
   const [storyModal, setStoryModal]                 = useState(null);
   const [updateModal, setUpdateModal]               = useState(null);
   const [shareStoryModal, setShareStoryModal]       = useState(null);
@@ -126,18 +138,14 @@ function ProfilePage() {
   }, [user?.user_id]);
 
   async function loadAll() {
-    const [a, p, s, r] = await Promise.allSettled([
+    const [a, s, r] = await Promise.allSettled([
       getMyAdoptions(),
-      getMyPendingWelfareChecks(),
       getMyStories(),
       getMyRescueReports(),
     ]);
 
     if (a.status === 'fulfilled') setAdoptions(a.value);
     else console.error('Adoptions load failed:', a.reason);
-
-    if (p.status === 'fulfilled') setPendingChecks(p.value);
-    else console.error('Pending checks load failed:', p.reason);
 
     if (s.status === 'fulfilled') setStories(s.value);
     else console.error('Stories load failed:', s.reason);
@@ -280,6 +288,8 @@ function ProfilePage() {
   const pendingRescuesCount    = adminRescues.filter(r => r.status === 'pending').length;
   const submittedStoriesCount  = adminStories.filter(s => s.status === 'submitted').length;
   const pendingWelfareCount    = adminWelfareChecks.filter(w => w.status === 'pending').length;
+<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
+=======
 
   // ============ welfare check response ============
 
@@ -317,6 +327,7 @@ function ProfilePage() {
       alert(err.response?.data?.error || 'Failed to submit response.');
     }
   }
+>>>>>>> main:app/src/pages/profile/ProfilePage.jsx
 
   // ============ story request response ============
   function openStoryModal(story) {
@@ -430,8 +441,11 @@ function ProfilePage() {
 
   if (!user) return null;
 
+<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
+=======
   const pendingStoryRequests = stories.filter((s) => s.status === 'pending');
 
+>>>>>>> main:app/src/pages/profile/ProfilePage.jsx
   if (user.is_admin) {
     return (
       <div className="profile-container">
@@ -440,9 +454,6 @@ function ProfilePage() {
             <h1>Hello, {user.first_name}!</h1>
             <p>Welcome back to your admin dashboard.</p>
           </div>
-          <Link to="/profile/settings" className="profile-settings-link">
-            Account Settings
-          </Link>
         </section>
 
         <div className="admin-layout">
@@ -584,52 +595,7 @@ function ProfilePage() {
           <h1>Hello, {user.first_name}!</h1>
           <p>Welcome back to your user dashboard</p>
         </div>
-        <Link to="/profile/settings" className="profile-settings-link">
-          Account Settings
-        </Link>
       </section>
-
-      {(pendingChecks.length > 0 || pendingStoryRequests.length > 0) && (
-        <section className="action-required-section">
-          <h2>Action Required</h2>
-
-          {pendingChecks.map((check) => (
-            <div key={`wc-${check.check_id}`} className="action-banner action-banner-urgent">
-              <div className="action-banner-content">
-                <h3>Welfare Check Required</h3>
-                <p>
-                  Please complete a welfare check for{' '}
-                  <strong>{check.pet_name}</strong>. As per our adoption terms, this is mandatory.
-                </p>
-                <p className="action-banner-meta">
-                  Requested {formatDate(check.requested_at)}
-                </p>
-              </div>
-              <button className="action-banner-btn" onClick={() => openWelfareModal(check)}>
-                Complete Welfare Check
-              </button>
-            </div>
-          ))}
-
-          {pendingStoryRequests.map((story) => (
-            <div key={`sr-${story.story_id}`} className="action-banner action-banner-info">
-              <div className="action-banner-content">
-                <h3>Story Request</h3>
-                <p>
-                  Our team has invited you to share your adoption story for{' '}
-                  <strong>{story.pet.name}</strong>.
-                </p>
-                <p className="action-banner-meta">
-                  Requested {formatDate(story.submitted_at)}
-                </p>
-              </div>
-              <button className="action-banner-btn" onClick={() => openStoryModal(story)}>
-                Write Story
-              </button>
-            </div>
-          ))}
-        </section>
-      )}
 
       <section className="profile-dashboard">
         <div className="dashboard-card dashboard-card-wide">
@@ -713,15 +679,6 @@ function ProfilePage() {
           )}
         </div>
       </section>
-
-      {welfareModal && (
-        <WelfareResponseModal
-          modal={welfareModal}
-          onChangeField={updateWelfareField}
-          onConfirm={submitWelfareResponse}
-          onCancel={() => setWelfareModal(null)}
-        />
-      )}
 
       {storyModal && (
         <StoryWriteModal
@@ -1085,71 +1042,6 @@ function RescueReportItem({ report, isExpanded, onToggle }) {
   );
 }
 
-// =====================================================
-// WelfareResponseModal
-// =====================================================
-function WelfareResponseModal({ modal, onChangeField, onConfirm, onCancel }) {
-  const conditions = ['excellent', 'good', 'concerning', 'critical'];
-
-  return (
-    <div className="modal-overlay" onClick={onCancel}>
-      <div className="modal-box modal-box-large" onClick={(e) => e.stopPropagation()}>
-        <h2>Welfare Check</h2>
-        <p className="modal-subtext">
-          Tell us how <strong>{modal.petName}</strong> is doing.
-        </p>
-
-        <label className="modal-label">
-          Pet's Current Condition
-          <div className="condition-options">
-            {conditions.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className={`condition-pill condition-${c} ${
-                  modal.condition === c ? 'selected' : ''
-                }`}
-                onClick={() => onChangeField('condition', c)}
-              >
-                {getConditionLabel(c)}
-              </button>
-            ))}
-          </div>
-        </label>
-
-        <label className="modal-label">
-          Notes
-          <textarea
-            value={modal.notes}
-            onChange={(e) => onChangeField('notes', e.target.value)}
-            placeholder="How is your pet adjusting? Any health concerns? Daily routines, milestones, anything you want to share..."
-            rows={5}
-          />
-        </label>
-
-        <PhotoUploader
-          files={modal.photos}
-          onChange={(files) => onChangeField('photos', files)}
-          maxFiles={5}
-          label="Photos (Optional)"
-        />
-
-        <div className="modal-actions">
-          <button className="modal-cancel" onClick={onCancel}>Cancel</button>
-          <button
-            className="approve-btn"
-            onClick={onConfirm}
-            disabled={!modal.notes.trim()}
-          >
-            Submit Welfare Check
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// =====================================================
 // StoryWriteModal
 // =====================================================
 function StoryWriteModal({ modal, onChangeField, onConfirm, onCancel, isResponse }) {
@@ -1440,4 +1332,8 @@ function AdoptionActionModal({ modal, onChangeField, onConfirm, onCancel, isSubm
   );
 }
 
+<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
+export default DashboardPage;
+=======
 export default ProfilePage;
+>>>>>>> main:app/src/pages/profile/ProfilePage.jsx

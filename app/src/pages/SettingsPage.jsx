@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext.jsx';
-import api from '../../services/api.js';
-import '../../styles/settings.css';
-import Button from '../../components/Button.jsx';
-import passHideIcon from '../../assets/icons/pass-hide.svg';
-import passSeeIcon from '../../assets/icons/pass-see.svg';
+import { useAuth } from '../context/AuthContext.jsx';
+import api from '../services/api.js';
+import '../styles/settings.css';
+import Button from '../components/Button.jsx';
+import passHideIcon from '../assets/icons/pass-hide.svg';
+import passSeeIcon from '../assets/icons/pass-see.svg';
 import { useSearchParams } from "react-router-dom";
 
-function AccountSettingsPage() {
+function SettingsPage() {
   // react use state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -213,4 +213,4 @@ function AccountSettingsPage() {
   );
 }
 
-export default AccountSettingsPage;
+export default SettingsPage;

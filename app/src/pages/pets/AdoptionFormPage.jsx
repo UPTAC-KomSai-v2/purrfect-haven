@@ -65,7 +65,7 @@ function AdoptFormPage() {
         financial_capability: financialCapTxt,
         motivation:          aboutSelf,
       });
-      navigate('/profile');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to submit application. Please try again.');
     } finally {

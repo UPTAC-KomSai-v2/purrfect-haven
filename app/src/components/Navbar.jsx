@@ -6,6 +6,8 @@ import '../styles/navbar.css';
 import favicon from '../assets/favicon.png';
 import dashboardIcon from '../assets/icons/dashboard.svg';
 import logoutIcon from '../assets/icons/logout.svg';
+import settingsIcon from '../assets/icons/settings.svg';
+import notificationsIcon from '../assets/icons/notifications.svg';
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -72,12 +74,29 @@ export default function Navbar() {
               {dropdownOpen && (
                 <div className="navbar-user-menu">
                   <Link
-                    to="/profile"
+                    to="/dashboard"
                     className="navbar-user-item"
                     onClick={() => setDropdownOpen(false)}
                   >
                     <img src={dashboardIcon} alt="Dashboard Icon" className="navbar-user-item-icon" /> Dashboard
                   </Link>
+
+                  <Link
+                    to="/settings"
+                    className="navbar-user-item"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    <img src={settingsIcon} alt="Settings Icon" className="navbar-user-item-icon" /> Settings
+                  </Link>
+
+                  <Link
+                    to="/notifications"
+                    className="navbar-user-item"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    <img src={notificationsIcon} alt="Notifications Icon" className="navbar-user-item-icon" /> Notifications
+                  </Link>
+
                   <button
                     className="navbar-user-item"
                     onClick={handleLogout}

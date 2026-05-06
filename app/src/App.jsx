@@ -12,10 +12,19 @@ import RequestRescue from './pages/rescue/RequestRescue.jsx'; //delete when done
 import RequestDetailsPage from './pages/rescue/RequestDetailsPage.jsx';
 import CommunityPage from './pages/community/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
-import AccountSettingsPage from './pages/profile/AccountSettingsPage.jsx';
-import ProfilePage from './pages/profile/ProfilePage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 import AdminRoute from './components/AdminRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
+import NotificationPage from './pages/NotificationPage.jsx';
+import UnauthorizedPage from './pages/UnauthorizedPage.jsx';
+
+// Redirects admins to /dashboard; renders the given element for regular users.
+function UserOnlyRoute({ element }) {
+  const { user } = useAuth();
+  if (user?.is_admin === 1) return <Navigate to="/dashboard" replace />;
+  return element;
+}
 
 // Redirects admins to /profile; renders the given element for regular users.
 function UserOnlyRoute({ element }) {
@@ -36,15 +45,70 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/pets" element={<AdoptionList />} />
           <Route path="/pets/:id"  element={<PetDetail />} />
-          <Route path="/rescue" element={<UserOnlyRoute element={<RequestRescue />} />} />
-          <Route path="/rescue/:reportId" element={<RequestDetailsPage />} />
-          <Route path="/community" element={<UserOnlyRoute element={<CommunityPage />} />} />
-          {/*<Route path="/community/:postId" element={<CommunityDetailsPage />} /> delete when done testing*/}
-          <Route path="/adopt/:id" element={<AdoptionFormPage />} />
+          
+          <Route
+            path="/rescue"
+            element={
+                <RequestRescue />
+            }
+          />
+          <Route
+            path="/rescue/:reportId"
+            element={
+              <ProtectedRoute>
+                <RequestDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/community"
+            element={
+                <CommunityPage />
+            }
+          />
 
-          {/* Combined profile/ for users and admin view */}
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/settings" element={<AccountSettingsPage />} />
+          <Route
+            path="/community/:postId"
+            element={
+              <ProtectedRoute>
+                {/* Add rendering of receipt here */}
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/adopt/:id"
+            element={
+                <AdoptionFormPage />
+            }
+          />
+
+          {/* Refactored user.name dropdown */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
          
           {/* Protected routes — only for logged-in users */}
           {/* Add back protected routes after testing */}
