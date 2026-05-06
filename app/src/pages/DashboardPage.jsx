@@ -18,7 +18,6 @@ import {
   getAllStories,
   submitStoryContent,
   initiateOwnStory,
-<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
 } from '../services/storiesService.js';
 import api from '../services/api.js';
 import PhotoUploader from '../components/PhotoUploader.jsx';
@@ -103,11 +102,6 @@ function DashboardPage() {
   const [adminWelfareChecks, setAdminWelfareChecks] = useState([]);
   const [activeTab, setActiveTab]           = useState('adoptions');
   const [statusFilter, setStatusFilter]     = useState('all');
-
-<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
-=======
-  const [welfareModal, setWelfareModal]             = useState(null);
->>>>>>> main:app/src/pages/profile/ProfilePage.jsx
   const [storyModal, setStoryModal]                 = useState(null);
   const [updateModal, setUpdateModal]               = useState(null);
   const [shareStoryModal, setShareStoryModal]       = useState(null);
@@ -276,46 +270,6 @@ function DashboardPage() {
   const pendingRescuesCount    = adminRescues.filter(r => r.status === 'pending').length;
   const submittedStoriesCount  = adminStories.filter(s => s.status === 'submitted').length;
   const pendingWelfareCount    = adminWelfareChecks.filter(w => w.status === 'pending').length;
-<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
-=======
-
-  // ============ welfare check response ============
-
-  function openWelfareModal(check) {
-    setWelfareModal({
-      checkId:    check.check_id,
-      petName:    check.pet_name,
-      adoptionId: check.adoption_id,
-      condition:  'good',
-      notes:      '',
-      photos:     [],
-    });
-  }
-
-  function updateWelfareField(field, value) {
-    setWelfareModal((prev) => ({ ...prev, [field]: value }));
-  }
-
-  async function submitWelfareResponse() {
-    if (!welfareModal || !welfareModal.notes.trim()) return;
-    try {
-      await respondToWelfareCheck(
-        welfareModal.checkId,
-        welfareModal.condition,
-        welfareModal.notes,
-        welfareModal.photos
-      );
-      setPendingChecks((prev) =>
-        prev.filter((c) => c.check_id !== welfareModal.checkId)
-      );
-      refreshAdoption(welfareModal.adoptionId);
-      setWelfareModal(null);
-    } catch (err) {
-      console.error('Welfare response error:', err);
-      alert(err.response?.data?.error || 'Failed to submit response.');
-    }
-  }
->>>>>>> main:app/src/pages/profile/ProfilePage.jsx
 
   // ============ story request response ============
   function openStoryModal(story) {
@@ -428,12 +382,6 @@ function DashboardPage() {
   }
 
   if (!user) return null;
-
-<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
-=======
-  const pendingStoryRequests = stories.filter((s) => s.status === 'pending');
-
->>>>>>> main:app/src/pages/profile/ProfilePage.jsx
   if (user.is_admin) {
     return (
       <div className="profile-container">
@@ -1319,9 +1267,4 @@ function AdoptionActionModal({ modal, onChangeField, onConfirm, onCancel, isSubm
     </div>
   );
 }
-
-<<<<<<< HEAD:app/src/pages/DashboardPage.jsx
 export default DashboardPage;
-=======
-export default ProfilePage;
->>>>>>> main:app/src/pages/profile/ProfilePage.jsx

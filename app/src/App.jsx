@@ -26,13 +26,6 @@ function UserOnlyRoute({ element }) {
   return element;
 }
 
-// Redirects admins to /profile; renders the given element for regular users.
-function UserOnlyRoute({ element }) {
-  const { user } = useAuth();
-  if (user?.is_admin === 1) return <Navigate to="/profile" replace />;
-  return element;
-}
-
 function App() {
   return (
     <BrowserRouter>
@@ -71,7 +64,7 @@ function App() {
             path="/community/:postId"
             element={
               <ProtectedRoute>
-                {/* Add rendering of receipt here */}
+                <CommunityPage />
               </ProtectedRoute>
             }
           />
