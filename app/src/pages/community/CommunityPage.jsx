@@ -64,7 +64,7 @@ function CommunityPage() {
                 about: formData.about
             });
 
-            setSuccess('Community adoption post submitted successfully!');
+            setSuccess('Community adoption post submitted successfully! Redirecting to confirmation...');
             setFormData({
                 petName: '', age: '', weight: '', gender: '',
                 type: '', breed: '', color: '', personality: '',
