@@ -13,7 +13,7 @@ import storiesRoutes from './routes/stories.js';
 import welfareChecksRoutes from './routes/welfareChecks.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import triviaRoutes from './routes/triviaRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -52,6 +52,7 @@ app.use('/api/stories', storiesRoutes);
 app.use('/api/welfare-checks', welfareChecksRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.use('/api/trivia', triviaRoutes);
 
 // health endpoint
 app.get('/api/health', async (req, res) => {
