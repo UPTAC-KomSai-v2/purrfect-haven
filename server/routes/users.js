@@ -5,7 +5,7 @@ import { requireAuth } from '../middleware/requireAuth.js';
 const router = express.Router();
 
 // Usage of requireAuth middleware
-router.get('/dashboard', requireAuth, getProfile);
-router.put('/dashboard', requireAuth, updateProfile);
+router.get('/profile', requireAuth, getProfile);
+router.put('/profile', requireAuth, updateProfile);
 
 export default router;
