@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FormCard from '../../components/FormCard.jsx';
 import Button from '../../components/Button.jsx';
 import api from '../../services/api.js'; 
@@ -8,17 +8,25 @@ import "../../styles/community.css";
 import bg1 from "../../assets/landing-bg-1.jpg";
 import bg2 from "../../assets/landing-bg-2.jpg";
 import bg3 from "../../assets/landing-bg-3.jpg";
+import { useAuth } from '../../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
 function CommunityPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         petName: '', age: '', weight: '', gender: '',
         type: '', breed: '', color: '', personality: '',
         organization: '', location: '', health: '', about: '',
     });
+
+    useEffect(() => {
+        if(!user) navigate('/login');
+    }, []);
 
     function handleInputChange(e) {
         const { name, value } = e.target;

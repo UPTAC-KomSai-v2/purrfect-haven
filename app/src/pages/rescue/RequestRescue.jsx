@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormCard from '../../components/FormCard.jsx';
 import Button from '../../components/Button.jsx';
 import api from '../../services/api.js';
 import '../../styles/forms.css';
 import '../../styles/rescue.css';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 function RequestRescue() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,6 +26,10 @@ function RequestRescue() {
   });
 
   const [privacyConsent, setPrivacyConsent] = useState(false);
+
+  useEffect(() => {
+    if(!user) navigate('/login');
+  }, []);
 
   function handleInputChange(e) {
     const { name, value } = e.target;
