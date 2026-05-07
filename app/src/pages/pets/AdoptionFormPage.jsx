@@ -31,6 +31,13 @@ function AdoptFormPage() {
   const [pet, setPet]       = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError]   = useState('');
+  const [success, setSuccess] = useState('');
+
+  const [formData, setFormData] = useState({
+      fullname: '', phoneNo: '', email: '', location: '',
+      aboutSelf: '', financialCapTxt: '', homeOwnership: '', firstPet: '',
+      petExperience: '', otherPets: '', hasChildren: ''
+  });
 
   useEffect(() => {
     async function fetchPet() {
@@ -52,9 +59,18 @@ function AdoptFormPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+
+    console.log('handleSubmit');
+    /*
+    if (!formData.fullname || !formData.phoneNo || !formData.email || !formData.location || !formData.financialCapTxt || !formData.homeOwnership ) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+    */
+
     setLoading(true);
     try {
-      await submitAdoptionApplication({
+      const response = await submitAdoptionApplication({
         pet_id:              parseInt(id),
         applicant_address:   location,
         is_first_pet:        firstPet,
@@ -65,7 +81,22 @@ function AdoptFormPage() {
         financial_capability: financialCapTxt,
         motivation:          aboutSelf,
       });
-      navigate('/dashboard');
+      console.log(response);
+
+      setSuccess('Adoption request submitted successfully! Redirecting to confirmation...');
+      console.log('clearing form data');
+
+      setFormData({
+        fullname: '', phoneNo: '', email: '', location: '',
+        aboutSelf: '', financialCapTxt: '', homeOwnership: '', firstPet: '',
+        petExperience: '', otherPets: '', hasChildren: ''
+      });
+
+      console.log('navigating...');
+      setTimeout(() => {
+          navigate(`/adopt/application/${response.adoption_id}`, { state: { fromSubmission: true } });
+          console.log('done');
+      }, 2500);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to submit application. Please try again.');
     } finally {
@@ -311,6 +342,7 @@ function AdoptFormPage() {
           </div>
 
           {error && <div className="status-message error">{error}</div>}
+          {success && <div className="status-message success">{success}</div>}  
 
           <div className="submit-box">
             <Button type="submit" disabled={loading} className="button-full">

@@ -138,6 +138,80 @@ export async function getMyApplications(req, res) {
   }
 }
 
+
+// =====================================================
+// GET /api/adoptions/:adoption_id
+// get a specific adoption application
+// =====================================================
+export async function getApplicationById(req, res) {
+  const userId = req.session.userId;
+  const { adoption_id } = req.params;
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT
+          a.adoption_id,
+          a.status,
+          a.date_applied,
+          a.applicant_address,
+          a.is_first_pet,
+          a.has_experience,
+          a.has_other_pets,
+          a.has_children,
+          a.owns_home,
+          a.financial_capability,
+          a.motivation,
+          a.appointment_date,
+          a.decision_note,
+          a.date_decided,
+          a.date_completed,
+
+          p.pet_id,
+          p.name AS pet_name,
+          p.breed,
+
+          s.species_name,
+
+          MIN(ph.file_path) AS pet_photo
+
+        FROM Adoptions a
+        JOIN Pets p
+          ON a.pet_id = p.pet_id
+
+        JOIN Species s
+          ON p.species_id = s.species_id
+
+        LEFT JOIN pet_photos ph
+          ON p.pet_id = ph.pet_id
+
+        WHERE a.user_id = ?
+          AND a.adoption_id = ?
+
+        GROUP BY a.adoption_id`,
+      [userId, adoption_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        error: 'Application not found.',
+      });
+    }
+
+    const application = toApplicationShape(rows[0]);
+
+    return res.status(200).json(application);
+
+  } catch (err) {
+    console.error('Get application by ID error:', err.message);
+
+    return res.status(500).json({
+      error: 'Server error. Please try again.',
+    });
+  }
+}
+
+
+
 // =====================================================
 // GET /api/adoptions
 // admin only — kunin lahat ng applications, may applicant info na.

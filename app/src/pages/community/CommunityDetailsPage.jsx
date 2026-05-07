@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../../services/api.js';
-import '../../styles/rescue.css';
+import '../../styles/community.css';
 import Button from '../../components/Button.jsx';
 
 function CommunityDetailsPage() {
@@ -81,8 +81,8 @@ function CommunityDetailsPage() {
   return (
     <section className="post-details-wrapper">
       <div className="post-details-header">
-        <h1>Rescue Request Submitted</h1>
-        <p>Thank you for helping! Your post has been received and will be reviewed by our rescue volunteers.</p>
+        <h1>Community Post Submitted</h1>
+        <p>Thank you for your submission! Your post has been received and will be reviewed by our admin.</p>
       </div>
 
       <div className="post-details-container">
@@ -91,21 +91,9 @@ function CommunityDetailsPage() {
 
           <div className="post-details-grid">
             <div className="post-detail-item">
-              <label className="post-detail-label">Poster Name</label>
-              <p className="post-detail-value">{`${post.first_name} ${post.last_name}` || 'N/A'}</p>
+              <label className="post-detail-label">Post ID</label>
+              <p className="post-detail-value">{post.post_id || 'N/A'}</p>
             </div>
-
-            <div className="post-detail-item">
-              <label className="post-detail-label">Email</label>
-              <p className="post-detail-value">{post.email || 'N/A'}</p>
-            </div>
-
-            <div className="post-detail-item">
-              <label className="post-detail-label">Contact</label>
-              <p className="post-detail-value">{post.cell_num || 'N/A'}</p>
-            </div>
-
-            <div className="post-detail-item"></div>
 
             <div className="post-detail-item">
               <label className="post-detail-label">Pet Name</label>
