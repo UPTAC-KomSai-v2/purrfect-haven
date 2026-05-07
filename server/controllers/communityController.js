@@ -101,3 +101,76 @@ export async function getCommunityPostById(req, res) {
     res.status(500).json({ error: 'Error' });
   }
 }
+
+// =====================================================
+// GET /api/community/me
+// logged-in user — kunin lahat ng sariling community posts.
+// =====================================================
+export async function getMyCommunityPosts(req, res) {
+  const userId = req.session.userId;
+
+  try {
+    const [posts] = await pool.query(
+      `SELECT
+        cp.post_id, cp.pet_name, cp.status, cp.admin_note,
+        cp.date_posted, cp.date_reviewed,
+        s.species_name
+       FROM Community_Posts cp
+       JOIN Species s ON cp.species_id = s.species_id
+       WHERE cp.user_id = ?
+       ORDER BY cp.date_posted DESC`,
+      [userId]
+    );
+
+    res.json({ count: posts.length, posts });
+  } catch (err) {
+    console.error('Get my community posts error:', err.message);
+    res.status(500).json({ error: 'Server error.' });
+  }
+}
+
+// =====================================================
+// PUT /api/community/:id/status
+// admin only — approve or reject a community post.
+// =====================================================
+export async function updateCommunityPostStatus(req, res) {
+  const { id } = req.params;
+  const { status, admin_note } = req.body;
+
+  const validStatuses = ['approved', 'rejected'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Status must be 'approved' or 'rejected'." });
+  }
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT post_id, status, pet_name FROM Community_Posts WHERE post_id = ?`,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Community post not found.' });
+    }
+
+    if (rows[0].status !== 'pending') {
+      return res.status(400).json({ error: 'This post has already been reviewed.' });
+    }
+
+    await pool.query(
+      `UPDATE Community_Posts
+       SET status = ?, admin_note = ?, date_reviewed = NOW()
+       WHERE post_id = ?`,
+      [status, admin_note || null, id]
+    );
+
+    return res.status(200).json({
+      message: `Post ${status} successfully.`,
+      post_id: parseInt(id),
+      new_status: status,
+    });
+
+  } catch (err) {
+    console.error('Update community post status error:', err.message);
+    return res.status(500).json({ error: 'Server error.' });
+  }
+}

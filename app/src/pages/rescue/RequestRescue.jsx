@@ -56,7 +56,7 @@ function RequestRescue() {
         privacyConsent,
       });
 
-      setSuccess('Rescue report submitted successfully! Redirecting to confirmation...');
+      setSuccess('Rescue request submitted successfully! Redirecting to confirmation...');
       setFormData({
         fullName: '',
         contactNumber: '',
@@ -73,9 +73,9 @@ function RequestRescue() {
         navigate(`/rescue/${response.data.reportId}`, { state: { fromSubmission: true } });
       }, 2500);
     } catch (err) {
-      console.error('Error submitting rescue report:', err);
+      console.error('Error submitting rescue request:', err);
       setError(
-        err.response?.data?.error || 'Failed to submit rescue report. Please try again.'
+        err.response?.data?.error || 'Failed to submit rescue request. Please try again.'
       );
     } finally {
       setLoading(false);

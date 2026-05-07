@@ -2,18 +2,23 @@ import express from 'express';
 import {
   createCommunityPost,
   getCommunityPosts,
-  getCommunityPostById
+  getCommunityPostById,
+  getMyCommunityPosts,
+  updateCommunityPostStatus,
 } from '../controllers/communityController.js';
+import { requireAuth }  from '../middleware/requireAuth.js';
+import { requireAdmin } from '../middleware/requireAdmin.js';
 
 const router = express.Router();
 
-// POST /api/community
-router.post('/', createCommunityPost);
+router.post('/', requireAuth, createCommunityPost);
 
-// GET /api/community
+// /me must be registered before /:id so Express doesn't treat "me" as an id
+router.get('/me', requireAuth, getMyCommunityPosts);
+
 router.get('/', getCommunityPosts);
-
-// GET /api/community/:id
 router.get('/:id', getCommunityPostById);
+
+router.put('/:id/status', requireAdmin, updateCommunityPostStatus);
 
 export default router;

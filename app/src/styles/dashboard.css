@@ -92,6 +92,14 @@
   background-color: var(--color-info-bg);
 }
 
+.action-banner-success {
+  background-color: var(--color-success-bg);
+}
+
+.action-banner-rejected {
+  background-color: var(--color-error-bg);
+}
+
 .action-banner-content {
   flex: 1;
   min-width: 250px;

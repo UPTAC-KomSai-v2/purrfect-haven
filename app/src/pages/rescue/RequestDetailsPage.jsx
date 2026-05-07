@@ -110,7 +110,7 @@ function RequestDetailsPage() {
   return (
     <section className="report-details-wrapper">
       <div className="report-details-header">
-        <h1>Rescue Report Submitted</h1>
+        <h1>Rescue Request Submitted</h1>
         <p>Thank you for helping! Your report has been received and will be reviewed by our rescue volunteers.</p>
       </div>
 

@@ -20,9 +20,10 @@ import {
   initiateOwnStory,
 } from '../services/storiesService.js';
 import api from '../services/api.js';
+import { updateCommunityPostStatus } from '../services/communityService.js';
 import PhotoUploader from '../components/PhotoUploader.jsx';
 import CollapsibleItem, { CollapsibleGroup } from '../components/CollapsibleItem.jsx';
-import { getMyRescueReports } from '../services/rescueService.js';
+import { getMyRescueReports, updateRescueReportStatus } from '../services/rescueService.js';
 import AdoptionRequestCard from './admin/AdoptionRequestCard.jsx';
 import CommunityPostCard from './admin/CommunityPostCard.jsx';
 import RescueReportCard from './admin/RescueRequestCard.jsx';
@@ -106,6 +107,8 @@ function DashboardPage() {
   const [updateModal, setUpdateModal]               = useState(null);
   const [shareStoryModal, setShareStoryModal]       = useState(null);
   const [adoptionActionModal, setAdoptionActionModal] = useState(null);
+  const [communityActionModal, setCommunityActionModal] = useState(null);
+  const [rescueActionModal, setRescueActionModal] = useState(null);
   const [actionSubmitting, setActionSubmitting]       = useState(false);
   const [toast, setToast]                             = useState(null);
 
@@ -133,7 +136,7 @@ function DashboardPage() {
     else console.error('Stories load failed:', s.reason);
 
     if (r.status === 'fulfilled') setRescueReports(r.value);
-    else console.error('Rescue reports load failed:', r.reason);
+    else console.error('Rescue requests load failed:', r.reason);
 
     if (a.status === 'rejected') {
       setError('Could not load your adoption requests.');
@@ -237,6 +240,78 @@ function DashboardPage() {
       showToast('Welfare check requested. The adopter will be notified.');
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to request welfare check.', 'error');
+    }
+  }
+
+  // ============ admin community post actions ============
+
+  function openCommunityAction(post, type) {
+    setCommunityActionModal({ type, post, note: '' });
+  }
+
+  async function confirmCommunityAction() {
+    if (!communityActionModal) return;
+    const { type, post, note } = communityActionModal;
+    const status = type === 'approve' ? 'approved' : 'rejected';
+
+    setActionSubmitting(true);
+    try {
+      await updateCommunityPostStatus(post.post_id, status, note || null);
+      setAdminPosts((prev) =>
+        prev.map((p) =>
+          p.post_id === post.post_id
+            ? { ...p, status, admin_note: note || null }
+            : p
+        )
+      );
+      setCommunityActionModal(null);
+      showToast(
+        type === 'approve'
+          ? 'Post approved and published.'
+          : 'Post rejected.'
+      );
+    } catch (err) {
+      console.error('Community post action error:', err);
+      showToast(err.response?.data?.error || 'Failed to update post status.', 'error');
+    } finally {
+      setActionSubmitting(false);
+    }
+  }
+
+  // ============ admin rescue request actions ============
+
+  function openRescueAction(report, type) {
+    setRescueActionModal({ type, report, note: '' });
+  }
+
+  async function confirmRescueAction() {
+    if (!rescueActionModal) return;
+    const { type, report, note } = rescueActionModal;
+
+    const statusMap = {
+      dispatch: 'in_progress',
+      resolve:  'resolved',
+      close:    'closed',
+    };
+    const status = statusMap[type];
+
+    setActionSubmitting(true);
+    try {
+      await updateRescueReportStatus(report.report_id, status, note || null);
+      setAdminRescues((prev) =>
+        prev.map((r) =>
+          r.report_id === report.report_id
+            ? { ...r, status, admin_note: note || null }
+            : r
+        )
+      );
+      setRescueActionModal(null);
+      showToast('Rescue requests updated successfully.');
+    } catch (err) {
+      console.error('Rescue action error:', err);
+      showToast(err.response?.data?.error || 'Failed to update rescue requests.', 'error');
+    } finally {
+      setActionSubmitting(false);
     }
   }
 
@@ -422,7 +497,7 @@ function DashboardPage() {
               className={`admin-sidebar-item ${activeTab === 'rescues' ? 'active' : ''}`}
               onClick={() => setActiveTab('rescues')}
             >
-              <span>Rescue Reports</span>
+              <span>Rescue Requests</span>
               {pendingRescuesCount > 0 && <span className="tab-badge">{pendingRescuesCount}</span>}
             </button>
             <button
@@ -438,7 +513,7 @@ function DashboardPage() {
           <div className="admin-main">
             <div className="admin-main-header">
               <h2 className="admin-main-title">
-                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Reports', stories: 'Stories', welfare: 'Welfare Checks' }[activeTab]}
+                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Requests', stories: 'Stories', welfare: 'Welfare Checks' }[activeTab]}
               </h2>
               <AutoSizeSelect
                 className="admin-tab-filter"
@@ -462,14 +537,17 @@ function DashboardPage() {
                   <CommunityPostCard
                     key={post.post_id}
                     post={post}
-                    onApprove={() => {}}
-                    onReject={() => {}}
+                    onApprove={() => openCommunityAction(post, 'approve')}
+                    onReject={() => openCommunityAction(post, 'reject')}
                   />
                 ))}
                 {activeTab === 'rescues' && filteredAdminRescues.map(report => (
                   <RescueReportCard
                     key={report.report_id}
                     report={report}
+                    onDispatch={() => openRescueAction(report, 'dispatch')}
+                    onResolve={() => openRescueAction(report, 'resolve')}
+                    onClose={() => openRescueAction(report, 'close')}
                   />
                 ))}
                 {activeTab === 'adoptions' && (filteredAdminAdoptions || []).map(request => (
@@ -495,7 +573,7 @@ function DashboardPage() {
                   <p className="empty-state">No community posts found.</p>
                 )}
                 {!loading && activeTab === 'rescues' && filteredAdminRescues.length === 0 && (
-                  <p className="empty-state">No rescue reports found.</p>
+                  <p className="empty-state">No rescue requests found.</p>
                 )}
                 {!loading && activeTab === 'welfare' && adminWelfareChecks.length === 0 && (
                   <p className="empty-state">No welfare checks yet.</p>
@@ -513,6 +591,30 @@ function DashboardPage() {
             }
             onConfirm={confirmAdoptionAction}
             onCancel={() => setAdoptionActionModal(null)}
+            isSubmitting={actionSubmitting}
+          />
+        )}
+
+        {communityActionModal && (
+          <CommunityActionModal
+            modal={communityActionModal}
+            onChangeField={(field, value) =>
+              setCommunityActionModal((prev) => ({ ...prev, [field]: value }))
+            }
+            onConfirm={confirmCommunityAction}
+            onCancel={() => setCommunityActionModal(null)}
+            isSubmitting={actionSubmitting}
+          />
+        )}
+
+        {rescueActionModal && (
+          <RescueActionModal
+            modal={rescueActionModal}
+            onChangeField={(field, value) =>
+              setRescueActionModal((prev) => ({ ...prev, [field]: value }))
+            }
+            onConfirm={confirmRescueAction}
+            onCancel={() => setRescueActionModal(null)}
             isSubmitting={actionSubmitting}
           />
         )}
@@ -593,9 +695,9 @@ function DashboardPage() {
         </div>
 
         <div className="dashboard-card">
-          <h2>My Rescue Reports</h2>
+          <h2>My Rescue Requests</h2>
           {rescueReports.length === 0 ? (
-            <p className="empty-state">No rescue reports yet.</p>
+            <p className="empty-state">No rescue requests yet.</p>
           ) : (
             <div className="dashboard-list">
               {rescueReports.map((r) => (
@@ -1173,6 +1275,128 @@ function AutoSizeSelect({ value, onChange, disabled, className, children }) {
         {children}
       </select>
     </>
+  );
+}
+
+// =====================================================
+// RescueActionModal
+// =====================================================
+function RescueActionModal({ modal, onChangeField, onConfirm, onCancel, isSubmitting }) {
+  const config = {
+    dispatch: {
+      title:       'Approve & Dispatch',
+      confirmText: 'Approve & Dispatch',
+      btnClass:    'approve-btn',
+      description: 'A rescue team will be dispatched to the reported location.',
+    },
+    resolve: {
+      title:       'Mark as Resolved',
+      confirmText: 'Mark as Resolved',
+      btnClass:    'approve-btn',
+      description: 'This marks the rescue operation as successfully completed.',
+    },
+    close: {
+      title:       modal.report?.status === 'pending' ? 'Reject Report' : 'Close Report',
+      confirmText: modal.report?.status === 'pending' ? 'Reject Report' : 'Close Report',
+      btnClass:    'reject-btn',
+      description:
+        modal.report?.status === 'pending'
+          ? 'The report will be rejected and the reporter will be notified.'
+          : 'The rescue request will be closed without resolution.',
+    },
+  };
+
+  const c = config[modal.type] || {};
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+        <h2>{c.title}</h2>
+        <p className="modal-subtext">
+          Report at <strong>{modal.report?.location}</strong> by{' '}
+          <strong>{modal.report?.reporter_name}</strong>
+        </p>
+
+        <p className="modal-confirm-text">{c.description}</p>
+
+        <label className="modal-label">
+          Admin Note{' '}
+          <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+          <textarea
+            value={modal.note}
+            onChange={(e) => onChangeField('note', e.target.value)}
+            placeholder="Leave a note for the reporter (optional)..."
+            rows={3}
+          />
+        </label>
+
+        <div className="modal-actions">
+          <button className="modal-cancel" onClick={onCancel} disabled={isSubmitting}>
+            Cancel
+          </button>
+          <button
+            className={c.btnClass}
+            onClick={onConfirm}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : c.confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =====================================================
+// CommunityActionModal
+// =====================================================
+function CommunityActionModal({ modal, onChangeField, onConfirm, onCancel, isSubmitting }) {
+  const isApprove = modal.type === 'approve';
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+        <h2>{isApprove ? 'Approve Post' : 'Reject Post'}</h2>
+        <p className="modal-subtext">
+          Community post for <strong>{modal.post.pet_name}</strong> by{' '}
+          <strong>{modal.post.poster?.full_name}</strong>
+        </p>
+
+        <label className="modal-label">
+          Admin Note{' '}
+          <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+          <textarea
+            value={modal.note}
+            onChange={(e) => onChangeField('note', e.target.value)}
+            placeholder={
+              isApprove
+                ? 'Optional message to the poster...'
+                : 'Reason for rejection (optional)...'
+            }
+            rows={4}
+          />
+        </label>
+
+        {isApprove && (
+          <p className="modal-confirm-text">
+            Approving this post will publish it to the community listings.
+          </p>
+        )}
+
+        <div className="modal-actions">
+          <button className="modal-cancel" onClick={onCancel} disabled={isSubmitting}>
+            Cancel
+          </button>
+          <button
+            className={isApprove ? 'approve-btn' : 'reject-btn'}
+            onClick={onConfirm}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : isApprove ? 'Approve & Publish' : 'Reject Post'}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
