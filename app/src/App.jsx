@@ -13,7 +13,6 @@ import RequestDetailsPage from './pages/rescue/RequestDetailsPage.jsx';
 import CommunityPage from './pages/community/CommunityPage.jsx'; //delete when done testing
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
-import AdminRoute from './components/AdminRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import NotificationPage from './pages/NotificationPage.jsx';
