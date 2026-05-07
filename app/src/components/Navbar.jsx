@@ -10,7 +10,7 @@ import settingsIcon from '../assets/icons/settings.svg';
 import notificationsIcon from '../assets/icons/notifications.svg';
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -36,17 +36,6 @@ export default function Navbar() {
       navigate('/');
     }
   }
-
-  // Handle protected links - redirect to login if not authenticated
-  const handleProtectedLink = (e, path) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      navigate(`/login?page=${path.replace('/', '')}`);
-    } else {
-      navigate(path);
-    }
-  };
-
  
   // Fix logo styling in styles
   return (
@@ -58,12 +47,17 @@ export default function Navbar() {
       <div className="navbar-right">
         <div className="navbar-links">
           <Link to="/pets">Find a pet</Link>
-          <Link to="/rescue">Request a rescue</Link>
-          <Link to="/community">Community posts</Link>
+          { (!user || !user.is_admin) && (
+            <>
+              <Link to="/rescue">Request a rescue</Link>
+              <Link to="/community">Community posts</Link>
+            </>
+          )}
+          
         </div>
 
         <div className="navbar-links">
-          {isAuthenticated ? (
+          {user ? (
             <div className="navbar-user-dropdown" ref={dropdownRef}>
               <button
                 className="navbar-user-trigger"
