@@ -64,6 +64,7 @@ export default function Navbar() {
                 onClick={() => setDropdownOpen((o) => !o)}
               >
                 {user && `${user.first_name} ${user.last_name}`}
+                {user && `${user.is_admin ? ' (Admin)' : ''}`}
               </button>
               {dropdownOpen && (
                 <div className="navbar-user-menu">
