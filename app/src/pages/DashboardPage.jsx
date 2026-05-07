@@ -103,6 +103,7 @@ function DashboardPage() {
   const [adminWelfareChecks, setAdminWelfareChecks] = useState([]);
   const [activeTab, setActiveTab]           = useState('adoptions');
   const [statusFilter, setStatusFilter]     = useState('all');
+
   const [storyModal, setStoryModal]                 = useState(null);
   const [updateModal, setUpdateModal]               = useState(null);
   const [shareStoryModal, setShareStoryModal]       = useState(null);
@@ -111,7 +112,6 @@ function DashboardPage() {
   const [rescueActionModal, setRescueActionModal] = useState(null);
   const [actionSubmitting, setActionSubmitting]       = useState(false);
   const [toast, setToast]                             = useState(null);
-
 
   useEffect(() => {
     if (!user) return;
@@ -532,6 +532,7 @@ function DashboardPage() {
             </div>
 
             <CollapsibleGroup>
+
               <div className="admin-cards">
                 {activeTab === 'community' && filteredAdminPosts.map(post => (
                   <CommunityPostCard
@@ -579,6 +580,7 @@ function DashboardPage() {
                   <p className="empty-state">No welfare checks yet.</p>
                 )}
               </div>
+              
             </CollapsibleGroup>
           </div>
         </div>

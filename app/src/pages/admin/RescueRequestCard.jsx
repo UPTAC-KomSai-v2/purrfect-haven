@@ -46,7 +46,7 @@ function RescueRequestCard({
   const showResolve  = report.status === 'in_progress';
   const showClose    = report.status === 'in_progress';
   const isFinal      = report.status === 'resolved' || report.status === 'closed';
-
+  
   return (
     <CollapsibleItem
       wrapperClassName={`admin-card status-${report.status}`}
@@ -75,6 +75,7 @@ function RescueRequestCard({
           <h3>POSTED BY</h3>
           <h4>Full Name</h4><p>{report.reporter_name}</p>
           <h4>Location Reported</h4><p>{report.location}</p>
+
           {report.date_resolved && (
             <>
               <h4>Date Resolved</h4>

@@ -44,6 +44,7 @@ function RequestRescue() {
     setError('');
     setSuccess('');
 
+    // Validation: Prevents submission if required fields are empty
     if (!formData.fullName || !formData.contactNumber || !formData.location || !formData.description) {
       setError('Please fill in all required fields.');
       return;
@@ -222,10 +223,10 @@ function RequestRescue() {
           </label>
         </div>
 
-        {error && <div className="status-message error">{error}</div>}
-        {success && <div className="status-message success">{success}</div>}
-
         <div className="submit-box">
+            {error && <div className="status-message error">{error}</div>}
+            {success && <div className="status-message success">{success}</div>}
+            
             <Button type="submit" disabled={loading} className="button-full">
               {loading ? 'Submitting...' : 'Submit Rescue Request'}
             </Button>

@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import bcrypt from 'bcrypt'; 
 
 // GET /api/users/profile
 export async function getProfile(req, res) {
@@ -34,7 +35,6 @@ export async function updateProfile(req, res) {
     });
   }
 
-  // How about create a helper for this regex
   if (email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -43,7 +43,6 @@ export async function updateProfile(req, res) {
   }
  
   try {
-    // Check email/cell_num not already taken by another user
     if (email || cell_num) {
       const conditions = [];
       const checkParams = [];
@@ -71,7 +70,6 @@ export async function updateProfile(req, res) {
       }
     }
  
-    // Build UPDATE query dynamically (only update provided fields)
     const fields = [];
     const params = [];
  
@@ -88,7 +86,6 @@ export async function updateProfile(req, res) {
       params
     );
  
-    // Return updated profile
     const [rows] = await pool.query(
       `SELECT user_id, first_name, last_name, city, email, cell_num, created_at
        FROM Users WHERE user_id = ?`,
@@ -105,4 +102,44 @@ export async function updateProfile(req, res) {
     return res.status(500).json({ error: 'Server error. Please try again.' });
   }
 }
- 
+
+// PUT /api/users/change-password
+export async function changePassword(req, res) {
+  const { current_password, new_password } = req.body;
+
+  if (!current_password || !new_password) {
+    return res.status(400).json({ error: 'Both current and new passwords are required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT password_hash FROM Users WHERE user_id = ?',
+      [req.session.userId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const user = rows[0];
+
+    const isMatch = await bcrypt.compare(current_password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Current password is incorrect.' });
+    }
+
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(new_password, saltRounds);
+
+    await pool.query(
+      'UPDATE Users SET password_hash = ? WHERE user_id = ?',
+      [hashedNewPassword, req.session.userId]
+    );
+
+    return res.status(200).json({ message: 'Password changed successfully.' });
+
+  } catch (err) {
+    console.error('Change password error:', err.message);
+    return res.status(500).json({ error: 'Server error. Please try again.' });
+  }
+}

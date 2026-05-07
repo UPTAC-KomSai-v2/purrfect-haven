@@ -38,9 +38,12 @@ function CommunityPage() {
         setError('');
         setSuccess('');
 
-        if (!formData.petName || !formData.location) {
+        // Strict Validation: Checks if ANY field in the formData object is empty
+        const allFieldsFilled = Object.values(formData).every(value => value.trim() !== '');
+
+        if (!allFieldsFilled) {
             setError('Please fill in all required fields.');
-            return;
+            return; // This blocks the submission
         }
 
         setLoading(true);
@@ -103,7 +106,6 @@ function CommunityPage() {
                     <img src={bg3} alt="Pet Adoption 3" className="cap-featured-img" />
                 </section>
 
-                {/* RIGHT COLUMN: Entry Form */}
                 <section className="cap-form-section">
                     <FormCard
                         title="Community Adoption Posting Form"
@@ -121,46 +123,46 @@ function CommunityPage() {
                             <div className="report-form-group cap-third">
                                 <label htmlFor="age">Age</label>
                                 <input type="text" id="age" name="age" placeholder="e.g. 2 years"
-                                    value={formData.age} onChange={handleInputChange} />
+                                    value={formData.age} onChange={handleInputChange} required />
                             </div>
                             <div className="report-form-group cap-third">
                                 <label htmlFor="weight">Weight (kg)</label>
                                 <input type="text" id="weight" name="weight" placeholder="e.g. 3.5"
-                                    value={formData.weight} onChange={handleInputChange} />
+                                    value={formData.weight} onChange={handleInputChange} required />
                             </div>
                             <div className="report-form-group cap-third">
                                 <label htmlFor="gender">Gender</label>
                                 <input type="text" id="gender" name="gender" placeholder="Male / Female"
-                                    value={formData.gender} onChange={handleInputChange} />
+                                    value={formData.gender} onChange={handleInputChange} required />
                             </div>
 
                             <div className="report-form-group">
                                 <label htmlFor="type">Type</label>
                                 <input type="text" id="type" name="type" placeholder="e.g. Cat, Dog"
-                                    value={formData.type} onChange={handleInputChange} />
+                                    value={formData.type} onChange={handleInputChange} required />
                             </div>
                             <div className="report-form-group">
                                 <label htmlFor="breed">Breed</label>
                                 <input type="text" id="breed" name="breed" placeholder="e.g. Golden Retriever"
-                                    value={formData.breed} onChange={handleInputChange} />
+                                    value={formData.breed} onChange={handleInputChange} required />
                             </div>
 
                             <div className="report-form-group full">
                                 <label htmlFor="color">Color / Pattern</label>
                                 <input type="text" id="color" name="color" placeholder="e.g. black, white, calico"
-                                    value={formData.color} onChange={handleInputChange} />
+                                    value={formData.color} onChange={handleInputChange} required />
                             </div>
 
                             <div className="report-form-group full">
                                 <label htmlFor="personality">Personality</label>
                                 <input type="text" id="personality" name="personality" placeholder="Enter pet's personality traits"
-                                    value={formData.personality} onChange={handleInputChange} />
+                                    value={formData.personality} onChange={handleInputChange} required />
                             </div>
 
                             <div className="report-form-group full">
                                 <label htmlFor="organization">Organization / Foster Home</label>
                                 <input type="text" id="organization" name="organization" placeholder="Enter organization or foster owner"
-                                    value={formData.organization} onChange={handleInputChange} />
+                                    value={formData.organization} onChange={handleInputChange} required />
                             </div>
 
                             <div className="report-form-group full">
@@ -172,14 +174,14 @@ function CommunityPage() {
                             <div className="report-form-group full">
                                 <label htmlFor="health">Health & Care</label>
                                 <input type="text" id="health" name="health" placeholder="e.g. vaccinated, dewormed, healthy"
-                                    value={formData.health} onChange={handleInputChange} />
+                                    value={formData.health} onChange={handleInputChange} required />
                             </div>
 
                             <div className="report-form-group full">
                                 <label htmlFor="about">About The Pet</label>
                                 <textarea id="about" name="about" rows="4"
                                     placeholder="Provide history, how they were found, etc."
-                                    value={formData.about} onChange={handleInputChange}></textarea>
+                                    value={formData.about} onChange={handleInputChange} required></textarea>
                             </div>
 
                             <div className="report-form-group full">
@@ -195,10 +197,10 @@ function CommunityPage() {
                                 </div>
                             </div>
 
-                            {error && <div className="status-message error">{error}</div>}
-                            {success && <div className="status-message success">{success}</div>}
-
                             <div className="submit-box">
+                                {error && <div className="status-message error">{error}</div>}
+                                {success && <div className="status-message success">{success}</div>}
+
                                 <Button type="submit" disabled={loading} className="button-full">
                                     {loading ? 'Submitting...' : 'Submit Community Post'}
                                 </Button>
