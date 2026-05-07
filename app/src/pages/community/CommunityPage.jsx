@@ -45,7 +45,7 @@ function CommunityPage() {
 
         setLoading(true);
         try {
-            await api.post('/community', {
+            const response = await api.post('/community', {
                 pet_name: formData.petName,
                 species_name: formData.type, 
                 breed: formData.breed,
@@ -70,8 +70,16 @@ function CommunityPage() {
                 type: '', breed: '', color: '', personality: '',
                 organization: '', location: '', health: '', about: '',
             });
+            console.log(response);
+
+            setTimeout(() => {
+                navigate(`/community/${response.data.postId}`, { state: { fromSubmission: true } });
+            }, 2500);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to submit post. Please try again.');
+            console.log('Error submitting community post submission: ', err);
+            setError(
+                err.response?.data?.error || 'Failed to submit post. Please try again.'
+            );
         } finally {
             setLoading(false);
         }

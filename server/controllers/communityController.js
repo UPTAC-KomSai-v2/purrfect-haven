@@ -94,7 +94,21 @@ export async function getCommunityPosts(req, res) {
 export async function getCommunityPostById(req, res) {
   const { id } = req.params;
   try {
-    const [posts] = await pool.query('SELECT * FROM Community_Posts WHERE post_id = ?', [id]);
+    const [posts] = await pool.query(
+      `SELECT 
+          cp.*, 
+          s.species_name, 
+          u.first_name, 
+          u.last_name, 
+          u.email, 
+          u.cell_num, 
+          u.city AS user_address
+      FROM Community_Posts cp
+      JOIN Species s ON cp.species_id = s.species_id
+      LEFT JOIN Users u ON cp.user_id = u.user_id
+      WHERE cp.post_id = ?
+      ORDER BY cp.date_posted DESC;`, 
+      [id]);
     if (posts.length === 0) return res.status(404).json({ error: 'Not found' });
     res.json(posts[0]);
   } catch (err) {
