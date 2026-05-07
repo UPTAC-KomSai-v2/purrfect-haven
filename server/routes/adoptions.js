@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   submitApplication,
+  getApplicationById,
   getMyApplications,
   getAllAdoptions,
   updateAdoptionStatus,
@@ -19,7 +20,9 @@ import { requireAdmin } from '../middleware/requireAdmin.js';
 const router = express.Router();
 
 router.post('/',   requireAuth,  submitApplication);
+
 router.get('/me',  requireAuth,  getMyApplications);
+router.get('/:adoption_id', requireAuth, getApplicationById);
 
 router.get('/',           requireAdmin, getAllAdoptions);
 router.put('/:id/status', requireAdmin, updateAdoptionStatus);

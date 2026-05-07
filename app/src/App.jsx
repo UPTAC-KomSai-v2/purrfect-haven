@@ -11,7 +11,9 @@ import PetDetail from './pages/pets/PetDetailPage.jsx';
 import RequestRescue from './pages/rescue/RequestRescue.jsx'; //delete when done testing
 import RequestDetailsPage from './pages/rescue/RequestDetailsPage.jsx';
 import CommunityPage from './pages/community/CommunityPage.jsx'; //delete when done testing
+import CommunityDetailsPage from './pages/community/CommunityDetailsPage.jsx';
 import AdoptionFormPage from './pages/pets/AdoptionFormPage.jsx';
+import AdoptionDetailsPage from './pages/pets/AdoptionDetailsPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
@@ -44,6 +46,7 @@ function App() {
                 <RequestRescue />
             }
           />
+
           <Route
             path="/rescue/:reportId"
             element={
@@ -52,6 +55,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/community"
             element={
@@ -63,7 +67,7 @@ function App() {
             path="/community/:postId"
             element={
               <ProtectedRoute>
-                <CommunityPage />
+                <CommunityDetailsPage />
               </ProtectedRoute>
             }
           />
@@ -72,6 +76,15 @@ function App() {
             path="/adopt/:id"
             element={
                 <AdoptionFormPage />
+            }
+          />
+
+          <Route
+            path="/adopt/application/:adoption_id"
+            element={
+              <ProtectedRoute>
+                <AdoptionDetailsPage />
+              </ProtectedRoute>
             }
           />
 
