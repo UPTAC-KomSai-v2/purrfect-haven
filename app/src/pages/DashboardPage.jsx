@@ -463,7 +463,7 @@ function DashboardPage() {
         <section className="profile-header">
           <div>
             <h1>Hello, {user.first_name}!</h1>
-            <p>Welcome back to your admin dashboard.</p>
+            <p>Welcome back to your Admin Dashboard.</p>
           </div>
         </section>
 
@@ -631,7 +631,7 @@ function DashboardPage() {
       <section className="profile-header">
         <div>
           <h1>Hello, {user.first_name}!</h1>
-          <p>Welcome back to your user dashboard</p>
+          <p>Welcome back to your User Dashboard.</p>
         </div>
       </section>
 
@@ -1049,6 +1049,31 @@ function getRescueStatusLabel(status) {
 }
 
 function RescueReportItem({ report, isExpanded, onToggle }) {
+  const parseDescription = (desc) => {
+    const lines = desc.split('\n');
+    lines.pop();
+    const details = [];
+    
+    lines.map((line) => {
+      const cleaned = line.replaceAll('*', '').trim();
+      const splitLines = cleaned.split(':');
+      details.push(
+        {
+          property: splitLines[0],
+          value: splitLines[1]
+        }
+      )
+    });
+
+    return details;
+  };
+
+  const details = parseDescription(report.description);
+  const conditionStart = report.description.indexOf('**Condition & Description:**');
+  const condition = conditionStart !== -1
+    ? report.description.substring(conditionStart).replace('**Condition & Description:**', '').trim()
+    : 'Not provided';
+
   return (
     <CollapsibleItem
       title={report.location}
@@ -1058,8 +1083,16 @@ function RescueReportItem({ report, isExpanded, onToggle }) {
       isExpanded={isExpanded}
       onToggle={onToggle}
     >
-      <div className="view-story-content">
-        <p>{report.description}</p>
+      <div className="detail-section">
+        {details.map(detail => 
+          (
+            <div className="detail-section">
+              <h4>{detail.property}</h4>
+              <p>{detail.value}</p>
+            </div>
+          )
+        )}
+        <p>{condition}</p>
       </div>
 
       {(report.status === 'resolved' || report.status === 'closed') && report.date_resolved && (
