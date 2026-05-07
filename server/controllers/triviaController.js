@@ -1,3 +1,5 @@
+// GET /api/trivia/:type
+
 export async function getTrivia(req, res) {
   const { type } = req.params;
 
