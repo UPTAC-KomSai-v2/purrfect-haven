@@ -110,6 +110,7 @@ function DashboardPage() {
   const [adoptionActionModal, setAdoptionActionModal] = useState(null);
   const [communityActionModal, setCommunityActionModal] = useState(null);
   const [rescueActionModal, setRescueActionModal] = useState(null);
+  const [storyActionModal, setStoryActionModal] = useState(null);
   const [actionSubmitting, setActionSubmitting]       = useState(false);
   const [toast, setToast]                             = useState(null);
 
@@ -283,6 +284,49 @@ function DashboardPage() {
   function openRescueAction(report, type) {
     setRescueActionModal({ type, report, note: '' });
   }
+
+  // ============ admin story actions ============
+
+function openStoryAction(story, type) {
+  setStoryActionModal({ type, story, note: '' });
+}
+
+async function confirmStoryAction() {
+  if (!storyActionModal) return;
+  const { type, story, note } = storyActionModal;
+
+  setActionSubmitting(true);
+  try {
+    // tatawag sa PUT /api/stories/:id/review (action: publish | reject)
+    await api.put(`/stories/${story.story_id}/review`, {
+      action: type,
+      admin_note: note || null,
+    });
+
+    // i-update ang local state agad — kaya re-render kahit hindi nag-refetch
+    setAdminStories((prev) =>
+      prev.map((s) =>
+        s.story_id === story.story_id
+          ? {
+              ...s,
+              status: type === 'publish' ? 'published' : 'rejected',
+              admin_note: note || null,
+            }
+          : s
+      )
+    );
+
+    setStoryActionModal(null);
+    showToast(
+      type === 'publish' ? 'Story published successfully.' : 'Story rejected.'
+    );
+  } catch (err) {
+    console.error('Story action error:', err);
+    showToast(err.response?.data?.error || 'Failed to update story.', 'error');
+  } finally {
+    setActionSubmitting(false);
+  }
+}
 
   async function confirmRescueAction() {
     if (!rescueActionModal) return;
@@ -566,6 +610,17 @@ function DashboardPage() {
                 {activeTab === 'welfare' && adminWelfareChecks.map((check) => (
                   <WelfareCheckCard key={check.check_id} check={check} />
                 ))}
+                {activeTab === 'stories' &&
+                  adminStories
+                    .filter((s) => s.status === 'submitted')
+                    .map((story) => (
+                      <StoryReviewCard
+                        key={story.story_id}
+                        story={story}
+                        onPublish={() => openStoryAction(story, 'publish')}
+                        onReject={() => openStoryAction(story, 'reject')}
+                      />
+                    ))}
                 {loading && <p className="empty-state">Loading...</p>}
                 {!loading && activeTab === 'adoptions' && filteredAdminAdoptions.length === 0 && (
                   <p className="empty-state">No adoption requests found.</p>
@@ -578,6 +633,10 @@ function DashboardPage() {
                 )}
                 {!loading && activeTab === 'welfare' && adminWelfareChecks.length === 0 && (
                   <p className="empty-state">No welfare checks yet.</p>
+                )}
+                {!loading && activeTab === 'stories' &&
+                  adminStories.filter((s) => s.status === 'submitted').length === 0 && (
+                    <p className="empty-state">No stories awaiting review.</p>
                 )}
               </div>
               
@@ -617,6 +676,18 @@ function DashboardPage() {
             }
             onConfirm={confirmRescueAction}
             onCancel={() => setRescueActionModal(null)}
+            isSubmitting={actionSubmitting}
+          />
+        )}
+
+        {storyActionModal && (
+          <StoryActionModal
+            modal={storyActionModal}
+            onChangeField={(field, value) =>
+              setStoryActionModal((prev) => ({ ...prev, [field]: value }))
+            }
+            onConfirm={confirmStoryAction}
+            onCancel={() => setStoryActionModal(null)}
             isSubmitting={actionSubmitting}
           />
         )}
@@ -1526,4 +1597,122 @@ function AdoptionActionModal({ modal, onChangeField, onConfirm, onCancel, isSubm
     </div>
   );
 }
+
+// =====================================================
+// StoryReviewCard — admin view ng isang submitted story
+// =====================================================
+function StoryReviewCard({ story, onPublish, onReject }) {
+  const isDecided = story.status !== 'submitted';
+
+  return (
+    <CollapsibleItem
+      wrapperClassName={`admin-card status-${story.status}`}
+      headerClassName="card-header card-header-gradient"
+      titleContainerClassName="card-header-text"
+      contentClassName="card-content"
+      TitleTag="h2"
+      title={story.title || `Story for ${story.pet.name}`}
+      meta={`By ${story.adopter_name} · About ${story.pet.name} · Submitted ${formatDate(story.submitted_at)}`}
+      statusLabel={getStoryStatusLabel(story.status)}
+      statusClass={`story-status-${story.status}`}
+    >
+      {/* mismong laman ng story */}
+      <div className="info-section">
+        <h3 className="section-title">STORY CONTENT</h3>
+        <p style={{ whiteSpace: 'pre-wrap', fontSize: '13px', lineHeight: 1.6 }}>
+          {story.content}
+        </p>
+      </div>
+
+      {/* mga photos kung meron */}
+      {story.photos && story.photos.length > 0 && (
+        <div className="info-section" style={{ marginTop: '14px' }}>
+          <h3 className="section-title">PHOTOS</h3>
+          <div className="story-card-photos">
+            {story.photos.map((photo, i) => (
+              <a key={i} href={getPhotoUrl(photo)} target="_blank" rel="noopener noreferrer">
+                <img src={getPhotoUrl(photo)} alt={`Story photo ${i + 1}`} />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* lalabas lang ang note kapag na-decide na */}
+      {isDecided && story.admin_note && (
+        <div className="info-section" style={{ marginTop: '14px' }}>
+          <h3 className="section-title">ADMIN NOTE</h3>
+          <p className="story-admin-note">{story.admin_note}</p>
+        </div>
+      )}
+
+      {/* approve/reject buttons — submitted lang */}
+      {!isDecided && (
+        <div className="action-buttons">
+          <button className="approve-btn" onClick={onPublish}>
+            Publish Story
+          </button>
+          <button className="reject-btn" onClick={onReject}>
+            Reject Story
+          </button>
+        </div>
+      )}
+    </CollapsibleItem>
+  );
+}
+
+// =====================================================
+// StoryActionModal — confirm dialog para sa publish/reject
+// =====================================================
+function StoryActionModal({ modal, onChangeField, onConfirm, onCancel, isSubmitting }) {
+  const isPublish = modal.type === 'publish';
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+        <h2>{isPublish ? 'Publish Story' : 'Reject Story'}</h2>
+        <p className="modal-subtext">
+          Story by <strong>{modal.story.adopter_name}</strong> about{' '}
+          <strong>{modal.story.pet.name}</strong>
+        </p>
+
+        <label className="modal-label">
+          Admin Note{' '}
+          <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+          <textarea
+            value={modal.note}
+            onChange={(e) => onChangeField('note', e.target.value)}
+            placeholder={
+              isPublish
+                ? 'Optional message to the adopter...'
+                : 'Reason for rejection (optional)...'
+            }
+            rows={4}
+          />
+        </label>
+
+        {isPublish && (
+          <p className="modal-confirm-text">
+            Publishing will make this story eligible to appear as the Featured
+            Story on the homepage.
+          </p>
+        )}
+
+        <div className="modal-actions">
+          <button className="modal-cancel" onClick={onCancel} disabled={isSubmitting}>
+            Cancel
+          </button>
+          <button
+            className={isPublish ? 'approve-btn' : 'reject-btn'}
+            onClick={onConfirm}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : isPublish ? 'Publish Story' : 'Reject Story'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default DashboardPage;
