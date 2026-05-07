@@ -5,4 +5,5 @@ const router = express.Router();
 
 router.get('/:type', getTrivia);
 
+
 export default router;
