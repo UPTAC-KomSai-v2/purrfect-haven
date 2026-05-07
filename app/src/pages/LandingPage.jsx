@@ -7,6 +7,7 @@ import Hero from '../components/Hero.jsx';
 import Button from '../components/Button.jsx';
 import '../styles/landing.css';
 import faqItems from '../data/faqs.json';
+import TriviaPopup from '../components/TriviaPopup.jsx';
 
 function formatStoryDate(dateString) {
   if (!dateString) return '';
@@ -20,6 +21,8 @@ function Landing() {
   const [activeFaq, setActiveFaq] = useState(0);
   const [featuredPets, setFeaturedPets] = useState([]);
   const [featuredStory, setFeaturedStory] = useState(null);
+  const [showTrivia, setShowTrivia] = useState(false);
+  const [triviaType, setTriviaType] = useState('dog');
 
   useEffect(() => {
     async function fetchFeaturedPets() {
@@ -43,6 +46,25 @@ function Landing() {
       }
     }
     fetchStory();
+  }, []);
+
+  useEffect(() => {
+    // i-check kung galing sa fresh login
+    const shouldShow = sessionStorage.getItem('showTriviaAfterLogin');
+    if (shouldShow !== 'true') return;
+
+    // pipili ng random animal type
+    const animalTypes = ['dog', 'cat', 'panda', 'fox', 'red_panda', 'koala', 'bird', 'raccoon', 'kangaroo'];
+    const randomType = animalTypes[Math.floor(Math.random() * animalTypes.length)];
+    setTriviaType(randomType);
+
+    // delay
+    const timer = setTimeout(() => {
+      setShowTrivia(true);
+      sessionStorage.removeItem('showTriviaAfterLogin');
+    }, 1200);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleFaq = (index) => setActiveFaq(activeFaq === index ? -1 : index);
@@ -129,6 +151,13 @@ function Landing() {
           ))}
         </div>
       </section>
+
+      {showTrivia && (
+        <TriviaPopup
+          type={triviaType}
+          onClose={() => setShowTrivia(false)}
+        />
+      )}
     </>
   );
 }

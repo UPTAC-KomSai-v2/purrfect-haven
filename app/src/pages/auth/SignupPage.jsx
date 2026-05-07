@@ -57,6 +57,7 @@ function SignupPage() {
 
       // pag successful, ilagay agad sa auth context at i-redirect sa home
       login(response.data.user);
+      sessionStorage.setItem('showTriviaAfterLogin', 'true');
       navigate('/');
     } catch (err) {
       // backend nagrereturn ng { error: "..." }, hindi message

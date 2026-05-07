@@ -48,6 +48,9 @@ function LoginPage() {
     try {
       const response = await api.post('/auth/login', { email, password });
       login(response.data.user);
+      console.log('FLAG SET!');   
+      sessionStorage.setItem('showTriviaAfterLogin', 'true');
+      console.log('Flag value:', sessionStorage.getItem('showTriviaAfterLogin'));
       navigate('/');
     } catch (err) {
       // backend nagrereturn ng { error: "..." }, dati ang hinahanap natin .message
