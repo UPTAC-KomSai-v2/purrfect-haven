@@ -47,6 +47,7 @@ export default function Navbar() {
       <div className="navbar-right">
         <div className="navbar-links">
           <Link to="/pets">Find a pet</Link>
+          <Link to="/about-us">About us</Link>
           { (!user || !user.is_admin) && (
             <>
               <Link to="/rescue">Request a rescue</Link>

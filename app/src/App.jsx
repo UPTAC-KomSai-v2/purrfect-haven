@@ -19,6 +19,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import NotificationPage from './pages/NotificationPage.jsx';
 import UnauthorizedPage from './pages/UnauthorizedPage.jsx';
+import AboutDevelopersPage from './pages/AboutDevelopersPage.jsx';
 
 // Redirects admins to /dashboard; renders the given element for regular users.
 function UserOnlyRoute({ element }) {
@@ -121,6 +122,7 @@ function App() {
           {/* 404 — named route + catch-all */}
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/about-us" element={<AboutDevelopersPage />} />
         </Routes>
       </main>
       <Footer />
