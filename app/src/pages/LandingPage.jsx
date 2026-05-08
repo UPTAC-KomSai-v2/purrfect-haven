@@ -79,10 +79,12 @@ function Landing() {
           {featuredStory ? (
             <>
               {/* prefer cover_photo (story photo o fallback pet_photo) */}
-              <img
-                src={getPhotoUrl(featuredStory.cover_photo, featuredStory.cover_photo ? null : featuredStory.pet.name)}
-                alt={featuredStory.pet.name}
-              />
+              <div className='featured-wrapper'>
+                <img
+                  src={getPhotoUrl(featuredStory.cover_photo, featuredStory.cover_photo ? null : featuredStory.pet.name)}
+                  alt={featuredStory.pet.name}
+                />
+              </div>
               <div className="story-text">
                 <p className="story-label">Adoption Success Story</p>
                 <h2>"{featuredStory.title}"</h2>
@@ -91,7 +93,7 @@ function Landing() {
                 <p className="story-adopter" style={{ color: 'var(--color-text-secondary)', fontWeight: '400', fontSize: '12px' }}>
                   Adopted {featuredStory.pet.name} • {formatStoryDate(featuredStory.published_at)}
                 </p>
-                <button className="story-button" onClick={() => navigate('/pets')}>Adopt Now</button>
+                <Button className="story-button" onClick={() => navigate('/pets')}>Adopt Now</Button>
               </div>
             </>
           ) : (
