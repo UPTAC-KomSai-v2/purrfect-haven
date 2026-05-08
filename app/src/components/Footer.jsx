@@ -29,7 +29,7 @@ function Footer() {
             </a>
             
             <a 
-              href="https://youtube.com" 
+              href="https://www.youtube.com/watch?v=8CBjKLGwLqE" 
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="Follow us on YouTube"
@@ -59,7 +59,7 @@ function Footer() {
 
       {/* Copyright */}
       <div className="footer-bottom">
-        <p>&copy; 2026 Purrfect Haven. Website developed with <span className="heart">♥</span> by rubberduck</p>
+        <p>&copy; 2026 Purrfect Haven. </p>
       </div>
     </footer>
   )

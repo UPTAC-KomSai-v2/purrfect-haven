@@ -23,6 +23,109 @@ export async function getProfile(req, res) {
   }
 }
 
+// =====================================================
+// DELETE /api/users/:id
+// admin only — delete a user account.
+// nag-rerefuse kapag may existing data ng user (adoptions, posts, etc).
+// =====================================================
+export async function deleteUser(req, res) {
+  const targetUserId = parseInt(req.params.id);
+  const currentUserId = req.session.userId;
+
+  if (isNaN(targetUserId)) {
+    return res.status(400).json({ error: 'Invalid user ID.' });
+  }
+
+  // bawal mag-delete ng sarili — para hindi ma-lockout ang admin
+  if (targetUserId === currentUserId) {
+    return res.status(400).json({
+      error: 'You cannot delete your own account.',
+    });
+  }
+
+  try {
+    // tingnan kung existing yung user
+    const [userRows] = await pool.query(
+      'SELECT user_id, is_admin FROM Users WHERE user_id = ?',
+      [targetUserId]
+    );
+
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    // bawal mag-delete ng kapwa admin para safe
+    if (userRows[0].is_admin === 1) {
+      return res.status(403).json({
+        error: 'Cannot delete another admin account.',
+      });
+    }
+
+    // i-check kung may active adoption applications
+    const [adoptionRows] = await pool.query(
+      `SELECT adoption_id FROM Adoptions
+       WHERE user_id = ?
+       AND status IN ('pending', 'appointment_scheduled', 'under_review', 'approved', 'completed')`,
+      [targetUserId]
+    );
+
+    if (adoptionRows.length > 0) {
+      return res.status(409).json({
+        error: 'Cannot delete user — they have adoption records. Resolve those first.',
+      });
+    }
+
+    // i-delete na — ang ibang linked rows (rescue reports, posts) ay
+    // hahawakan ng FK ON DELETE behavior sa schema.
+    const [result] = await pool.query(
+      'DELETE FROM Users WHERE user_id = ?',
+      [targetUserId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    return res.status(200).json({
+      message: 'User deleted successfully.',
+    });
+
+  } catch (err) {
+    // kapag may FK violation ang MySQL, ito 'yon
+    if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+      return res.status(409).json({
+        error: 'Cannot delete user — they have linked data (rescue reports, community posts, etc).',
+      });
+    }
+    console.error('Delete user error:', err.message);
+    return res.status(500).json({ error: 'Server error.' });
+  }
+}
+
+// =====================================================
+// GET /api/users
+// admin only — kunin lahat ng accounts.
+// =====================================================
+export async function getAllUsers(req, res) {
+  try {
+    // hindi isasama ang password_hash — sensitive 'yon kahit
+    // admin lang ang makakakita.
+    const [rows] = await pool.query(
+      `SELECT user_id, first_name, last_name, city, email, cell_num,
+              is_admin, created_at
+       FROM Users
+       ORDER BY created_at DESC`
+    );
+    return res.status(200).json({
+      count: rows.length,
+      users: rows,
+    });
+  } catch (err) {
+    console.error('Get all users error:', err.message);
+    return res.status(500).json({ error: 'Server error.' });
+  }
+}
+
 // Modify my user details
 // PUT /api/users/profile
 export async function updateProfile(req, res) {

@@ -1223,3 +1223,120 @@
     max-width: none;
   }
 }
+
+.user-card {
+  padding: 18px 22px;
+}
+
+.user-card-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.user-card-identity {
+  flex: 1;
+  min-width: 200px;
+}
+
+.user-card-contact {
+  flex: 1;
+  min-width: 220px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 12px 0;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1.5px solid #E0D6CC;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--color-secondary, #C0794A);
+  background-color: #F5EDE5;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.admin-search-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 10px 36px 10px 14px;
+  border: 1.5px solid #E0D6CC;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  background-color: #FFFFFF;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-search-input:focus {
+  border-color: var(--color-secondary, #C0794A);
+  box-shadow: 0 0 0 3px rgba(192, 121, 74, 0.15);
+}
+
+.admin-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: inherit;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-search-clear:hover {
+  background-color: #F5EDE5;
+  color: var(--color-text-primary);
+}
+
+.user-card-actions {
+  display: flex;
+  align-items: center;
+}
+
+.user-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}

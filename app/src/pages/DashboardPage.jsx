@@ -27,6 +27,7 @@ import { getMyRescueReports, updateRescueReportStatus } from '../services/rescue
 import AdoptionRequestCard from './admin/AdoptionRequestCard.jsx';
 import CommunityPostCard from './admin/CommunityPostCard.jsx';
 import RescueReportCard from './admin/RescueRequestCard.jsx';
+import { getAllUsers, deleteUser } from '../services/usersService.js';
 import '../styles/admin.css';
 import '../styles/dashboard.css';
 
@@ -95,6 +96,12 @@ function DashboardPage() {
   const [expandedStory, setExpandedStory] = useState(null);
   const [expandedReport, setExpandedReport] = useState(null);
 
+  const [usersSearch, setUsersSearch] = useState('');
+  const [userDeleteConfirm, setUserDeleteConfirm] = useState(null);
+
+  const USERS_PER_PAGE = 5;
+  const [usersPage, setUsersPage] = useState(1);
+
   // Admin state
   const [adminAdoptions, setAdminAdoptions]       = useState([]);
   const [adminPosts, setAdminPosts]               = useState([]);
@@ -103,6 +110,7 @@ function DashboardPage() {
   const [adminWelfareChecks, setAdminWelfareChecks] = useState([]);
   const [activeTab, setActiveTab]           = useState('adoptions');
   const [statusFilter, setStatusFilter]     = useState('all');
+  const [adminUsers, setAdminUsers] = useState([]);
 
   const [storyModal, setStoryModal]                 = useState(null);
   const [updateModal, setUpdateModal]               = useState(null);
@@ -122,6 +130,11 @@ function DashboardPage() {
       loadAll();
     }
   }, [user?.user_id]);
+
+  useEffect(() => {
+    setUsersPage(1);
+    setUsersSearch('');
+  }, [activeTab]);
 
   async function loadAll() {
     const [a, s, r] = await Promise.allSettled([
@@ -172,6 +185,11 @@ function DashboardPage() {
       const wc = await getAdminWelfareChecks();
       setAdminWelfareChecks(wc || []);
     } catch (e) { console.error('Admin welfare checks failed:', e); }
+
+    try {
+      const u = await getAllUsers();
+      setAdminUsers(u || []);
+    } catch (e) { console.error('Admin users failed:', e); }
 
     setLoading(false);
   }
@@ -369,6 +387,28 @@ async function confirmStoryAction() {
     );
   }
 
+  // ============ admin user actions ============
+
+  async function confirmUserDelete() {
+    if (!userDeleteConfirm) return;
+
+    setActionSubmitting(true);
+    try {
+      await deleteUser(userDeleteConfirm.user_id);
+      // tanggalin sa local state — para hindi na kailangan mag-refetch
+      setAdminUsers((prev) =>
+        prev.filter((u) => u.user_id !== userDeleteConfirm.user_id)
+      );
+      setUserDeleteConfirm(null);
+      showToast(`${userDeleteConfirm.first_name} ${userDeleteConfirm.last_name} has been removed.`);
+    } catch (err) {
+      console.error('Delete user error:', err);
+      showToast(err.response?.data?.error || 'Failed to delete user.', 'error');
+    } finally {
+      setActionSubmitting(false);
+    }
+  }
+
   // ============ admin helpers ============
 
   const filteredAdminAdoptions = useMemo(
@@ -384,10 +424,16 @@ async function confirmStoryAction() {
     [adminRescues, statusFilter]
   );
 
-  const pendingAdoptionsCount  = adminAdoptions.filter(a => a.status === 'pending').length;
-  const pendingPostsCount      = adminPosts.filter(p => p.status === 'pending').length;
-  const pendingRescuesCount    = adminRescues.filter(r => r.status === 'pending').length;
-  const submittedStoriesCount  = adminStories.filter(s => s.status === 'submitted').length;
+  const pendingAdoptionsCount = adminAdoptions.filter(a =>
+    ['pending', 'appointment_scheduled', 'under_review'].includes(a.status)
+  ).length;
+  const pendingRescuesCount = adminRescues.filter(r =>
+    ['pending', 'in_progress'].includes(r.status)
+  ).length;
+  const pendingPostsCount   = adminPosts.filter(p => p.status === 'pending').length;
+  const submittedStoriesCount = adminStories.filter(s =>
+    ['pending'].includes(s.status)
+  ).length;
   const pendingWelfareCount    = adminWelfareChecks.filter(w => w.status === 'pending').length;
 
   // ============ story request response ============
@@ -552,18 +598,25 @@ async function confirmStoryAction() {
               {submittedStoriesCount > 0 && <span className="tab-badge">{submittedStoriesCount}</span>}
             </button>
 
+            <button
+              className={`admin-sidebar-item ${activeTab === 'users' ? 'active' : ''}`}
+              onClick={() => setActiveTab('users')}
+            >
+              <span>Users</span>
+            </button>
+
           </aside>
 
           <div className="admin-main">
             <div className="admin-main-header">
               <h2 className="admin-main-title">
-                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Requests', stories: 'Stories', welfare: 'Welfare Checks' }[activeTab]}
+                {{ adoptions: 'Adoption Requests', community: 'Community Posts', rescues: 'Rescue Requests', stories: 'Stories', welfare: 'Welfare Checks', users: 'Users' }[activeTab]}
               </h2>
               <AutoSizeSelect
                 className="admin-tab-filter"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                disabled={activeTab === 'stories' || activeTab === 'welfare'}
+                disabled={activeTab === 'stories' || activeTab === 'welfare' || activeTab === 'users'}
               >
                 <option value="all">All</option>
                 <option value="pending">Pending</option>
@@ -621,6 +674,72 @@ async function confirmStoryAction() {
                         onReject={() => openStoryAction(story, 'reject')}
                       />
                     ))}
+                  
+                  {activeTab === 'users' && (() => {
+                    // i-filter muna based sa search query
+                    const q = usersSearch.trim().toLowerCase();
+                    const filtered = q
+                      ? adminUsers.filter((u) => {
+                          const haystack = `${u.first_name} ${u.last_name} ${u.email} ${u.cell_num} ${u.city}`.toLowerCase();
+                          return haystack.includes(q);
+                        })
+                      : adminUsers;
+
+                    // tapos i-paginate ang filtered list
+                    const totalPages = Math.ceil(filtered.length / USERS_PER_PAGE);
+                    const start = (usersPage - 1) * USERS_PER_PAGE;
+                    const paginated = filtered.slice(start, start + USERS_PER_PAGE);
+
+                    return (
+                      <>
+                        <div className="admin-search-wrapper">
+                          <input
+                            type="text"
+                            className="admin-search-input"
+                            placeholder="Search by name, email, phone, or city..."
+                            value={usersSearch}
+                            onChange={(e) => {
+                              setUsersSearch(e.target.value);
+                              setUsersPage(1); // bumalik sa page 1 kapag may bagong search
+                            }}
+                          />
+                          {usersSearch && (
+                            <button
+                              className="admin-search-clear"
+                              onClick={() => {
+                                setUsersSearch('');
+                                setUsersPage(1);
+                              }}
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+
+                        {filtered.length === 0 ? (
+                          <p className="empty-state">
+                            No users match "{usersSearch}".
+                          </p>
+                        ) : (
+                          <>
+                            {paginated.map((u) => (
+                              <UserCard
+                                key={u.user_id}
+                                user={u}
+                                onDelete={setUserDeleteConfirm}
+                                currentUserId={user.user_id}
+                              />
+                            ))}
+                            <Pagination
+                              currentPage={usersPage}
+                              totalPages={totalPages}
+                              onPageChange={setUsersPage}
+                            />
+                          </>
+                        )}
+                      </>
+                    );
+                  })()}
                 {loading && <p className="empty-state">Loading...</p>}
                 {!loading && activeTab === 'adoptions' && filteredAdminAdoptions.length === 0 && (
                   <p className="empty-state">No adoption requests found.</p>
@@ -637,6 +756,9 @@ async function confirmStoryAction() {
                 {!loading && activeTab === 'stories' &&
                   adminStories.filter((s) => s.status === 'submitted').length === 0 && (
                     <p className="empty-state">No stories awaiting review.</p>
+                )}
+                {!loading && activeTab === 'users' && adminUsers.length === 0 && (
+                  <p className="empty-state">No registered users yet.</p>
                 )}
               </div>
               
@@ -694,6 +816,40 @@ async function confirmStoryAction() {
 
         {toast && (
           <div className={`toast toast-${toast.kind}`}>{toast.message}</div>
+        )}
+
+        {userDeleteConfirm && (
+          <div className="modal-overlay" onClick={() => setUserDeleteConfirm(null)}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+              <h2>Delete User</h2>
+              <p className="modal-subtext">
+                Are you sure you want to delete{' '}
+                <strong>{userDeleteConfirm.first_name} {userDeleteConfirm.last_name}</strong>?
+                This cannot be undone.
+              </p>
+
+              <p className="modal-confirm-text">
+                Email: <strong>{userDeleteConfirm.email}</strong>
+              </p>
+
+              <div className="modal-actions">
+                <button
+                  className="modal-cancel"
+                  onClick={() => setUserDeleteConfirm(null)}
+                  disabled={actionSubmitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="reject-btn"
+                  onClick={confirmUserDelete}
+                  disabled={actionSubmitting}
+                >
+                  {actionSubmitting ? 'Deleting...' : 'Delete User'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
@@ -1711,6 +1867,90 @@ function StoryActionModal({ modal, onChangeField, onConfirm, onCancel, isSubmitt
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function UserCard({ user, onDelete, currentUserId }) {
+  const fullName = `${user.first_name} ${user.last_name}`;
+  const joined = new Date(user.created_at).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
+  // huwag pakitaan ng delete button kung admin o sarili
+  const canDelete = user.is_admin !== 1 && user.user_id !== currentUserId;
+
+  return (
+    <div className="admin-card user-card">
+      <div className="user-card-content">
+        <div className="user-card-identity">
+          <h2 style={{ margin: 0 }}>
+            {fullName}
+            {user.is_admin === 1 && (
+              <span className="meta-tag" style={{ marginLeft: '10px' }}>Admin</span>
+            )}
+          </h2>
+          <p className="user-card-meta" style={{ margin: '6px 0 0 0', fontSize: '12px', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
+            Joined {joined}
+          </p>
+        </div>
+
+        <div className="user-card-contact">
+          <p style={{ margin: '4px 0', fontSize: '13px' }}>
+            <strong>Email:</strong> {user.email}
+          </p>
+          <p style={{ margin: '4px 0', fontSize: '13px' }}>
+            <strong>Phone:</strong> {user.cell_num}
+          </p>
+          <p style={{ margin: '4px 0', fontSize: '13px' }}>
+            <strong>Location:</strong> {user.city}
+          </p>
+        </div>
+
+        {canDelete && (
+          <div className="user-card-actions">
+            <button
+              className="reject-btn small-btn"
+              onClick={() => onDelete(user)}
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// =====================================================
+// Pagination — reusable component para sa simple paging.
+// nawawala kapag isa lang o wala talagang page.
+// =====================================================
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  // walang ipapakita kung isa lang ang page
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="pagination">
+      <button
+        className="pagination-btn"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        ← Prev
+      </button>
+      <span className="pagination-info">
+        Page {currentPage} of {totalPages}
+      </span>
+      <button
+        className="pagination-btn"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        Next →
+      </button>
     </div>
   );
 }
