@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import { insertPetFromCommunityPost } from '../services/communityService.js';
 
 export async function createCommunityPost(req, res) {
   const {
@@ -158,7 +159,8 @@ export async function updateCommunityPostStatus(req, res) {
 
   try {
     const [rows] = await pool.query(
-      `SELECT post_id, status, pet_name FROM Community_Posts WHERE post_id = ?`,
+      `SELECT post_id, status, pet_name, species_id, breed, sex, age, color, description, location
+       FROM Community_Posts WHERE post_id = ?`,
       [id]
     );
 
@@ -177,10 +179,29 @@ export async function updateCommunityPostStatus(req, res) {
       [status, admin_note || null, id]
     );
 
+    let newPetId = null;
+    if (status === 'approved') {
+      const [photoRows] = await pool.query(
+        `SELECT file_path FROM community_post_photos WHERE post_id = ? ORDER BY photo_id ASC`,
+        [id]
+      );
+      const post = {
+        ...rows[0],
+        photos: photoRows.map(r => r.file_path),
+      };
+      newPetId = await insertPetFromCommunityPost(post);
+
+      await pool.query(
+        `UPDATE Community_Posts SET created_pet_id = ? WHERE post_id = ?`,
+        [newPetId, id]
+      );
+    }
+
     return res.status(200).json({
       message: `Post ${status} successfully.`,
       post_id: parseInt(id),
       new_status: status,
+      ...(newPetId && { pet_id: newPetId }),
     });
 
   } catch (err) {
